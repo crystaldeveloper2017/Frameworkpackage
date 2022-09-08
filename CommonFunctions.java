@@ -1,4 +1,4 @@
-package com.crystal.framework;
+package com.crystal.framework.Frameworkpackage;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -59,7 +59,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.crystalcommonfunctions.Element;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -777,7 +777,7 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 	
-	public List<Element> getElementsNewLogic(List<String> roleIds, List<Element> elementsMaster,HashMap<String, Role> rolesMaster,LinkedHashMap<Long, com.crystalcommonfunctions.Role> linkedHashMap) throws ClassNotFoundException, SQLException 
+	public List<Element> getElementsNewLogic(List<String> roleIds, List<Element> elementsMaster,HashMap<String, Role> rolesMaster,LinkedHashMap<Long, Role> linkedHashMap) throws ClassNotFoundException, SQLException 
 	{
 		List<Element> finalListRequired=new ArrayList<>();
 		List<Element> parentElements=new ArrayList<>();

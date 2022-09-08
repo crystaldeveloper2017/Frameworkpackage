@@ -1,4 +1,4 @@
-package com.crystal.framework;
+package com.crystal.framework.Frameworkpackage;
 
 import java.util.List;
 
@@ -31,6 +31,9 @@ public class Role
 		this.actions = actions;
 		this.elements = elements;
 		
+	}
+	public Role(int i, String string) {
+		this.roleName=string;		
 	}
 	
 	
