@@ -59,7 +59,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
+import com.crystal.customizedpos.Configuration.Config;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -463,7 +463,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = CommonFunctions.class.getResourceAsStream("ERAMapping.properties");
+			InputStream in = Config.class.getResourceAsStream("ERAMapping.properties");
 			Properties prop = new Properties();
 			prop.load(in);
 			
