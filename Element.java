@@ -8,11 +8,11 @@ import java.util.List;
 
 public class Element implements Serializable
 {
-		private long elementId;
+		private Long elementId;
 		public long getElementId() {
 			return elementId;
 		}
-		public void setElementId(long elementId) {
+		public void setElementId(Long elementId) {
 			this.elementId = elementId;
 		}
 		public String getElementName() {
@@ -32,13 +32,8 @@ public class Element implements Serializable
 		}
 		public void setElementUrl(String elementUrl) {
 			this.elementUrl = elementUrl;
-		}
-		public boolean isActivateFlag() {
-			return activateFlag;
-		}
-		public void setActivateFlag(boolean activateFlag) {
-			this.activateFlag = activateFlag;
-		}
+		}		
+		
 		public int getOrderNo() {
 			return orderNo;
 		}
@@ -48,17 +43,17 @@ public class Element implements Serializable
 		private String elementName;
 		private long parentElementId;
 		private String elementUrl;
-		private boolean activateFlag;
+		
 		private int orderNo;
 		
-		public Element(long elementId, String elementName, long parentElementId, String elementUrl,
-				boolean activateFlag, int orderNo, List<Element> childElements) {
+		public Element(Long elementId, String elementName, Long parentElementId, String elementUrl,
+				Integer orderNo, List<Element> childElements) {
 			super();
 			this.elementId = elementId;
 			this.elementName = elementName;
 			this.parentElementId = parentElementId;
 			this.elementUrl = elementUrl;
-			this.activateFlag = activateFlag;
+			
 			this.orderNo = orderNo;
 			this.childElements = childElements;
 		}

@@ -26,7 +26,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 	static Logger logger = Logger.getLogger(ControllerServiceImpl.class.getName());
 	private static final int MegaBytes = 1024 * 1024;
 
-	public void serveRequest(HttpServletRequest request, HttpServletResponse response,HashMap<String, FrmActionService> actions,HashMap<String, Role> roles)
+	public void serveRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, ClassNotFoundException, SQLException, InterruptedException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");

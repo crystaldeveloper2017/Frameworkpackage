@@ -4,7 +4,24 @@ import java.util.List;
 
 public class Role 
 {
-	private String roleName;
+	private Long roleId;
+	
+	private String roleName;	
+	private String[] actions;	
+	private Integer[] elements;
+	
+	public Long getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
+	}
+	public Integer[] getElements() {
+		return elements;
+	}
+	public void setElements(Integer[] elements) {
+		this.elements = elements;
+	}
 	public String getRoleName() {
 		return roleName;
 	}
@@ -17,14 +34,6 @@ public class Role
 	public void setActions(String[] actions) {
 		this.actions = actions;
 	}
-	private String[] actions;
-	public Integer[] getElements() {
-		return elements;
-	}
-	public void setElements(Integer[] elements) {
-		this.elements = elements;
-	}
-	private Integer[] elements;
 	public Role(String roleName, String[] actions,Integer[] elements) {
 		super();
 		this.roleName = roleName;
@@ -32,7 +41,8 @@ public class Role
 		this.elements = elements;
 		
 	}
-	public Role(int i, String string) {
+	public Role(Long i, String string) {
+		this.roleId=i;
 		this.roleName=string;		
 	}
 	

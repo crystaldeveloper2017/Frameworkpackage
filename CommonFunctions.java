@@ -47,6 +47,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.naming.ldap.StartTlsRequest;
@@ -58,7 +59,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.yaml.snakeyaml.Yaml;
 
+import com.crystal.Login.LoginServiceImpl;
+import com.crystal.commonfunctions.ExecuteSqlFile;
 import com.crystal.customizedpos.Configuration.Config;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -78,6 +82,26 @@ import com.itextpdf.text.pdf.qrcode.ErrorCorrectionLevel;
 
 public class CommonFunctions extends PdfPageEventHelper 
 {
+	
+	
+	public static HashMap<String, FrmActionService> actions=null;
+    public static HashMap<Long, Role> roles=new HashMap<>();
+    public static List<Element> elements=new ArrayList<>();
+    public static String url;
+	public static String username;
+	public static String password;
+	public static Boolean isAuditEnabled;
+	public static Boolean queryLogEnabled;	
+	public static Boolean copyAttachmentsToBuffer;	
+	public static String port;
+	public static String schemaName;
+	public static String host;
+	public static Boolean isSendEmail;
+	public static String mySqlPath;
+	public static List<String> lstbypassedActions;    
+    
+	
+	
 	public LinkedHashMap<String, String> getMap(ArrayList<Object> parameters, String query, Connection con)
 			throws SQLException {
 		ResultSet rs = null;
@@ -393,20 +417,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 
 	
-	public static String url;
-	public static String username;
-	public static String password;
-	public static Boolean isAuditEnabled;
-	public static Boolean queryLogEnabled;
 	
-	public static Boolean copyAttachmentsToBuffer;
-	
-	public static String port;
-	public static String schemaName;
-	public static String host;
-	public static Boolean isSendEmail;
-	public static String mySqlPath;
-	public static List lstbypassedActions;
 	
 	
 	
@@ -459,18 +470,56 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 	
 	
-	public void setERAMapping() 
+	public void setERAMapping(Class[] scanClasses) 
 	{		
 		try 
 		{
-			InputStream in = Config.class.getResourceAsStream("ERAMapping.properties");
-			Properties prop = new Properties();
-			prop.load(in);
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("ERAMapping.yaml");
 			
-			String bypassedActions= (prop.getProperty("bypassedActions"));
-			schemaName = prop.getProperty("schemaName");
-			//schemaName= (prop.getProperty("schemaName"));
-			lstbypassedActions=Arrays.asList(bypassedActions.split(","));
+			
+			
+			  Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
+			  List<HashMap<String, Object>> lst= (List<HashMap<String,Object>>)data.get("roles");			  
+			  List<Element> lstRoles=new ArrayList<>();
+				for (HashMap<String, Object> tmpHm : lst) 
+				{
+					
+					
+					Role r = new Role(Long.parseLong(String.valueOf(tmpHm.get("roleId"))),String.valueOf(tmpHm.get("roleName")));
+					List<String> actions= (List<String>) tmpHm.get("actions");
+					
+					actions = actions.stream().map(String :: trim).collect(Collectors.toList());
+
+					r.setActions(actions.toArray(new String[0]));
+					
+					
+					List<Integer> lstElements= (List<Integer>)tmpHm.get("elements");						    
+					r.setElements(lstElements.toArray(new Integer[0]));
+					
+					roles.put(r.getRoleId(), r);
+				}
+				
+			
+				List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
+				
+				for(HashMap<String, String> hm:lstElements)
+				{
+					Element e=new Element();
+					e.setElementId(Long.valueOf(String.valueOf(hm.get("elementId"))));
+					e.setElementName(hm.get("elementName"));
+					e.setParentElementId(Long.valueOf(String.valueOf(hm.get("parentElementId"))));
+					e.setElementUrl(hm.get("elementUrl"));
+					e.setOrderNo(Integer.parseInt(String.valueOf(hm.get("orderNo"))));
+					elements.add(e);
+				}
+				
+				
+			
+			lstbypassedActions= (List<String>) data.get("bypassedActions");
+			actions=getActionServiceList(scanClasses);
+			schemaName= (String) data.get("schemaName");			
+
+			
 			
 			
 		} catch (Exception e) 
@@ -479,7 +528,20 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	
-	
+	public HashMap<String, FrmActionService> getActionServiceList(Class[] classes) 
+	{
+		
+		HashMap<String, FrmActionService> reqActions = new HashMap<>();
+		for(Class c:classes)
+		{		
+			for(Method m:getAccessibleMethods(c))
+			{
+				reqActions.put(m.getName(),new FrmActionService(m.getName(), c.getName(),lstbypassedActions.contains(m.getName())));
+				//System.out.println( c.getName()+ ""+ m.getName());
+			}
+		}
+		return reqActions;
+	}
 
 
 	
@@ -777,15 +839,15 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 	
-	public List<Element> getElementsNewLogic(List<String> roleIds, List<Element> elementsMaster,HashMap<String, Role> rolesMaster,LinkedHashMap<Long, Role> linkedHashMap) throws ClassNotFoundException, SQLException 
+	public List<Element> getElementsNewLogic(List<String> roleIds, List<Element> elementsMaster,HashMap<Long, Role> rolesMaster) throws ClassNotFoundException, SQLException 
 	{
 		List<Element> finalListRequired=new ArrayList<>();
 		List<Element> parentElements=new ArrayList<>();
 		List<Element> childElements=new ArrayList<>();
 		for (String s : roleIds) 
 		{
-			String roleName=linkedHashMap.get(Long.valueOf(s)).getRoleName();
-			Role r=rolesMaster.get(roleName);
+			
+			Role r=rolesMaster.get(Long.parseLong(s));
 			
 			 parentElements.addAll(getParentElements(r.getElements(),elementsMaster));
 			 childElements.addAll(getChildElements(r.getElements(),elementsMaster));
@@ -883,15 +945,15 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	
 	
-	public HashSet<String> getActionsForthisUserDecoupled(long userId, Connection con,HashMap<String, Role> roles) throws ClassNotFoundException, SQLException {
+	public HashSet<String> getActionsForthisUserDecoupled(long userId, Connection con,HashMap<Long, Role> roles) throws ClassNotFoundException, SQLException {
 		ArrayList<Object> parameters = new ArrayList<Object>();
 		parameters.add(userId);
 		
-		String query = "select role_name from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
+		String query = "select role_id from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
 		HashSet<String> distinctActions=new HashSet<>();
 		for(String roleName:getListOfString(parameters, query, con))
 		{
-			String[] roleNameActions=((Role)roles.get(roleName)).getActions();
+			String[] roleNameActions=roles.get(Long.valueOf(roleName)).getActions();
 			 List<String> lst=Arrays.asList(roleNameActions);
 			 distinctActions.addAll(lst);
 		}
@@ -1444,6 +1506,14 @@ public class CommonFunctions extends PdfPageEventHelper
 	        clazz = clazz.getSuperclass();
 	    }
 	    return result.toArray(new Method[result.size()]);
+	}
+
+
+
+	public void initializeApplication(Class[] scanClasses) {
+		setERAMapping(scanClasses);
+    	setEnvVariables(schemaName);
+    	// copy images from db to buffer
 	}
 	
 	
