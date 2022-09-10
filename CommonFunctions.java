@@ -59,6 +59,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.crystal.basecontroller.ApplicationConfiguration;
 import com.crystal.customizedpos.Configuration.Config;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -883,13 +884,22 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	
 	
-	public HashSet<String> getActionsForthisUserDecoupled(long userId, Connection con,HashMap<String, Role> roles) throws ClassNotFoundException, SQLException {
+	public HashSet<String> getActionsForthisUserDecoupled(long userId, Connection con,HashMap<String, Role> roles,LinkedHashMap<Long, Role> roleMaster) throws ClassNotFoundException, SQLException {
 		ArrayList<Object> parameters = new ArrayList<Object>();
-		parameters.add(userId);
+		parameters.add(userId);		
+		String query = "select role_id from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
+		List<String> lstRoleIds=getListOfString(parameters, query, con);
 		
-		String query = "select role_name from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
+		List<String> lstRoleNames=new ArrayList<>();
+		
+		for(String s:lstRoleIds)
+		{
+			Role r=roleMaster.get(Long.valueOf(s));
+			lstRoleNames.add(r.getRoleName());
+		}
+		
 		HashSet<String> distinctActions=new HashSet<>();
-		for(String roleName:getListOfString(parameters, query, con))
+		for(String roleName:lstRoleNames)
 		{
 			String[] roleNameActions=((Role)roles.get(roleName)).getActions();
 			 List<String> lst=Arrays.asList(roleNameActions);
