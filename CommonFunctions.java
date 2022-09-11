@@ -470,48 +470,58 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 	
 	
-	public void setERAMapping(Class[] scanClasses) 
+	
+	public void setElementsMaster()
+	{
+		InputStream in = ExecuteSqlFile.class.getResourceAsStream("Elements.yaml");
+		Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
+		List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
+		
+		for(HashMap<String, String> hm:lstElements)
+		{
+			Element e=new Element();
+			e.setElementId(Long.valueOf(String.valueOf(hm.get("elementId"))));
+			e.setElementName(hm.get("elementName"));
+			e.setParentElementId(Long.valueOf(String.valueOf(hm.get("parentElementId"))));
+			e.setElementUrl(hm.get("elementUrl"));
+			e.setOrderNo(Integer.parseInt(String.valueOf(hm.get("orderNo"))));
+			elements.add(e);
+		}
+	}
+	
+	public void setRolesAndOthers(Class[] scanClasses) 
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("ERAMapping.yaml");
-			
-			
-			
-			  Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
-			  List<HashMap<String, Object>> lst= (List<HashMap<String,Object>>)data.get("roles");			  
-			  List<Element> lstRoles=new ArrayList<>();
-				for (HashMap<String, Object> tmpHm : lst) 
-				{
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Roles.yaml");
+			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
+			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
+			  for(LinkedHashMap lm: lst)
+			  {
+				  for(LinkedHashMap<String, Object> role: (List<LinkedHashMap<String, Object>>) lm.get("roles"))
+				  {
 					
-					
-					Role r = new Role(Long.parseLong(String.valueOf(tmpHm.get("roleId"))),String.valueOf(tmpHm.get("roleName")));
-					List<String> actions= (List<String>) tmpHm.get("actions");
-					
-					actions = actions.stream().map(String :: trim).collect(Collectors.toList());
-
-					r.setActions(actions.toArray(new String[0]));
-					
-					
-					List<Integer> lstElements= (List<Integer>)tmpHm.get("elements");						    
-					r.setElements(lstElements.toArray(new Integer[0]));
-					
-					roles.put(r.getRoleId(), r);
+							
+							
+							Role r = new Role(Long.parseLong(String.valueOf(role.get("roleId"))),String.valueOf(role.get("roleName")));
+							String actions= (String)role.get("actions");
+							r.setActions(actions.split(","));
+							
+							
+							String elementscsv= (String)role.get("elements");
+							
+							
+							int[] elements=Arrays.stream(elementscsv.split(",")).mapToInt(Integer::parseInt).toArray();
+							Integer[] elementsI = Arrays.stream( elements ).boxed().toArray( Integer[]::new );
+							
+							r.setElements(elementsI);
+							
+							roles.put(r.getRoleId(), r);
+						
 				}
-				
+			  }
 			
-				List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
 				
-				for(HashMap<String, String> hm:lstElements)
-				{
-					Element e=new Element();
-					e.setElementId(Long.valueOf(String.valueOf(hm.get("elementId"))));
-					e.setElementName(hm.get("elementName"));
-					e.setParentElementId(Long.valueOf(String.valueOf(hm.get("parentElementId"))));
-					e.setElementUrl(hm.get("elementUrl"));
-					e.setOrderNo(Integer.parseInt(String.valueOf(hm.get("orderNo"))));
-					elements.add(e);
-				}
 				
 				
 			
@@ -1511,7 +1521,8 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 	public void initializeApplication(Class[] scanClasses) {
-		setERAMapping(scanClasses);
+		setElementsMaster();
+		setRolesAndOthers(scanClasses);
     	setEnvVariables(schemaName);
     	// copy images from db to buffer
 	}
