@@ -46,10 +46,18 @@ public class Element implements Serializable
 		
 		private int orderNo;
 		
-		public Element(Long elementId, String elementName, Long parentElementId, String elementUrl,
+		/*
+		 * public Element(Long elementId, String elementName, Long parentElementId,
+		 * String elementUrl, Integer orderNo, List<Element> childElements) { super();
+		 * this.elementId = elementId; this.elementName = elementName;
+		 * this.parentElementId = parentElementId; this.elementUrl = elementUrl;
+		 * 
+		 * this.orderNo = orderNo; this.childElements = childElements; }
+		 */
+		public Element(int elementId, String elementName, int parentElementId, String elementUrl,
 				Integer orderNo, List<Element> childElements) {
 			super();
-			this.elementId = elementId;
+			this.elementId = Long.valueOf(String.valueOf(elementId));
 			this.elementName = elementName;
 			this.parentElementId = parentElementId;
 			this.elementUrl = elementUrl;
@@ -57,10 +65,9 @@ public class Element implements Serializable
 			this.orderNo = orderNo;
 			this.childElements = childElements;
 		}
-		public Element() 
-		{
-			
+		public Element() {
 		}
+	
 		private List<Element> childElements;
 		public List<Element> getChildElements() {
 			return childElements;

@@ -48,6 +48,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.naming.ldap.StartTlsRequest;
@@ -62,8 +63,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.yaml.snakeyaml.Yaml;
 
 import com.crystal.Login.LoginServiceImpl;
-import com.crystal.commonfunctions.ExecuteSqlFile;
 import com.crystal.customizedpos.Configuration.Config;
+import com.crystal.customizedpos.Configuration.ExecuteSqlFile;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -86,6 +87,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	public static HashMap<String, FrmActionService> actions=null;
     public static HashMap<Long, Role> roles=new HashMap<>();
+    public static HashMap<String, LinkedHashMap<Long, Role>> apptypes=new HashMap<>();
     public static List<Element> elements=new ArrayList<>();
     public static String url;
 	public static String username;
@@ -495,11 +497,10 @@ public class CommonFunctions extends PdfPageEventHelper
 		{
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Roles.yaml");
 			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
-			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
-			  for(LinkedHashMap lm: lst)
+			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("roles");
+			  for(LinkedHashMap role: lst)
 			  {
-				  for(LinkedHashMap<String, Object> role: (List<LinkedHashMap<String, Object>>) lm.get("roles"))
-				  {
+				  
 					
 							
 							
@@ -518,14 +519,27 @@ public class CommonFunctions extends PdfPageEventHelper
 							
 							roles.put(r.getRoleId(), r);
 						
-				}
+				
 			  }
+			  
+			  // set apptypes here
+			  in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+				data = yaml.load(in);
+				 lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
+				 HashMap<String, List<Role>> appType=new HashMap<>();
+			for(LinkedHashMap<String, Object> lm: lst)
+			{
+				String[] roles=String.valueOf(lm.get("roles")).split(",");
+				List<Long> rolesInt=Stream.of(roles).map(Long::valueOf).collect(Collectors.toList());
+				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
+				apptypes.put(lm.get("appType").toString(),lstRoles);
+			}
+				
 			
 				
 				
-				
-			
-			lstbypassedActions= (List<String>) data.get("bypassedActions");
+			  String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
+			lstbypassedActions= Arrays.asList(bypassedActions);
 			actions=getActionServiceList(scanClasses);
 			schemaName= (String) data.get("schemaName");			
 
@@ -538,6 +552,25 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	
+	private LinkedHashMap<Long, Role> getRolesById(List<Long> roles2) 
+	{
+		LinkedHashMap<Long, Role> r=new LinkedHashMap<>();
+		for(Long roleId:roles2)
+		{
+			for(Entry<Long, Role> tmpRole: roles.entrySet())
+			{
+				if(tmpRole.getKey()==roleId)
+				{
+					//r.add(tmpRole.getValue());
+					r.put(roleId, tmpRole.getValue());
+				}
+			}
+		}
+		return r;
+	}
+
+
+
 	public HashMap<String, FrmActionService> getActionServiceList(Class[] classes) 
 	{
 		
@@ -1525,6 +1558,16 @@ public class CommonFunctions extends PdfPageEventHelper
 		setRolesAndOthers(scanClasses);
     	setEnvVariables(schemaName);
     	// copy images from db to buffer
+	}
+
+
+
+	public LinkedHashMap<Long, Role> getRoleMasterForThisAppType(String app_type) 
+	{
+		
+		roles.get(app_type);
+
+		return null;
 	}
 	
 	

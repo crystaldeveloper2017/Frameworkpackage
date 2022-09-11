@@ -46,6 +46,11 @@ public class Role
 		this.roleName=string;		
 	}
 	
+	public Role(int i, String string) {
+		this.roleId=Long.valueOf(i);
+		this.roleName=string;		
+	}
+	
 	
 
 	
