@@ -15,7 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+
 
 
 
@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 public class ControllerServiceImpl extends CommonFunctions {
 
-	static Logger logger = Logger.getLogger(ControllerServiceImpl.class.getName());
+	
 	private static final int MegaBytes = 1024 * 1024;
 
 	public void serveRequest(HttpServletRequest request, HttpServletResponse response)
