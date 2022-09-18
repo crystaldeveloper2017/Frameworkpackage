@@ -492,7 +492,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	
-	public void setRolesAndOthers(Class[] scanClasses) 
+	public void setRoles(Class[] scanClasses) 
 	{		
 		try 
 		{
@@ -524,25 +524,9 @@ public class CommonFunctions extends PdfPageEventHelper
 			  }
 			  
 			  // set apptypes here
-			  in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
-				data = yaml.load(in);
-				 lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
-				 HashMap<String, List<Role>> appType=new HashMap<>();
-			for(LinkedHashMap<String, Object> lm: lst)
-			{
-				String[] roles=String.valueOf(lm.get("roles")).split(",");
-				List<Long> rolesInt=Stream.of(roles).map(Long::valueOf).collect(Collectors.toList());
-				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
-				apptypes.put(lm.get("appType").toString(),lstRoles);
-			}
-				
 			
-				
-				
-			  String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
-			lstbypassedActions= Arrays.asList(bypassedActions);
 			actions=getActionServiceList(scanClasses);
-			schemaName= (String) data.get("schemaName");			
+						
 
 			
 			
@@ -552,6 +536,34 @@ public class CommonFunctions extends PdfPageEventHelper
 			e.printStackTrace();
 		}
 	}
+	
+	public void setApplicationTypesAndSchema() 
+	{		
+		try 
+		{
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
+				data = yaml.load(in);
+				List<LinkedHashMap<String,Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
+				 HashMap<String, List<Role>> appType=new HashMap<>();
+			for(LinkedHashMap<String, Object> lm: lst)
+			{
+				String[] roles=String.valueOf(lm.get("roles")).split(",");
+				List<Long> rolesInt=Stream.of(roles).map(Long::valueOf).collect(Collectors.toList());
+				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
+				apptypes.put(lm.get("appType").toString(),lstRoles);
+			}
+			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
+			lstbypassedActions= Arrays.asList(bypassedActions);
+			schemaName= (String) data.get("schemaName");
+			
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	  
 	
 	private LinkedHashMap<Long, Role> getRolesById(List<Long> roles2) 
 	{
@@ -1556,11 +1568,20 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	public void initializeApplication(Class[] scanClasses) {
 		setElementsMaster();
-		setRolesAndOthers(scanClasses);
+		setApplicationTypesAndSchema();
+		setRoles(scanClasses);
+		
     	setEnvVariables(schemaName);
     	// copy images from db to buffer
 	}
-
+	
+	public void initializeApplication() {
+		
+		setElementsMaster();
+		setApplicationTypesAndSchema();
+    	setEnvVariables(schemaName);
+    	// copy images from db to buffer
+	}
 
 
 	public LinkedHashMap<Long, Role> getRoleMasterForThisAppType(String app_type) 
