@@ -542,8 +542,8 @@ public class CommonFunctions extends PdfPageEventHelper
 		try 
 		{
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
-			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
-				data = yaml.load(in);
+			Yaml yaml = new Yaml(); 
+			Map<String, Object> data = yaml.load(in);				
 				List<LinkedHashMap<String,Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
 				 HashMap<String, List<Role>> appType=new HashMap<>();
 			for(LinkedHashMap<String, Object> lm: lst)
