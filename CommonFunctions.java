@@ -537,7 +537,40 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	
-	public void setApplicationTypesAndSchema() 
+	public void setByPassedActions() 
+	{		
+		try 
+		{
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			Yaml yaml = new Yaml(); 
+			Map<String, Object> data = yaml.load(in);
+			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
+			lstbypassedActions= Arrays.asList(bypassedActions);
+			
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	public void setSchemaName() 
+	{		
+		try 
+		{
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			Yaml yaml = new Yaml(); 
+			Map<String, Object> data = yaml.load(in);
+			schemaName= (String) data.get("schemaName");
+			
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void setApplicationTypes() 
 	{		
 		try 
 		{
@@ -553,8 +586,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
 				apptypes.put(lm.get("appType").toString(),lstRoles);
 			}
-			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
-			lstbypassedActions= Arrays.asList(bypassedActions);
+			
 			schemaName= (String) data.get("schemaName");
 			
 			
@@ -1567,18 +1599,25 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 	public void initializeApplication(Class[] scanClasses) {
-		setElementsMaster();
-		setApplicationTypesAndSchema();
+		setSchemaName();
+		setEnvVariables(schemaName);
+		setByPassedActions();
 		setRoles(scanClasses);
+		setApplicationTypes();
 		
-    	setEnvVariables(schemaName);
+		setElementsMaster();
+		
+		
+		
+		
+		
+    	
     	// copy images from db to buffer
 	}
 	
 	public void initializeApplication() {
 		
-		setElementsMaster();
-		setApplicationTypesAndSchema();
+		setSchemaName();
     	setEnvVariables(schemaName);
     	// copy images from db to buffer
 	}
