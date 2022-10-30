@@ -1626,9 +1626,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	public LinkedHashMap<Long, Role> getRoleMasterForThisAppType(String app_type) 
 	{
 		
-		roles.get(app_type);
+		return apptypes.get(app_type);
 
-		return null;
 	}
 	
 	
