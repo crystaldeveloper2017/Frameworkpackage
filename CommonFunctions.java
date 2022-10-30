@@ -637,7 +637,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{				
 				
 		Class.forName("com.mysql.jdbc.Driver");
-		return DriverManager.getConnection (url+":"+port+"/"+schemaName+"?user="+username+"&password="+password+"&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+		return DriverManager.getConnection (url+":"+port+"/"+schemaName+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 	}
 
 	
