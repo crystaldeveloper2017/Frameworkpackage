@@ -101,7 +101,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static String host;
 	public static Boolean isSendEmail;
 	public static String mySqlPath;
-	public static List<String> lstbypassedActions;    
+	public static List<String> lstbypassedActions;
+	public static int threadSleep;
     
 	
 	
@@ -586,7 +587,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
 				apptypes.put(lm.get("appType").toString(),lstRoles);
 			}
-			
+			threadSleep=(Integer) data.get("threadSleep");
 			schemaName= (String) data.get("schemaName");
 			
 			
