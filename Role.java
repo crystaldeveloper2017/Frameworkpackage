@@ -9,6 +9,7 @@ public class Role
 	private String roleName;	
 	private String[] actions;	
 	private Integer[] elements;
+	private String[] dashboard;	
 	
 	public Long getRoleId() {
 		return roleId;
@@ -34,6 +35,15 @@ public class Role
 	public void setActions(String[] actions) {
 		this.actions = actions;
 	}
+	
+	
+	public String[] getDashboardList() {
+		return dashboard;
+	}
+	public void setDashboardList(String[] dashboard) {
+		this.dashboard= dashboard;
+	}
+	
 	public Role(String roleName, String[] actions,Integer[] elements) {
 		super();
 		this.roleName = roleName;

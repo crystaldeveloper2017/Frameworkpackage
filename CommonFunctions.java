@@ -90,6 +90,8 @@ public class CommonFunctions extends PdfPageEventHelper
     public static HashMap<Long, Role> roles=new HashMap<>();
     public static HashMap<String, LinkedHashMap<Long, Role>> apptypes=new HashMap<>();
     public static List<Element> elements=new ArrayList<>();
+    public static HashMap<String, String> dashboardLinks=new HashMap();
+    
     public static String url;
 	public static String username;
 	public static String password;
@@ -507,8 +509,15 @@ public class CommonFunctions extends PdfPageEventHelper
 							
 							
 							Role r = new Role(Long.parseLong(String.valueOf(role.get("roleId"))),String.valueOf(role.get("roleName")));
+							
 							String actions= (String)role.get("actions");
 							r.setActions(actions.split(","));
+							
+							if(role.get("dashboard")!=null)
+							{
+							String dashboard= (String)role.get("dashboard");
+							r.setDashboardList(dashboard.split(","));
+							}
 							
 							
 							String elementscsv= (String)role.get("elements");
@@ -554,6 +563,26 @@ public class CommonFunctions extends PdfPageEventHelper
 			e.printStackTrace();
 		}
 	}
+	
+	public void setDashboardLinks() 
+	{		
+		try 
+		{
+ 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("DashboardLinkMapping.yaml");
+			Yaml yaml = new Yaml(); 
+			dashboardLinks= yaml.load(in);
+			
+			
+			
+			
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void setSchemaName() 
 	{		
 		try 
@@ -587,7 +616,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
 				apptypes.put(lm.get("appType").toString(),lstRoles);
 			}
-			threadSleep=(Integer) data.get("threadSleep");
+			threadSleep=(Integer) data.get("thread_sleep");
 			schemaName= (String) data.get("schemaName");
 			
 			
@@ -978,6 +1007,21 @@ public class CommonFunctions extends PdfPageEventHelper
 		return finalListRequired;
 		
 	}
+	
+	public Set<String> getDashboardForThisUser(List<String> roleIds,HashMap<Long, Role> rolesMaster) throws ClassNotFoundException, SQLException 
+	{
+		Set<String> finalListRequired=new HashSet<>();	
+		for (String s : roleIds) 
+		{
+			
+			Role r=rolesMaster.get(Long.parseLong(s));
+			finalListRequired.addAll(Arrays.asList(r.getDashboardList()));
+		}	
+		
+		return finalListRequired;
+		
+	}
+	
 	
 	
 	public List<Element> getParentElements(Integer[] elementsIds,List<Element> elements)
@@ -1578,8 +1622,8 @@ public class CommonFunctions extends PdfPageEventHelper
 		Date date = format.parse(inputDate);
 		
 		Calendar c = Calendar.getInstance();
-		c.setTime(date); // Using today's date
-		c.add(Calendar.DATE, Integer.valueOf(noOfDays)); // Adding 5 days
+		c.setTime(date); 
+		c.add(Calendar.DATE, Integer.valueOf(noOfDays)); 	
 		return format.format(c.getTime());
 	}
 	
@@ -1607,6 +1651,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		setApplicationTypes();
 		
 		setElementsMaster();
+		setDashboardLinks();
 		
 		
 		
