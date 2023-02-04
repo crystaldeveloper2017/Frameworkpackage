@@ -118,7 +118,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			FrmActionService frmAction= (FrmActionService)actions.get(action);
 			
 			// added so that threads donot over lap with each other
-			//Thread.sleep(4000);			
+			Thread.sleep(CommonFunctions.threadSleep * 1000);			
 			logger.info("Class and Method Info From Database" + frmAction.toString());
 			Class<?>[] paramString = new Class[2];
 			paramString[0] = HttpServletRequest.class;
