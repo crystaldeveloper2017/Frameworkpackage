@@ -155,7 +155,73 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	}
 	
-	
+	public static void doOperation(Query q,Connection con) throws SQLException
+    {
+        String query="";
+        
+        String updateValues="";
+        String whereValues=" where ";
+        String finalQuery="";
+        
+        
+        String columnNames=" (";
+        String valueNames=" (";
+        
+        
+        
+        if(q.queryMode.equals("insert"))
+        {
+            query="insert into "+q.tableName+"";
+            finalQuery+=query+updateValues;
+            
+            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
+                
+                        columnNames+=entry.getKey()+",";
+                        valueNames+=entry.getValue()+",";
+            }
+            columnNames=columnNames.substring(0,columnNames.length()-1);
+            valueNames=valueNames.substring(0,valueNames.length()-1);
+            
+            finalQuery+=columnNames+")" + " values "+ valueNames+")";
+            PreparedStatement ps=con.prepareStatement(finalQuery);
+            int i=1;
+            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
+                
+                ps.setObject(i++,entry.getValue());
+            ps.executeUpdate();
+            }
+            
+        }
+        else
+        {
+            query="update "+q.tableName+" set ";
+            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
+                updateValues+=entry.getKey()+"=?,";
+            }
+            updateValues=updateValues.substring(0,updateValues.length()-1);
+            //System.out.println(updateValues);
+            
+            for (Map.Entry<String, Object> entry : q.whereValueMap.entrySet()) {
+                whereValues+=entry.getKey()+"=? and ";
+            }
+            whereValues=whereValues.substring(0,whereValues.length()-5);
+
+            if(q.whereValueMap.isEmpty())
+            {whereValues="";}
+            
+            PreparedStatement ps=con.prepareStatement(finalQuery);
+            finalQuery+=query+updateValues+whereValues;
+            int i=1;
+            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
+                
+                ps.setObject(i++,entry.getValue());
+                
+            ps.executeUpdate();
+            }
+            
+        }
+        System.out.println(finalQuery);
+    }
 	
 	 public String getFinYearString()
 	 {
@@ -914,6 +980,16 @@ public class CommonFunctions extends PdfPageEventHelper
 		return getMap(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
 				.toString();
 	}
+	
+	   public String getYesterdaysDateFromDB(Connection con) throws SQLException {
+	        return getMap(new ArrayList<>(), "select date_format(subdate(current_date, 1),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
+	                .toString();
+	    }
+	   
+	   public String getTommorowsDateFromDB(Connection con) throws SQLException {
+           return getMap(new ArrayList<>(), "select date_format(adddate(current_date, 1),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
+                   .toString();
+       }
 	
 	public String getDateFromDBMinusOneMonth(Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select date_format(DATE_SUB(sysdate(),INTERVAL 1 MONTH),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
