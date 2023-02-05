@@ -16,6 +16,13 @@ public class Query {
         this.keyValueMap = keyValueMap;
         this.whereValueMap = whereValueMap;
     }
+    public Query(String tableName, String queryMode, HashMap<String, Object> keyValueMap) {
+        super();
+        this.tableName = tableName;
+        this.queryMode = queryMode;
+        this.keyValueMap = keyValueMap;
+        this.whereValueMap = whereValueMap;
+    }
 
     @Override
     public String toString() {

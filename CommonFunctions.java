@@ -158,72 +158,112 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	}
 	
-	public static void doOperation(Query q,Connection con) throws SQLException
+	public long insertUpdateEnhanced(Query q,Connection con) throws SQLException
     {
-        String query="";
-        
+        String query="";        
         String updateValues="";
         String whereValues=" where ";
         String finalQuery="";
-        
-        
         String columnNames=" (";
         String valueNames=" (";
-        
-        
-        
-        if(q.queryMode.equals("insert"))
+        PreparedStatement ps=null;
+        long reqVAlue = 0;
+        try 
         {
-            query="insert into "+q.tableName+"";
-            finalQuery+=query+updateValues;
-            
-            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
-                
-                        columnNames+=entry.getKey()+",";
-                        valueNames+=entry.getValue()+",";
-            }
-            columnNames=columnNames.substring(0,columnNames.length()-1);
-            valueNames=valueNames.substring(0,valueNames.length()-1);
-            
-            finalQuery+=columnNames+")" + " values "+ valueNames+")";
-            PreparedStatement ps=con.prepareStatement(finalQuery);
-            int i=1;
-            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
-                
-                ps.setObject(i++,entry.getValue());
-            ps.executeUpdate();
-            }
-            
+	        if(q.queryMode.equals("insert"))
+	        {
+	            query="insert into "+q.tableName+"";
+	            finalQuery+=query+updateValues;            
+	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
+	            	columnNames+=entry.getKey()+",";
+	                if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+	                {
+	                	valueNames+=entry.getValue().toString().replaceAll("~", "")+",";
+	                }
+	                else
+	                {
+	                	valueNames+="?,";
+	                }
+	                        
+	            }
+	            columnNames=columnNames.substring(0,columnNames.length()-1);
+	            valueNames=valueNames.substring(0,valueNames.length()-1);	            
+	            finalQuery+=columnNames+")" + " values "+ valueNames+")";
+	            ps=con.prepareStatement(finalQuery,Statement.RETURN_GENERATED_KEYS);            
+	            int i=1;
+	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) 
+	            {	                
+	            	if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+	            	{
+	            		continue;
+	            	}	            		
+	                ps.setObject(i++,entry.getValue());            
+	            }
+	        }
+	        else
+	        {
+	            query="update "+q.tableName+" set ";
+	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) 
+	            {
+	            	if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+	                {
+	                	updateValues+=entry.getKey()+"="+entry.getValue().toString().replace("~", "")+",";
+	                }
+	                else
+	                {
+	                	updateValues+=entry.getKey()+"=?,";
+	                }
+	            }
+	            updateValues=updateValues.substring(0,updateValues.length()-1);
+	            
+	            for (Map.Entry<String, Object> entry : q.whereValueMap.entrySet()) 
+	            {
+	                whereValues+=entry.getKey()+"=? and ";
+	            }
+	            whereValues=whereValues.substring(0,whereValues.length()-5);	
+	            if(q.whereValueMap.isEmpty())
+	            {whereValues="";}	            	            
+	            finalQuery+=query+updateValues+whereValues;
+	            ps=con.prepareStatement(finalQuery,Statement.RETURN_GENERATED_KEYS);            
+	            int i=1;
+	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) 
+	            {
+	            	if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+	            	{
+	            		continue;
+	            	}
+	                ps.setObject(i++,entry.getValue());	                
+	            }
+	            for (Map.Entry<String, Object> entry : q.whereValueMap.entrySet()) 
+	            {
+	            	ps.setObject(i++,entry.getValue());	                
+	            }
+	        }
+	        ps.executeUpdate();
+	        logger.info("\n"+ps);
+	        try (ResultSet generatedKeys = ps.getGeneratedKeys()) 
+			{
+				if (generatedKeys.next()) 
+				{					
+					reqVAlue = generatedKeys.getLong(1);					
+				} 
+				else 
+				{
+					// do nothing as ID mignt not have generated
+				}
+			}        
         }
-        else
+        catch(Exception e)
         {
-            query="update "+q.tableName+" set ";
-            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
-                updateValues+=entry.getKey()+"=?,";
-            }
-            updateValues=updateValues.substring(0,updateValues.length()-1);
-            //System.out.println(updateValues);
-            
-            for (Map.Entry<String, Object> entry : q.whereValueMap.entrySet()) {
-                whereValues+=entry.getKey()+"=? and ";
-            }
-            whereValues=whereValues.substring(0,whereValues.length()-5);
-
-            if(q.whereValueMap.isEmpty())
-            {whereValues="";}
-            
-            PreparedStatement ps=con.prepareStatement(finalQuery);
-            finalQuery+=query+updateValues+whereValues;
-            int i=1;
-            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
-                
-                ps.setObject(i++,entry.getValue());
-                
-            ps.executeUpdate();
-            }
-            
+        	writeErrorToDB(e);
+        	throw e;
         }
-        System.out.println(finalQuery);
+        finally 
+		{
+			if(ps!=null)
+				ps.close();
+		}        
+        return reqVAlue;        
     }
 	
 	 public String getFinYearString()
@@ -634,7 +674,10 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
+			
  			InputStream in = ExecuteSqlFile.class.getResourceAsStream("DashboardLinkMapping.yaml");
+ 			if(in==null)
+ 			{return;}
 			Yaml yaml = new Yaml(); 
 			dashboardLinks= yaml.load(in);
 			
