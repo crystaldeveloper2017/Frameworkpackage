@@ -53,6 +53,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.naming.ldap.StartTlsRequest;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.log4j.Logger;
@@ -100,6 +101,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static Boolean copyAttachmentsToBuffer;	
 	public static String port;
 	public static String schemaName;
+	public static String projectName;
 	public static String host;
 	public static Boolean isSendEmail;
 	public static String mySqlPath;
@@ -700,6 +702,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);
 			schemaName= (String) data.get("schemaName");
+			projectName= (String) data.get("projectName");
 			
 			
 		} catch (Exception e) 
