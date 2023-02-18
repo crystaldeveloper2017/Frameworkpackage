@@ -137,6 +137,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 				HashMap<String, Object> hm = rs.getReturnObject();
 				hm.put("contentJspName", rs.getViewName());
 				hm.put(username_constant, request.getSession().getAttribute(username_constant));
+				hm.put("projectName", request.getSession().getAttribute("projectName"));
 				request.setAttribute("outputObject", hm);
 
 				if (isBypassed) {
