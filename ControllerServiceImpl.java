@@ -159,6 +159,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 			} else // its a file
 			{
+				logger.info("Its not ajax nor a view name, Unless its a file download something is wrong");
 				String filepath = rs.getReturnObject().get(filename_constant).toString();
 				logger.info("Found a File So returning " + "BufferedImagesFolder/" + filepath);
 				response.sendRedirect("BufferedImagesFolder/" + filepath);
