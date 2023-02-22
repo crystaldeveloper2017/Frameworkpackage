@@ -80,10 +80,11 @@ public class ControllerServiceImpl extends CommonFunctions {
 				
 				return;
 			}
-
+			request.getSession().setAttribute("projectName",CommonFunctions.projectName);
 			// send to login if session is null and the action is also not bypassed
 			if (!isBypassed && request.getSession().getAttribute(username_constant) == null) {
 				logger.info("Session Found as Null and the action is also not bypassed");
+				
 				response.sendRedirect("frameworkjsps/Login.jsp"); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
