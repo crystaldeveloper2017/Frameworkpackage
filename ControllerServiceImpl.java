@@ -80,11 +80,12 @@ public class ControllerServiceImpl extends CommonFunctions {
 				
 				return;
 			}
-
+			request.getSession().setAttribute("projectName",CommonFunctions.projectName);
 			// send to login if session is null and the action is also not bypassed
 			if (!isBypassed && request.getSession().getAttribute(username_constant) == null) {
 				logger.info("Session Found as Null and the action is also not bypassed");
-				response.sendRedirect("Login.jsp"); // No logged-in user found, so redirect to login page.
+				
+				response.sendRedirect("frameworkjsps/Login.jsp"); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
@@ -137,13 +138,14 @@ public class ControllerServiceImpl extends CommonFunctions {
 				HashMap<String, Object> hm = rs.getReturnObject();
 				hm.put("contentJspName", rs.getViewName());
 				hm.put(username_constant, request.getSession().getAttribute(username_constant));
+				
 				request.setAttribute("outputObject", hm);
 
 				if (isBypassed) {
 					RequestDispatcher dispatcher = request.getRequestDispatcher(rs.getViewName());
 					dispatcher.forward(request, response);
 				} else {
-					RequestDispatcher dispatcher = request.getRequestDispatcher("model.jsp");
+					RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/model.jsp");
 					dispatcher.forward(request, response);
 				}
 
