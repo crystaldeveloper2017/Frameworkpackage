@@ -106,7 +106,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 			if (action != null && !allowedActionsForThisRole.contains(action)) {
 				logger.info("Redirecting to Unauthorized Page");
-				RequestDispatcher dispatcher = request.getRequestDispatcher("unAutorized.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
 				dispatcher.forward(request, response);
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 				
