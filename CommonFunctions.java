@@ -549,26 +549,45 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setEnvVariables(String schemaName) {		
 		try 
 		{
-			System.out.println("mysqlusername" + System.getenv("mysqlusername"));
-			System.out.println("password" + System.getenv("password"));
+			
+			
+			System.out.println("mysqlusername Environment" + System.getenv("mysqlusername"));		
+			System.out.println("password Environment" + System.getenv("password"));			
 			System.out.println("host" + System.getenv("host"));
 			System.out.println("port" + System.getenv("port"));
-			System.out.println("mySqlPath" + System.getenv("mySqlPath"));		
-			if (System.getenv("mysqlusername") == null|| System.getenv("password") == null|| System.getenv("port") == null
-					|| System.getenv("mySqlPath") == null|| System.getenv("host") == null)
-			{
-				logger.error("Hey did you forget to set env variables ? ");
-				logger.error("If you set these recently try restarting your IDE");
-				logger.error("Application will now exit");
-				System.exit(0);
-				return;
-			}			
+			System.out.println("mySqlPath" + System.getenv("mySqlPath"));
+			
 			host=System.getenv("host");
 			url = "jdbc:mysql://"+host;
 			username = System.getenv("mysqlusername");
 			password = System.getenv("password");
 			port = System.getenv("port");			
 			mySqlPath=System.getenv("mySqlPath");
+			
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Environment.yaml");
+			if(in!=null)
+			{
+				Yaml yaml = new Yaml(); 
+				Map<String, Object> data = yaml.load(in);
+				logger.error("Found Environment.yaml file Hence Overriding Environment variables");
+				host=(String) data.get("host");
+				url = "jdbc:mysql://"+host;
+				username = (String) data.get("mysqlusername");
+				password = (String) data.get("password");
+				port =  (String) data.get("port");			
+				mySqlPath=(String) data.get("mySqlPath");
+			}
+			
+			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
+			{
+				logger.error("Environment Variables not Found. In OS Variables or override by Environment.yaml");				
+				logger.error("Application will now exit");
+				System.exit(0);
+				return;
+			}
+			
+			
+			
 			
 			
 			isAuditEnabled = Boolean.valueOf(System.getenv(schemaName+"isAuditEnabled"));
@@ -1788,7 +1807,6 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void initializeApplication(Class[] scanClasses) {
 		
 		
-		// check for duplicate serivce method ^
 		
 		setSchemaName();
 		setEnvVariables(schemaName);
