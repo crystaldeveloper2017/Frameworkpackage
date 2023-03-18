@@ -1,4 +1,4 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;

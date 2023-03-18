@@ -1,4 +1,4 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
 import java.io.BufferedReader;
 import java.io.File;
