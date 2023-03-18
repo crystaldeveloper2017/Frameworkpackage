@@ -1,10 +1,10 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
 import java.io.InputStream;
 
 import com.crystal.Login.LoginServiceImpl;
 
-import com.crystal.framework.Frameworkpackage.CommonFunctions;
+import com.crystal.Frameworkpackage.CommonFunctions;
 
 public class DumpCollection {
 

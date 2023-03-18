@@ -1,4 +1,4 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;

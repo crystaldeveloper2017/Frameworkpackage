@@ -1,4 +1,4 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
 public class Action 
 {
