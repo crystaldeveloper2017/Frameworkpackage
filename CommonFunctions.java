@@ -1,4 +1,4 @@
-package com.crystal.framework.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -241,8 +241,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	            	ps.setObject(i++,entry.getValue());	                
 	            }
 	        }
-	        ps.executeUpdate();
 	        logger.info("\n"+ps);
+	        ps.executeUpdate();
+	        
 	        try (ResultSet generatedKeys = ps.getGeneratedKeys()) 
 			{
 				if (generatedKeys.next()) 
@@ -761,12 +762,21 @@ public class CommonFunctions extends PdfPageEventHelper
 	public HashMap<String, FrmActionService> getActionServiceList(Class[] classes) 
 	{
 		
+		
+		
 		HashMap<String, FrmActionService> reqActions = new HashMap<>();
+		Set<String> methodNames=new HashSet<String>();
 		for(Class c:classes)
-		{		
+		{
+			
 			for(Method m:getAccessibleMethods(c))
 			{
 				reqActions.put(m.getName(),new FrmActionService(m.getName(), c.getName(),lstbypassedActions.contains(m.getName())));
+				if(methodNames.add(m.getName())==false)
+				{
+					logger.error("Hey We have found a duplicate method " +m.getName() +"in the class "+c.getName());
+					System.exit(0);
+				}
 				//System.out.println( c.getName()+ ""+ m.getName());
 			}
 		}
@@ -1754,21 +1764,32 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	public static Method[] getAccessibleMethods(Class clazz) {
 	    List<Method> result = new ArrayList<Method>();
-	    while (clazz != null) {
+	    
 	        for (Method method : clazz.getDeclaredMethods()) {
 	            int modifiers = method.getModifiers();
 	            if (Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)) {
 	                result.add(method);
 	            }
 	        }
-	        clazz = clazz.getSuperclass();
-	    }
+	        
+	    
+	    
+	    
+	    
+	    
+	  
+	    
+	    
 	    return result.toArray(new Method[result.size()]);
 	}
 
 
 
 	public void initializeApplication(Class[] scanClasses) {
+		
+		
+		// check for duplicate serivce method ^
+		
 		setSchemaName();
 		setEnvVariables(schemaName);
 		setByPassedActions();
