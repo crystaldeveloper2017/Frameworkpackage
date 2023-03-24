@@ -554,18 +554,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		{
 			
 			
-			System.out.println("mysqlusername Environment" + System.getenv("mysqlusername"));		
-			System.out.println("password Environment" + System.getenv("password"));			
-			System.out.println("host" + System.getenv("host"));
-			System.out.println("port" + System.getenv("port"));
-			System.out.println("mySqlPath" + System.getenv("mySqlPath"));
 			
-			host=System.getenv("host");
-			url = "jdbc:mysql://"+host;
-			username = System.getenv("mysqlusername");
-			password = System.getenv("password");
-			port = System.getenv("port");			
-			mySqlPath=System.getenv("mySqlPath");
 			
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Environment.yaml");
 			if(in!=null)
@@ -585,7 +574,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
-				logger.error("Environment Variables not Found. In OS Variables or override by Environment.yaml");				
+				logger.error("Environment.yaml not found");				
 				logger.error("Application will now exit");
 				System.exit(0);
 				return;
