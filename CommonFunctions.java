@@ -597,7 +597,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			isAuditEnabled = Boolean.valueOf(System.getenv(schemaName+"isAuditEnabled"));
 			queryLogEnabled = Boolean.valueOf(System.getenv(schemaName+"queryLogEnabled"));
-			copyAttachmentsToBuffer = Boolean.valueOf(data.get (schemaName+"copyAttachmentsToBuffer"));
+			//copyAttachmentsToBuffer = Boolean.valueOf(data.get (schemaName+"copyAttachmentsToBuffer"));
 			
 
 			isSendEmail = Boolean.valueOf(System.getenv(schemaName+"sendEmail"));
