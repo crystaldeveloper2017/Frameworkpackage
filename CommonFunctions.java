@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
@@ -55,6 +56,7 @@ import javax.naming.ldap.StartTlsRequest;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -64,7 +66,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.yaml.snakeyaml.Yaml;
 
 import com.crystal.Login.LoginServiceImpl;
-
+import com.crystal.basecontroller.BaseController;
 import com.crystal.customizedpos.Configuration.Config;
 import com.crystal.customizedpos.Configuration.ExecuteSqlFile;
 import com.itextpdf.text.Document;
@@ -107,6 +109,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static String mySqlPath;
 	public static List<String> lstbypassedActions;
 	public static int threadSleep;
+	public static String persistentPath;
     
 	
 	
@@ -576,6 +579,8 @@ public class CommonFunctions extends PdfPageEventHelper
 				password = (String) data.get("password");
 				port =  (String) data.get("port");			
 				mySqlPath=(String) data.get("mySqlPath");
+				copyAttachmentsToBuffer=(Boolean) data.get(schemaName+"copyAttachmentsToBuffer");
+				persistentPath=(String) data.get("persistentPath");
 			}
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
@@ -592,7 +597,9 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			isAuditEnabled = Boolean.valueOf(System.getenv(schemaName+"isAuditEnabled"));
 			queryLogEnabled = Boolean.valueOf(System.getenv(schemaName+"queryLogEnabled"));
-			copyAttachmentsToBuffer = Boolean.valueOf(System.getenv(schemaName+"copyAttachmentsToBuffer"));
+			copyAttachmentsToBuffer = Boolean.valueOf(data.get (schemaName+"copyAttachmentsToBuffer"));
+			
+
 			isSendEmail = Boolean.valueOf(System.getenv(schemaName+"sendEmail"));
 			
 			
@@ -944,42 +951,39 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	
 
-	public void copyImagesFromDBToBufferFolder(String DestinationPath, Connection con)
-			throws ClassNotFoundException, SQLException, IOException {
-		
-		
-		
-		
-		logger.info("Destination path is"+DestinationPath);
-		
-		// set global session
-		
-		
-		while (true) {
-			File f1 = new File(DestinationPath);
-			List<String> listFromServerFolder = Arrays.asList(f1.list());
-			ArrayList<Object> parameters = new ArrayList<>();
-			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from tbl_attachment_mst where activate_flag=1",
-					con);
-			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
-			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
-			setFromDb.removeAll(setFromServerFolder);
-			ArrayList<String> namesList = new ArrayList<>(setFromDb);
-
-			logger.info("Pending Files to copy"+namesList);
-
-			if (actualCopy(DestinationPath, con, namesList)) {
-				break;
-			}
-
-		}
-	}
-	public void copyImagesFromDBToBufferFolder(ServletContext sc, Connection con)
-			throws ClassNotFoundException, SQLException, IOException {
-		String DestinationPath = sc.getRealPath("BufferedImagesFolder") + "/";
-		logger.info("Destination path is"+DestinationPath);
-		
+	/*
+	 * public void copyImagesFromDBToBufferFolder(String DestinationPath, Connection
+	 * con) throws ClassNotFoundException, SQLException, IOException {
+	 * 
+	 * 
+	 * 
+	 * 
+	 * logger.info("Destination path is"+DestinationPath);
+	 * 
+	 * // set global session
+	 * 
+	 * 
+	 * while (true) { File f1 = new File(DestinationPath); List<String>
+	 * listFromServerFolder = Arrays.asList(f1.list()); ArrayList<Object> parameters
+	 * = new ArrayList<>(); List<String> lstFromDb = getListOfString(parameters,
+	 * "select concat(attachment_id,file_name) as file_name from tbl_attachment_mst where activate_flag=1"
+	 * , con); HashSet<String> setFromServerFolder = new
+	 * HashSet<String>(listFromServerFolder); HashSet<String> setFromDb = new
+	 * HashSet<String>(lstFromDb); setFromDb.removeAll(setFromServerFolder);
+	 * ArrayList<String> namesList = new ArrayList<>(setFromDb);
+	 * 
+	 * logger.info("Pending Files to copy"+namesList);
+	 * 
+	 * if (actualCopy(DestinationPath, con, namesList)) { break; }
+	 * 
+	 * } }
+	 */
+	
+	public void copyAttachmentsFromDBToGivenPath(String persistentPath,Connection con) throws ClassNotFoundException, SQLException, IOException
+	{
+		String DestinationPath = persistentPath;
+		logger.error("Destination path is"+DestinationPath);
+		logger.error("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);
 		// set global session
 		if(!copyAttachmentsToBuffer)
 			return;
@@ -1003,6 +1007,29 @@ public class CommonFunctions extends PdfPageEventHelper
 				break;
 			}
 
+		}
+	}
+	
+	public void copyFromSrcToDesitnationIfNotExist(String sourcePath,String destinationPath) throws IOException
+	{
+		File f1 = new File(sourcePath);
+		List<String> listFromSource = Arrays.asList(f1.list());
+		
+		File f2 = new File(destinationPath);
+		List<String> listFromDestination= Arrays.asList(f2.list());
+		
+		HashSet<String> setFromSource = new HashSet<String>(listFromSource);
+		HashSet<String> setFromDestination= new HashSet<String>(listFromDestination);
+		setFromSource.removeAll(setFromDestination);
+		ArrayList<String> namesList = new ArrayList<>(setFromSource);
+
+		logger.info("File to copy from "+sourcePath +"To Destination path "+ destinationPath +namesList);
+		
+		for(String s:namesList)
+		{
+			File sourceFile=new File(sourcePath+ File.separator +s);
+			File destinationFile=new File(destinationPath+ File.separator+s);
+			FileUtils.copyFile(sourceFile,destinationFile);
 		}
 	}
 
@@ -1804,7 +1831,28 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 
-	public void initializeApplication(Class[] scanClasses) {
+	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
+		
+		
+		
+		setSchemaName();
+		setEnvVariables(schemaName);
+		setByPassedActions();
+		setRoles(scanClasses);
+		setApplicationTypes();
+		
+		setElementsMaster();
+		setDashboardLinks();
+		copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
+		
+		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
+		
+		
+    	
+    	// copy images from db to buffer
+	}
+	
+public void initializeApplication(Class[] scanClasses) throws ClassNotFoundException, SQLException, IOException {
 		
 		
 		
@@ -1819,17 +1867,16 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		
 		
-		
-		
     	
     	// copy images from db to buffer
 	}
 	
-	public void initializeApplication() {
+	public void initializeApplication() throws ClassNotFoundException, SQLException, IOException {
 		
 		setSchemaName();
     	setEnvVariables(schemaName);
     	// copy images from db to buffer
+    	
 	}
 
 
