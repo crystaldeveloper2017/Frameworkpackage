@@ -1809,9 +1809,9 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		setElementsMaster();
 		setDashboardLinks();
-		//copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
+		copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
 		
-		//copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
+		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
 	}
 	
