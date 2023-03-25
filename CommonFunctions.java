@@ -1838,10 +1838,41 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		setElementsMaster();
 		setDashboardLinks();
-		copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
+		//copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
 		
-		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
+		//copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
+	}
+	
+	public void copyImagesFromDBToBufferFolder(ServletContext sc, Connection con)
+			throws ClassNotFoundException, SQLException, IOException {
+		String DestinationPath = sc.getRealPath("BufferedImagesFolder") + "/";
+		logger.info("Destination path is"+DestinationPath);
+		
+		// set global session
+		if(!copyAttachmentsToBuffer)
+			return;
+		
+		
+		while (true) {
+			File f1 = new File(DestinationPath);
+			List<String> listFromServerFolder = Arrays.asList(f1.list());
+			ArrayList<Object> parameters = new ArrayList<>();
+			List<String> lstFromDb = getListOfString(parameters,
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 ",
+					con);
+			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
+			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
+			setFromDb.removeAll(setFromServerFolder);
+			ArrayList<String> namesList = new ArrayList<>(setFromDb);
+
+			logger.info("Pending Files to copy"+namesList);
+
+			if (actualCopy(DestinationPath, con, namesList)) {
+				break;
+			}
+
+		}
 	}
 	
 public void initializeApplication(Class[] scanClasses) throws ClassNotFoundException, SQLException, IOException {
