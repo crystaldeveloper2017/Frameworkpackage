@@ -544,32 +544,29 @@ public class CommonFunctions extends PdfPageEventHelper
 	String username_constant = "username";
 	String filename_constant = "FileName";
 	
-	
-	
-	
-	
-	
-	public void setEnvVariables(String schemaName) {		
+	public void setApplicationConfig() {		
 		try 
-		{
-			
-			
-			
-			
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Environment.yaml");
+		{		
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
 				Yaml yaml = new Yaml(); 
-				Map<String, Object> data = yaml.load(in);
-				logger.error("Found Environment.yaml file Hence Overriding Environment variables");
+				Map<String, Object> data = yaml.load(in);				
 				host=(String) data.get("host");
 				url = "jdbc:mysql://"+host;
 				username = (String) data.get("mysqlusername");
 				password = (String) data.get("password");
 				port =  (String) data.get("port");			
 				mySqlPath=(String) data.get("mySqlPath");
-				copyAttachmentsToBuffer=(Boolean) data.get(schemaName+"copyAttachmentsToBuffer");
+				copyAttachmentsToBuffer=new Boolean(data.get("copyAttachmentsToBuffer").toString());
 				persistentPath=(String) data.get("persistentPath");
+				isAuditEnabled=new Boolean(data.get("isAuditEnabled").toString());
+				queryLogEnabled=new Boolean(data.get("queryLogEnabled").toString());
+				isSendEmail=new Boolean (data.get("sendEmail").toString());
+				
+				schemaName= (String) data.get("schemaName");
+				projectName= (String) data.get("projectName");
+				threadSleep=(Integer) data.get("thread_sleep");				
 			}
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
@@ -584,12 +581,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			
 			
-			isAuditEnabled = Boolean.valueOf(System.getenv(schemaName+"isAuditEnabled"));
-			queryLogEnabled = Boolean.valueOf(System.getenv(schemaName+"queryLogEnabled"));
-			//copyAttachmentsToBuffer = Boolean.valueOf(data.get (schemaName+"copyAttachmentsToBuffer"));
 			
-
-			isSendEmail = Boolean.valueOf(System.getenv(schemaName+"sendEmail"));
 			
 			
 			
@@ -710,22 +702,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 	
 	
-	public void setSchemaName() 
-	{		
-		try 
-		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
-			Yaml yaml = new Yaml(); 
-			Map<String, Object> data = yaml.load(in);
-			schemaName= (String) data.get("schemaName");
-			projectName= (String) data.get("projectName");
-			
-			
-		} catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-	}
+	
 	
 	
 	public void setApplicationTypes() 
@@ -744,8 +721,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				LinkedHashMap<Long, Role> lstRoles=getRolesById(rolesInt);
 				apptypes.put(lm.get("appType").toString(),lstRoles);
 			}
-			threadSleep=(Integer) data.get("thread_sleep");
-			schemaName= (String) data.get("schemaName");
+			
 			
 			
 		} catch (Exception e) 
@@ -967,6 +943,37 @@ public class CommonFunctions extends PdfPageEventHelper
 	 * 
 	 * } }
 	 */
+	
+	public void copyImagesFromDBToBufferFolder(ServletContext sc, Connection con)
+			throws ClassNotFoundException, SQLException, IOException {
+		String DestinationPath = sc.getRealPath("BufferedImagesFolder") + "/";
+		logger.info("Destination path is"+DestinationPath);
+		
+		// set global session
+		if(!copyAttachmentsToBuffer)
+			return;
+		
+		
+		while (true) {
+			File f1 = new File(DestinationPath);
+			List<String> listFromServerFolder = Arrays.asList(f1.list());
+			ArrayList<Object> parameters = new ArrayList<>();
+			List<String> lstFromDb = getListOfString(parameters,
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 ",
+					con);
+			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
+			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
+			setFromDb.removeAll(setFromServerFolder);
+			ArrayList<String> namesList = new ArrayList<>(setFromDb);
+
+			logger.info("Pending Files to copy"+namesList);
+
+			if (actualCopy(DestinationPath, con, namesList)) {
+				break;
+			}
+
+		}
+	}
 	
 	public void copyAttachmentsFromDBToGivenPath(String persistentPath,Connection con) throws ClassNotFoundException, SQLException, IOException
 	{
@@ -1709,10 +1716,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	public void doDump()
 	{
-		try {
-			
+		try {			
 			System.out.println("Starting Dump "+new Date());
-			setEnvVariables(schemaName);
+			setApplicationConfig();
 			System.out.println("Set credentials done"+new Date());
 			getDump(CommonFunctions.schemaName,CommonFunctions.port);
 			System.out.println("Dump Done Succesfully at ");
@@ -1764,7 +1770,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static void ExecuteDump() throws SQLException, FileNotFoundException
 	{
 		  CommonFunctions cf = new CommonFunctions();
-		  cf.setEnvVariables(schemaName);
+		  cf.setApplicationConfig();
 		
 	      DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 	      String mysqlUrl = CommonFunctions.url+":"+CommonFunctions.port;
@@ -1824,8 +1830,8 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		
 		
-		setSchemaName();
-		setEnvVariables(schemaName);
+		
+		setApplicationConfig();
 		setByPassedActions();
 		setRoles(scanClasses);
 		setApplicationTypes();
@@ -1836,17 +1842,14 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
-		
-    	
-    	// copy images from db to buffer
 	}
 	
 public void initializeApplication(Class[] scanClasses) throws ClassNotFoundException, SQLException, IOException {
 		
 		
 		
-		setSchemaName();
-		setEnvVariables(schemaName);
+		
+		setApplicationConfig();
 		setByPassedActions();
 		setRoles(scanClasses);
 		setApplicationTypes();
@@ -1862,9 +1865,8 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 	public void initializeApplication() throws ClassNotFoundException, SQLException, IOException {
 		
-		setSchemaName();
-    	setEnvVariables(schemaName);
-    	// copy images from db to buffer
+		
+    	setApplicationConfig();
     	
 	}
 
