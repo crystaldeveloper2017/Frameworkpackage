@@ -571,9 +571,8 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
-				logger.error("Environment.yaml not found");				
-				logger.error("Application will now exit");
-				System.exit(0);
+				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");				
+				logger.error("Application will now exit");				
 				return;
 			}
 			
