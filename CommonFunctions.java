@@ -765,7 +765,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				if(methodNames.add(m.getName())==false)
 				{
 					logger.error("Hey We have found a duplicate method " +m.getName() +"in the class "+c.getName());
-					System.exit(0);
+					
 				}
 				//System.out.println( c.getName()+ ""+ m.getName());
 			}
@@ -978,6 +978,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	public void copyFromSrcToDesitnationIfNotExist(String sourcePath,String destinationPath) throws IOException
 	{
+		if(copyAttachmentsToBuffer==false)
+		{return;}
 		File f1 = new File(sourcePath);
 		List<String> listFromSource = Arrays.asList(f1.list());
 		
