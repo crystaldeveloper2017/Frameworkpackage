@@ -787,8 +787,10 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 
-	public void writeErrorToDB(Exception e) 
+	public long writeErrorToDB(Exception e) 
 	{
+		
+		long error_id = 0;
 		try {
 			e.printStackTrace();
 			StringWriter sw = new StringWriter();
@@ -798,14 +800,17 @@ public class CommonFunctions extends PdfPageEventHelper
 			Connection con = getConnectionJDBC();
 			ArrayList<Object> parameters = new ArrayList<>();
 			parameters.add(sStackTrace);
-			insertUpdateDuablDB("insert into frm_error_log values (default,?,sysdate())", parameters, con);
+			error_id = insertUpdateDuablDB("insert into frm_error_log values (default,?,sysdate())", parameters, con);
+			System.out.println(error_id);
+			
+			
 		} catch (Exception e1) {
 
 			e.printStackTrace();
 			e1.printStackTrace();
 		}
 
-		return;
+		return error_id;
 	}
 
 	
