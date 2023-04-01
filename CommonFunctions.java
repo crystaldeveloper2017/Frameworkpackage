@@ -801,7 +801,6 @@ public class CommonFunctions extends PdfPageEventHelper
 			ArrayList<Object> parameters = new ArrayList<>();
 			parameters.add(sStackTrace);
 			error_id = insertUpdateDuablDB("insert into frm_error_log values (default,?,sysdate())", parameters, con);
-			System.out.println(error_id);
 			
 			
 		} catch (Exception e1) {
