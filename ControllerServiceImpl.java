@@ -196,11 +196,10 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 		} catch (Exception e) {
 			logger.error(e);
-			writeErrorToDB(e);
 			con.rollback();			
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("errorPage.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/errorPage.jsp");
 			dispatcher.forward(request, response);
 		}
 		finally
