@@ -199,7 +199,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			con.rollback();			
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("errorPage.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/errorPage.jsp");
 			dispatcher.forward(request, response);
 		}
 		finally
