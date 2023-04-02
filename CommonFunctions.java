@@ -1070,6 +1070,11 @@ public class CommonFunctions extends PdfPageEventHelper
 		return getMap(new ArrayList<>(), "select date_format(sysdate(),'%d%m%Y%H%i%s') as dt1 from dual", con)
 				.get("dt1").toString();
 	}
+	
+	public String getDateTimeWithSecondsYYYYMMDDHHMMSS(Connection con) throws SQLException {
+		return getMap(new ArrayList<>(), " select date_format(sysdate(),'%Y-%m-%d %H:%i:%s') as dt1 from dual", con)
+				.get("dt1").toString();
+	}
 
 	public String getDateTimeWithoutSeconds(Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y %H:%i') as dt1 from dual", con)
