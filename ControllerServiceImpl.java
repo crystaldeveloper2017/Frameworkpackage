@@ -119,7 +119,21 @@ public class ControllerServiceImpl extends CommonFunctions {
 			FrmActionService frmAction= (FrmActionService)actions.get(action);
 			
 			// added so that threads donot over lap with each other
-			Thread.sleep(CommonFunctions.threadSleep * 1000);			
+			if(request.getSession().getAttribute("userdetails")!=null)
+			{
+				HashMap<String, String> hm= (HashMap<String, String>) request.getSession().getAttribute("userdetails");
+				Integer threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
+				
+				if(CommonFunctions.threadSleep>threads_overlap)
+				{
+					Thread.sleep(CommonFunctions.threadSleep * 1000);
+				}
+				else
+				{
+					Thread.sleep(threads_overlap* 1000);
+				}
+			}
+			
 			logger.info("Class and Method Info From Database" + frmAction.toString());
 			Class<?>[] paramString = new Class[2];
 			paramString[0] = HttpServletRequest.class;
