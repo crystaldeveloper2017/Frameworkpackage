@@ -113,17 +113,18 @@ public class ControllerServiceImpl extends CommonFunctions {
 			}
 			// code for authorization ends
 
-			//HashMap<String, String> classandmethodInfo = getClassNameAndMethodNameUsingJDBC(action, con);
-			logger.info("Redirecting to Unauthorized Page");
+			//HashMap<String, String> classandmethodInfo = getClassNameAndMethodNameUsingJDBC(action, con);			
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			FrmActionService frmAction= (FrmActionService)actions.get(action);
 			
 			// added so that threads donot over lap with each other
 			if(request.getSession().getAttribute("userdetails")!=null)
 			{
+				logger.debug("session is not null");
 				HashMap<String, String> hm= (HashMap<String, String>) request.getSession().getAttribute("userdetails");
+				logger.debug("getting userdetails"+hm);
 				Integer threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
-				
+				logger.debug("getting threads_overlap"+threads_overlap);				
 				if(CommonFunctions.threadSleep>threads_overlap)
 				{
 					Thread.sleep(CommonFunctions.threadSleep * 1000);
@@ -212,6 +213,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			
 			try {
 			logger.error(e);
+			e.printStackTrace();
 			con.rollback();			
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			
