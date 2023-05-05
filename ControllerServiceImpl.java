@@ -27,7 +27,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 	private static final int MegaBytes = 1024 * 1024;
 
 	public void serveRequest(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, ClassNotFoundException, SQLException, InterruptedException {
+			 {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		Connection con = null;
@@ -43,33 +43,33 @@ public class ControllerServiceImpl extends CommonFunctions {
 			
 			for(String s:getMemoryStats())
 			{
-				logger.info(s);
+				logger.debug(s);
 			}
 
-			logger.info("JVM freeMemory: " + freeMemory);
-			logger.info("JVM totalMemory also equals to initial heap size of JVM : " + totalMemory);
-			logger.info("JVM maxMemory also equals to maximum heap size of JVM: " + maxMemory);
+			logger.debug("JVM freeMemory: " + freeMemory);
+			logger.debug("JVM totalMemory also equals to initial heap size of JVM : " + totalMemory);
+			logger.debug("JVM maxMemory also equals to maximum heap size of JVM: " + maxMemory);
 
-			logger.info("Request Start Time " + startDatetime);
+			logger.debug("Request Start Time " + startDatetime);
 			String ApplicationName = ((HttpServletRequest) request).getContextPath().replace("/", "");
-			logger.info("Inside Serve Request" + ApplicationName);
+			logger.debug("Inside Serve Request" + ApplicationName);
 			String action = request.getParameter("a") == null ? request.getParameter("actionName")
 					: request.getParameter("a");
 			action = action == null ? "showHomePage" : action;
 
-			logger.info("Action Flag receieved is :- " + action);
+			logger.debug("Action Flag receieved is :- " + action);
 			con = getConnectionJDBC();
 			con.setAutoCommit(false);
 
-			logger.info("Connection Opened Succesfully");
+			logger.debug("Connection Opened Succesfully");
 			reqStartTime = getDateTime(con);
-			logger.info("Datetime From DB Received as" + reqStartTime);
+			logger.debug("Datetime From DB Received as" + reqStartTime);
 
 			
 			//System.out.println(actions);			
 			boolean isBypassed =  lstbypassedActions.contains(action);
 			
-			logger.info("is ByPassed :-" + isBypassed);
+			logger.debug("is ByPassed :-" + isBypassed);
 			if ((action == null || action.equals("")) && request.getSession().getAttribute(username_constant) != null) {
 				logger.info("Redirecting Back to homepage");
 				response.sendRedirect("?a=showHomePage"); // No logged-in user found, so redirect to login page.
@@ -83,7 +83,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			request.getSession().setAttribute("projectName",CommonFunctions.projectName);
 			// send to login if session is null and the action is also not bypassed
 			if (!isBypassed && request.getSession().getAttribute(username_constant) == null) {
-				logger.info("Session Found as Null and the action is also not bypassed");
+				logger.debug("Session Found as Null and the action is also not bypassed");
 				
 				response.sendRedirect("frameworkjsps/Login.jsp"); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
@@ -115,11 +115,26 @@ public class ControllerServiceImpl extends CommonFunctions {
 			// code for authorization ends
 
 			//HashMap<String, String> classandmethodInfo = getClassNameAndMethodNameUsingJDBC(action, con);
+			logger.info("Redirecting to Unauthorized Page");
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			FrmActionService frmAction= (FrmActionService)actions.get(action);
 			
 			// added so that threads donot over lap with each other
-			Thread.sleep(CommonFunctions.threadSleep * 1000);			
+			if(request.getSession().getAttribute("userdetails")!=null)
+			{
+				HashMap<String, String> hm= (HashMap<String, String>) request.getSession().getAttribute("userdetails");
+				Integer threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
+				
+				if(CommonFunctions.threadSleep>threads_overlap)
+				{
+					Thread.sleep(CommonFunctions.threadSleep * 1000);
+				}
+				else
+				{
+					Thread.sleep(threads_overlap* 1000);
+				}
+			}
+			
 			logger.info("Class and Method Info From Database" + frmAction.toString());
 			Class<?>[] paramString = new Class[2];
 			paramString[0] = HttpServletRequest.class;
@@ -195,17 +210,28 @@ public class ControllerServiceImpl extends CommonFunctions {
 			logger.info("maxMemory in JVM: " + maxMemory);
 
 		} catch (Exception e) {
+			
+			try {
 			logger.error(e);
 			con.rollback();			
 			mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
 			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/errorPage.jsp");
 			dispatcher.forward(request, response);
+			}
+			catch(Exception m) {m.printStackTrace();}
 		}
 		finally
 		{
+			try 
+			{
 			con.close();
 			makeAuditTrailEntry(mapFromRequest, reqStartTime, webPortal);
+			}
+			catch(Exception m)
+			{
+				m.printStackTrace();
+			}
 			
 		}
 	}
