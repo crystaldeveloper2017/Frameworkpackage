@@ -123,7 +123,12 @@ public class ControllerServiceImpl extends CommonFunctions {
 				logger.debug("session is not null");
 				HashMap<String, String> hm= (HashMap<String, String>) request.getSession().getAttribute("userdetails");
 				logger.debug("getting userdetails"+hm);
-				Integer threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
+				Integer threads_overlap=0;
+				if(hm.get("threads_overlap")!=null)
+				{
+					threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
+				}
+				
 				logger.debug("getting threads_overlap"+threads_overlap);				
 				if(CommonFunctions.threadSleep>threads_overlap)
 				{
