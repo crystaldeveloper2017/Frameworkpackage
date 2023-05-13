@@ -588,7 +588,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			
 			
-			
+			System.out.println("Config is read succesfully");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -597,9 +597,11 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	
 	
-	public void setElementsMaster()
+	public void setElementsMaster() throws FileNotFoundException
 	{
-		InputStream in = ExecuteSqlFile.class.getResourceAsStream("Elements.yaml");
+		File file = ResourceUtils.getFile("classpath:Elements.yaml");
+		InputStream in = new FileInputStream(file);
+		
 		Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
 		List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
 		
@@ -619,7 +621,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Roles.yaml");
+			File file = ResourceUtils.getFile("classpath:Roles.yaml");
+            InputStream in = new FileInputStream(file);
+		
 			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
 			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("roles");
 			  for(LinkedHashMap role: lst)
@@ -715,7 +719,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			File file = ResourceUtils.getFile("classpath:Application.yaml");
+            InputStream in = new FileInputStream(file);
+		
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);				
 				List<LinkedHashMap<String,Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
