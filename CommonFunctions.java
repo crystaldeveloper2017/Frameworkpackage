@@ -1811,28 +1811,28 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		
 		
-		logger.debug("setApplicationConfig();");
+		logger.error("setApplicationConfig();");
 		setApplicationConfig();
 
-		logger.debug("setByPassedActions();");
+		logger.error("setByPassedActions();");
 		setByPassedActions();
 
-		logger.debug("setRoles(scanClasses);");
+		logger.error("setRoles(scanClasses);");
 		setRoles(scanClasses);
 		
-		logger.debug("setApplicationTypes();");
+		logger.error("setApplicationTypes();");
 		setApplicationTypes();
 		
-		logger.debug("setElementsMaster();");
+		logger.error("setElementsMaster();");
 		setElementsMaster();
 
-		logger.debug("setDashboardLinks();");
+		logger.error("setDashboardLinks();");
 		setDashboardLinks();
 
-		logger.debug("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
+		logger.error("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
 		copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
 		
-		logger.debug("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
+		logger.error("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
 		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
 	}
