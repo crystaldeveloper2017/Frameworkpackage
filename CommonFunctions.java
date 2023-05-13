@@ -63,6 +63,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.ResourceUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import com.crystal.Login.LoginServiceImpl;
@@ -547,7 +548,11 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setApplicationConfig() {		
 		try 
 		{		
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
+		//	InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
+			File file = ResourceUtils.getFile("classpath:Config.yaml");
+            InputStream in = new FileInputStream(file);
+		
+			System.out.println("value of instream is "+in);
 			if(in!=null)
 			{
 				Yaml yaml = new Yaml(); 
