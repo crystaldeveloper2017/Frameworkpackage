@@ -58,7 +58,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -1283,6 +1285,12 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	public final String webPortal = "WebPortal";
 	static Logger logger = Logger.getLogger(CommonFunctions.class.getName());
+	
+
+	
+
+	
+	
 	List<String> bypassedACtions=null;
 
 	
@@ -1823,6 +1831,21 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
 		
 		
+		Properties props = new Properties(); 
+		try { 
+			//InputStream configStream = getClass().getResourceAsStream( "/log4j.properties"); 
+			
+			File file = ResourceUtils.getFile("classpath:log4j.properties");
+            InputStream configStream = new FileInputStream(file);
+		
+			props.load(configStream); 
+			configStream.close(); 
+		} catch (IOException e) { 
+			System.out.println("Errornot laod configuration file "); 
+		} 
+		 
+		LogManager.resetConfiguration(); 
+		PropertyConfigurator.configure(props); 
 		
 		logger.error("setApplicationConfig();");
 		setApplicationConfig();
