@@ -671,7 +671,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			//InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			File file = ResourceUtils.getFile("classpath:Application.yaml");
+			InputStream in = new FileInputStream(file);
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);
 			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
