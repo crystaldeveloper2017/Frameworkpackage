@@ -58,14 +58,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.util.ResourceUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import com.crystal.Login.LoginServiceImpl;
@@ -550,11 +547,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setApplicationConfig() {		
 		try 
 		{		
-		//	InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
-			File file = ResourceUtils.getFile("classpath:Config.yaml");
-            InputStream in = new FileInputStream(file);
-		
-			System.out.println("value of instream is "+in);
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
 				Yaml yaml = new Yaml(); 
@@ -590,7 +583,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			
 			
-			System.out.println("Config is read succesfully");
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -599,11 +592,9 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	
 	
-	public void setElementsMaster() throws FileNotFoundException
+	public void setElementsMaster()
 	{
-		File file = ResourceUtils.getFile("classpath:Elements.yaml");
-		InputStream in = new FileInputStream(file);
-		
+		InputStream in = ExecuteSqlFile.class.getResourceAsStream("Elements.yaml");
 		Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
 		List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
 		
@@ -623,9 +614,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			File file = ResourceUtils.getFile("classpath:Roles.yaml");
-            InputStream in = new FileInputStream(file);
-		
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Roles.yaml");
 			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
 			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("roles");
 			  for(LinkedHashMap role: lst)
@@ -677,9 +666,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			//InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
-			File file = ResourceUtils.getFile("classpath:Application.yaml");
-			InputStream in = new FileInputStream(file);
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);
 			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
@@ -721,9 +708,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			File file = ResourceUtils.getFile("classpath:Application.yaml");
-            InputStream in = new FileInputStream(file);
-		
+			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);				
 				List<LinkedHashMap<String,Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
@@ -1285,12 +1270,6 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	public final String webPortal = "WebPortal";
 	static Logger logger = Logger.getLogger(CommonFunctions.class.getName());
-	
-
-	
-
-	
-	
 	List<String> bypassedACtions=null;
 
 	
@@ -1831,44 +1810,17 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
 		
 		
-		Properties props = new Properties(); 
-		try { 
-			//InputStream configStream = getClass().getResourceAsStream( "/log4j.properties"); 
-			
-			File file = ResourceUtils.getFile("classpath:log4j.properties");
-            InputStream configStream = new FileInputStream(file);
 		
-			props.load(configStream); 
-			configStream.close(); 
-		} catch (IOException e) { 
-			System.out.println("Errornot laod configuration file "); 
-		} 
-		 
-		LogManager.resetConfiguration(); 
-		PropertyConfigurator.configure(props); 
 		
-		logger.error("setApplicationConfig();");
 		setApplicationConfig();
-
-		logger.error("setByPassedActions();");
 		setByPassedActions();
-
-		logger.error("setRoles(scanClasses);");
 		setRoles(scanClasses);
-		
-		logger.error("setApplicationTypes();");
 		setApplicationTypes();
 		
-		logger.error("setElementsMaster();");
 		setElementsMaster();
-
-		logger.error("setDashboardLinks();");
 		setDashboardLinks();
-
-		logger.error("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
 		copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());
 		
-		logger.error("copyAttachmentsFromDBToGivenPath(persistentPath, getConnectionJDBC());");
 		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
 	}
