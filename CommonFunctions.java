@@ -353,6 +353,8 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.close();
 		}
 	}
+	
+	
 
 	public List<LinkedHashMap<String, Object>> getListOfLinkedHashHashMap(ArrayList<Object> parameters, String query,
 			Connection con) throws ClassNotFoundException, SQLException {
@@ -395,6 +397,63 @@ public class CommonFunctions extends PdfPageEventHelper
 				LinkedHashMap<String, Object> hm = new LinkedHashMap<>();
 				for (String s : ar1) {
 					hm.put(s, rs.getObject(s));
+				}
+				retLst.add(hm);
+			}
+
+			return retLst;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmnt != null)
+				stmnt.close();
+
+		}
+	}
+	
+	public List<LinkedHashMap<String, String>> getListOfLinkedHashHashMapString(ArrayList<Object> parameters, String query,
+			Connection con) throws ClassNotFoundException, SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmnt = null;
+		try {
+			List<LinkedHashMap<String, String>> retLst = null;
+			retLst = new ArrayList<LinkedHashMap<String, String>>();
+			stmnt = con.prepareStatement(query);
+			int j = 1;
+			for (Object o : parameters) {
+				stmnt.setObject(j++, o);
+			}
+
+			logger.info("\n"+stmnt);
+			
+			Date dt1=new Date();			
+			rs = stmnt.executeQuery();
+			Date dt2=new Date();
+			if(queryLogEnabled)
+			{
+			
+			Long l=(dt2.getTime()-dt1.getTime());
+			 ArrayList<Object> parameters1 = new ArrayList<>();
+			  parameters1.add(stmnt.toString().substring(stmnt.toString().lastIndexOf(":") + 1));
+			  parameters1.add(String.valueOf(l));				
+				insertUpdateDuablDB("insert into frm_query_log values (default,?,?,sysdate())", parameters1,con);
+			}
+
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+
+			List<String> ar1 = new ArrayList<>();
+			for (int i = 1; i <= columnCount; i++) {
+				ar1.add(rsmd.getColumnLabel(i));
+			}
+
+			while (rs.next()) {
+
+				LinkedHashMap<String, String> hm = new LinkedHashMap<>();
+				for (String s : ar1) {
+					hm.put(s, rs.getString(s));
 				}
 				retLst.add(hm);
 			}
