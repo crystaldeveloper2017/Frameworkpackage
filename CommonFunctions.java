@@ -181,7 +181,11 @@ public class CommonFunctions extends PdfPageEventHelper
 	            finalQuery+=query+updateValues;            
 	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) {
 	            	columnNames+=entry.getKey()+",";
-	                if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+					if(entry.getValue() == null){
+						System.out.println("null value on column "+entry.getKey());
+						return 0;
+					}
+					else if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
 	                {
 	                	valueNames+=entry.getValue().toString().replaceAll("~", "")+",";
 	                }
@@ -197,8 +201,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	            ps=con.prepareStatement(finalQuery,Statement.RETURN_GENERATED_KEYS);            
 	            int i=1;
 	            for (Map.Entry<String, Object> entry : q.keyValueMap.entrySet()) 
-	            {	                
-	            	if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
+	            { 
+					if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
 	            	{
 	            		continue;
 	            	}	            		
