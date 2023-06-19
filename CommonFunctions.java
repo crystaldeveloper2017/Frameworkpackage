@@ -65,6 +65,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.yaml.snakeyaml.Yaml;
 
+import com.crystal.Configuration.ConfigurationDaoImpl;
+import com.crystal.Login.LoginDaoImpl;
 import com.crystal.Login.LoginServiceImpl;
 import com.crystal.basecontroller.BaseController;
 import com.crystal.customizedpos.Configuration.Config;
@@ -1955,7 +1957,7 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 	
 	
-	
+
 	
 	
 	
