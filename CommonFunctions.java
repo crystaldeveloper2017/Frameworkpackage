@@ -865,8 +865,15 @@ public class CommonFunctions extends PdfPageEventHelper
 	{				
 				
 		Class.forName("com.mysql.jdbc.Driver");
+		return DriverManager.getConnection (url+":"+port+"/"+schemaName+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+	}
 
-		try{
+
+	public boolean checkIfSchemaExist()
+	{
+		boolean schemaExist=false;
+		try
+		{
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Statement statement = connection.createStatement();
 
@@ -874,19 +881,17 @@ public class CommonFunctions extends PdfPageEventHelper
 	   ResultSet resultSet = statement.executeQuery(query);
 
 	   if (resultSet.next()) {
-		   System.out.println("The database exists.");
-	   } else {
-		   System.out.println("The database does not exist.");
-		   logger.error("The database does not exist.");
-		   ExecuteSqlFile.main(null);
+		   schemaExist=true;
 	   }
+   		}
+	catch (SQLException e) 
+		{
+	   		e.printStackTrace();
+   		}
+		return schemaExist;
+}
 
-   } catch (SQLException e) {
-	   e.printStackTrace();
-   }
 
-		return DriverManager.getConnection (url+":"+port+"/"+schemaName+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
-	}
 
 	
 
@@ -1916,7 +1921,11 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
 		
 		
-		
+		if(!checkIfSchemaExist())
+		{			
+			// code to create a new schema
+			ExecuteSqlFile.main(null);
+		}
 		
 		setApplicationConfig();
 		setByPassedActions();
