@@ -610,9 +610,12 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setApplicationConfig() {		
 		try 
 		{		
+			logger.error("Inside this method: setApplicationConfig");
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
+
+				logger.error("Config.yaml file found");
 				Yaml yaml = new Yaml(); 
 				Map<String, Object> data = yaml.load(in);				
 				host=(String) data.get("host");
@@ -634,11 +637,31 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
-				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");				
-				logger.error("Application will now exit");				
-				return;
+				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
+				logger.error("-------------------------------------Will Check Environment variables now-------------------------------------");				
+				
+				host= System.getenv("host");
+				url = "jdbc:mysql://"+host;
+				username = System.getenv("mysqlusername");
+				password = System.getenv("password");
+				port =  System.getenv("port");
+				mySqlPath=System.getenv("mySqlPath");
+				copyAttachmentsToBuffer=new Boolean(System.getenv("copyAttachmentsToBuffer"));
+				persistentPath=System.getenv("persistentPath");
+				isAuditEnabled=new Boolean(System.getenv("isAuditEnabled"));
+				queryLogEnabled=new Boolean(System.getenv("queryLogEnabled"));
+				isSendEmail=new Boolean (System.getenv("sendEmail"));
+
+				schemaName= System.getenv("schemaName");
+				projectName= System.getenv("projectName");
+				threadSleep=Integer.valueOf(System.getenv("thread_sleep"));
+
 			}
-			
+
+			else{
+				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
+				logger.error("-------------------------------------Environment variables NOT FOUND-------------------------------------");
+			}
 			
 			
 			
@@ -842,6 +865,26 @@ public class CommonFunctions extends PdfPageEventHelper
 	{				
 				
 		Class.forName("com.mysql.jdbc.Driver");
+
+		try{
+		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+		Statement statement = connection.createStatement();
+
+	   String query = "SHOW DATABASES LIKE '" + schemaName + "'";
+	   ResultSet resultSet = statement.executeQuery(query);
+
+	   if (resultSet.next()) {
+		   System.out.println("The database exists.");
+	   } else {
+		   System.out.println("The database does not exist.");
+		   logger.error("The database does not exist.");
+		   ExecuteSqlFile.main(null);
+	   }
+
+   } catch (SQLException e) {
+	   e.printStackTrace();
+   }
+
 		return DriverManager.getConnection (url+":"+port+"/"+schemaName+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 	}
 
