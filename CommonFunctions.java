@@ -610,9 +610,12 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setApplicationConfig() {		
 		try 
 		{		
+			logger.error("Inside this method: setApplicationConfig");
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
+
+				logger.error("Config.yaml file found");
 				Yaml yaml = new Yaml(); 
 				Map<String, Object> data = yaml.load(in);				
 				host=(String) data.get("host");
@@ -634,11 +637,31 @@ public class CommonFunctions extends PdfPageEventHelper
 			
 			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
-				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");				
-				logger.error("Application will now exit");				
-				return;
+				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
+				logger.error("-------------------------------------Will Check Environment variables now-------------------------------------");				
+				
+				host= System.getenv("host");
+				url = "jdbc:mysql://"+host;
+				username = System.getenv("mysqlusername");
+				password = System.getenv("password");
+				port =  System.getenv("port");
+				mySqlPath=System.getenv("mySqlPath");
+				copyAttachmentsToBuffer=new Boolean(System.getenv("copyAttachmentsToBuffer"));
+				persistentPath=System.getenv("persistentPath");
+				isAuditEnabled=new Boolean(System.getenv("isAuditEnabled"));
+				queryLogEnabled=new Boolean(System.getenv("queryLogEnabled"));
+				isSendEmail=new Boolean (System.getenv("sendEmail"));
+
+				schemaName= System.getenv("schemaName");
+				projectName= System.getenv("projectName");
+				threadSleep=Integer.valueOf(System.getenv("thread_sleep"));
+
 			}
-			
+
+			else{
+				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
+				logger.error("-------------------------------------Environment variables NOT FOUND-------------------------------------");
+			}
 			
 			
 			
