@@ -632,10 +632,27 @@ public class CommonFunctions extends PdfPageEventHelper
 				
 				schemaName= (String) data.get("schemaName");
 				projectName= (String) data.get("projectName");
-				threadSleep=(Integer) data.get("thread_sleep");				
+				threadSleep=(Integer) data.get("thread_sleep");	
+				
+						
+		if(!checkIfSchemaExist())
+		{			
+			// code to create a new schema
+			try(Connection conn = DriverManager.getConnection(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+         Statement stmt = conn.createStatement();
+      ) {		      
+         String sql = "CREATE DATABASE customizedpos_staging";
+         stmt.executeUpdate(sql);
+         System.out.println("Database created successfully...");   	  
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } 
+
+			ExecuteSqlFile.main(null);
+		}
 			}
 			
-			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
+			else if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
 				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
 				logger.error("-------------------------------------Will Check Environment variables now-------------------------------------");				
@@ -655,6 +672,23 @@ public class CommonFunctions extends PdfPageEventHelper
 				schemaName= System.getenv("schemaName");
 				projectName= System.getenv("projectName");
 				threadSleep=Integer.valueOf(System.getenv("thread_sleep"));
+
+						
+		if(!checkIfSchemaExist())
+		{			
+			// code to create a new schema
+			try(Connection conn = DriverManager.getConnection(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+         Statement stmt = conn.createStatement();
+      ) {		      
+         String sql = "CREATE DATABASE customizedpos_staging";
+         stmt.executeUpdate(sql);
+         System.out.println("Database created successfully...");   	  
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } 
+
+			ExecuteSqlFile.main(null);
+		}
 
 			}
 
@@ -1920,12 +1954,7 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
 		
-		
-		if(!checkIfSchemaExist())
-		{			
-			// code to create a new schema
-			ExecuteSqlFile.main(null);
-		}
+
 		
 		setApplicationConfig();
 		setByPassedActions();
