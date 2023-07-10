@@ -869,11 +869,12 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 
 
-	public boolean checkIfSchemaExist()
+	public boolean checkIfSchemaExist() throws ClassNotFoundException
 	{
 		boolean schemaExist=false;
 		try
 		{
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&useSSL=False&allowPublicKeyRetrieval=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Statement statement = connection.createStatement();
 
