@@ -952,6 +952,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			{
 				sql=sql.replace(columnName, "?)");
 				columnName=columnName.replaceAll(":", "");
+				columnName=columnName.replaceAll("\\)", "");
 				parameters.add(hm.get(columnName));
 				continue;
 			}
