@@ -611,6 +611,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		try 
 		{		
 			logger.error("Inside this method: setApplicationConfig");
+			System.out.println("Inside this method: setApplicationConfig");		
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
@@ -634,11 +635,13 @@ public class CommonFunctions extends PdfPageEventHelper
 				projectName= (String) data.get("projectName");
 				threadSleep=(Integer) data.get("thread_sleep");				
 			}
-			
-			if (username == null || password== null|| port == null || mySqlPath== null || host== null)
+			else if (username == null || password== null|| port == null || mySqlPath== null || host== null)
 			{
 				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
 				logger.error("-------------------------------------Will Check Environment variables now-------------------------------------");				
+				System.out.println("-------------------------------------Config.yaml NOT FOUND-------------------------------------");		
+				System.out.println("-------------------------------------Will Check Environment variables now-------------------------------------");		
+
 				
 				host= System.getenv("host");
 				url = "jdbc:mysql://"+host;
@@ -659,6 +662,8 @@ public class CommonFunctions extends PdfPageEventHelper
 			}
 
 			else{
+				System.out.println("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
+				System.out.println("-------------------------------------Environment variables NOT FOUND-------------------------------------");
 				logger.error("-------------------------------------Config.yaml NOT FOUND-------------------------------------");
 				logger.error("-------------------------------------Environment variables NOT FOUND-------------------------------------");
 			}
@@ -869,11 +874,14 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 
 
-	public boolean checkIfSchemaExist()
+	public boolean checkIfSchemaExist() throws ClassNotFoundException
 	{
 		boolean schemaExist=false;
 		try
 		{
+		Class.forName("com.mysql.jdbc.Driver");
+		System.out.println("check if schema exist");
+		System.out.println(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Statement statement = connection.createStatement();
 
@@ -1919,15 +1927,16 @@ public class CommonFunctions extends PdfPageEventHelper
 
 
 	public void initializeApplication(Class[] scanClasses,ServletContext sc) throws ClassNotFoundException, SQLException, IOException {
-		
-		
-		if(!checkIfSchemaExist())
+	
+		setApplicationConfig();
+			if(!checkIfSchemaExist())
 		{			
 			// code to create a new schema
+			createNewSchema();
+
 			ExecuteSqlFile.main(null);
 		}
 		
-		setApplicationConfig();
 		setByPassedActions();
 		setRoles(scanClasses);
 		setApplicationTypes();
@@ -1938,6 +1947,18 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 		copyFromSrcToDesitnationIfNotExist(persistentPath,sc.getRealPath("BufferedImagesFolder") + "/");
 		
+	}
+
+	public void createNewSchema(){
+		try(Connection conn = DriverManager.getConnection(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+         Statement stmt = conn.createStatement();
+      ) {		      
+         String sql = "CREATE DATABASE " + schemaName;
+         stmt.executeUpdate(sql);
+         System.out.println("Database created successfully...");   	  
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } 
 	}
 	
 	public void copyImagesFromDBToBufferFolder(ServletContext sc, Connection con)
