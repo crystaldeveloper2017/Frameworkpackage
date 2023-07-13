@@ -879,9 +879,6 @@ public class CommonFunctions extends PdfPageEventHelper
 		boolean schemaExist=false;
 		try
 		{
-		Class.forName("com.mysql.jdbc.Driver");
-		System.out.println("check if schema exist");
-		System.out.println(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Statement statement = connection.createStatement();
 
@@ -959,6 +956,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			{
 				sql=sql.replace(columnName, "?)");
 				columnName=columnName.replaceAll(":", "");
+				columnName=columnName.replaceAll("\\)", "");
 				parameters.add(hm.get(columnName));
 				continue;
 			}
