@@ -1875,7 +1875,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		
 	      DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 	      String mysqlUrl = CommonFunctions.url+":"+CommonFunctions.port;
-	      if(!mysqlUrl.contains("localhost"))
+	      if(!mysqlUrl.contains("localhost") &&  !mysqlUrl.contains("mysqldb-container"))
 	      {
 	    	  System.out.println("seems you are not running for localhost");
 	    	  System.exit(0);
