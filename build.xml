@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="customizedpos">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    
+              	<property name="war-file-name" value="${project-name}.war" />
+              		<property name="source-directory" value="src/main/java" />
+              		<property name="classes-directory" value="build/classes" />
+              		<property name="web-directory" value="src/main/resources/META-INF/resources" />
+              		<property name="web-xml-file" value="src/main/resources/META-INF/resources/WEB-INF/web.xml" />
+       <path id="Web App Libraries.libraryclasspath">
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/activation-1.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/antlr_2.7.6.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/apache-commons-lang.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/asm-3.3.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/c3p0-0.9.5.2.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/cglib-2.1.3.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/com.ibm.icu.base-54.1.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/com.mysql.jdbc_5.1.5.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-cli-1.2.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-collections-2.1.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-compress-1.14.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-io-2.5.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-logging-1.0.4.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/commons-net-3.3 (1).jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/dom4j-1.6.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/httpclient-4.3-beta1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/httpcore-4.4.12.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/httpcore-ab-4.4.12.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/httpcore-nio-4.4.12.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/httpcore-osgi-4.4.12.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/itext-5.0.5.jar"/>
+        
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jackson-annotations-2.13.2.jar"/>
+        
+        
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jackson-core-2.13.2.jar"/>
+        
+        
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jackson-databind-2.13.2.jar"/>
+        
+        
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jackson-dataformat-yaml-2.13.2.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/javax.mail.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/javax.xml.bind.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jersey-core-1.8.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jersey-server-1.8.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jsch-0.1.72.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/json-20171018.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/json-simple-1.1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jsoup-1.11.3.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/jstl-1.2.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/log4j-1.2.17.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/mchange-commons-java-0.2.11.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/mockito-all-1.8.4.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/mybatis-3.5.10.jar"/>        
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/poi-3.9.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/poi-ooxml-3.8.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/poi-ooxml-schemas-3.7-beta1.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/snakeyaml-1.26.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/snakeyaml-1.30.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/snakeyaml-1.9.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/xmlbeans-2.5.0.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/xmlbeans-xmlpublic-2.4.0.jar"/>
+        <pathelement location="src/main/resources/META-INF/resources/WEB-INF/lib/xz-1.6.jar"/>
+    </path>
+    <path id="EAR Libraries.libraryclasspath"/>
+    <path id="Server Runtime [Apache Tomcat v9.0].libraryclasspath">
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/annotations-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina-ant.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina-ha.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina-ssi.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina-storeconfig.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina-tribes.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/catalina.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/ecj-4.20.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/el-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jasper-el.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jasper.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jaspic-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jsp-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/servlet-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-api.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-coyote.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-dbcp.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-cs.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-de.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-es.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-fr.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-ja.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-ko.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-pt-BR.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-ru.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-i18n-zh-CN.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-jdbc.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-jni.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-util-scan.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-util.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/tomcat-websocket.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/websocket-api.jar"/>
+    </path>
+    <path id="customizedpos.classpath">
+        <pathelement location="build/classes"/>
+        <path refid="Web App Libraries.libraryclasspath"/>        
+        <path refid="Server Runtime [Apache Tomcat v9.0].libraryclasspath"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/activation-1.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/antlr_2.7.6.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/apache-commons-lang.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/asm-3.3.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/c3p0-0.9.5.2.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/cglib-2.1.3.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/com.ibm.icu.base-54.1.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/com.mysql.jdbc_5.1.5.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-cli-1.2.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-collections-2.1.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-compress-1.14.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-fileupload-1.2.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-io-2.5.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-logging-1.0.4.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/commons-net-3.3 (1).jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/dom4j-1.6.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/httpclient-4.3-beta1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/httpcore-4.4.12.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/httpcore-ab-4.4.12.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/httpcore-nio-4.4.12.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/httpcore-osgi-4.4.12.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/itext-5.0.5.jar"/>
+        
+        
+        
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/javax.mail.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/javax.xml.bind.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jersey-core-1.8.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jersey-server-1.8.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jsch-0.1.72.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/json-20171018.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/json-simple-1.1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jsoup-1.11.3.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/jstl-1.2.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/log4j-1.2.17.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/mchange-commons-java-0.2.11.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/mockito-all-1.8.4.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/mybatis-3.5.10.jar"/>
+        
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/poi-3.9.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/poi-ooxml-3.8.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/poi-ooxml-schemas-3.7-beta1.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/xmlbeans-2.5.0.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/xmlbeans-xmlpublic-2.4.0.jar"/>
+        <pathelement location="/home/ubuntu/apache-tomcat-8.5.55/lib/xz-1.6.jar"/>
+    </path>
+    
+    
+    <target name="init">
+        <mkdir dir="build/classes"/>
+        <copy includeemptydirs="false" todir="build/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="build/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <delete file="src/main/java/com/crystal/SpringBootServletJspApplication.java" />
+        <delete file="src/main/java/com/crystal/ServletInitializer.java" />
+        <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="true" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="customizedpos.classpath"/>
+        </javac>
+        <copy file="src/main/java/com/crystal/customizedpos/Configuration/Application.yaml" tofile="build/classes/com/crystal/customizedpos/Configuration/Application.yaml" overwrite="true"/>
+        <copy file="src/main/java/com/crystal/customizedpos/Configuration/Roles.yaml" tofile="build/classes/com/crystal/customizedpos/Configuration/Roles.yaml" overwrite="true"/>
+        <copy file="src/main/java/com/crystal/customizedpos/Configuration/Elements.yaml" tofile="build/classes/com/crystal/customizedpos/Configuration/Elements.yaml" overwrite="true"/>
+        <copy file="src/main/java/com/crystal/customizedpos/Configuration/Config.yaml" tofile="build/classes/com/crystal/customizedpos/Configuration/Config.yaml" overwrite="true"/>
+        
+        
+        
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+   
+              	
+              	<target name="war" depends="build">
+              			<mkdir dir="${build-directory}" />
+              			<delete file="${build-directory}/${war-file-name}" />
+              			<war warfile="/home/ubuntu/apache-tomcat-8.5.55/webapps/customizedpos_staging.war" webxml="${web-xml-file}">
+              				<classes dir="${classes-directory}" />
+              				<fileset dir="${web-directory}">
+              					<!-- Need to exclude it since webxml is an attribute of the war tag above -->
+              					<exclude name="WEB-INF/web.xml" />
+              				</fileset>
+              				<manifest>
+              					<attribute name="Built-By" value="${builder}" />
+              					<attribute name="Built-On" value="${build-info.current-date}" />
+              					<attribute name="Built-At" value="${build-info.current-time}" />
+              				</manifest>
+              			</war>
+              		</target>
+</project>

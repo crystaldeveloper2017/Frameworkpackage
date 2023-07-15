@@ -1,0 +1,124 @@
+elements:
+- elementId: 12
+  elementName: "Admin"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 4
+  childElements: null
+- elementId: 700168
+  elementName: "Check-In"
+  parentElementId: 700165
+  elementUrl: "?a=showCheckInScreen"
+  orderNo: 1
+- elementId: 21
+  elementName: "Category Master"
+  parentElementId: 11
+  elementUrl: "?a=showCategoryMasterNew"
+  orderNo: 2
+  childElements: null
+- elementId: 22
+  elementName: "Client Master"
+  parentElementId: 11
+  elementUrl: "?a=showClientMaster&type=C"
+  orderNo: 1
+  childElements: null
+- elementId: 10
+  elementName: "Group Master"
+  parentElementId: 11
+  elementUrl: "?a=showGroupMaster"
+  orderNo: 6
+  childElements: null
+- elementId: 23
+  elementName: "Service Master"
+  parentElementId: 11
+  elementUrl: "?a=showServiceMaster"
+  orderNo: 2
+  childElements: null
+- elementId: 700165
+  elementName: "Worklist"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 1
+- elementId: 24
+  elementName: "Employee Master"
+  parentElementId: 12
+  elementUrl: "?a=showEmployeeMaster"
+  orderNo: 4
+  childElements: null
+- elementId: 25
+  elementName: "User Role Mapping"
+  parentElementId: 12
+  elementUrl: "?a=showUserRoleMapping"
+  orderNo: 4
+  childElements: null
+- elementId: 700195
+  elementName: "My Account"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 1
+- elementId: 700197
+  elementName: "User Details"
+  parentElementId: 700195
+  elementUrl: "?a=showUserDetails"
+  orderNo: 1
+  childElements: null
+- elementId: 700157
+  elementName: "Visitor"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 1
+- elementId: 700158
+  elementName: "Visitor Register"
+  parentElementId: 700157
+  elementUrl: "?a=showVisitors"
+  orderNo: 1
+- elementId: 700160
+  elementName: "Add Visitor"
+  parentElementId: 700157
+  elementUrl: "?a=showAddVisitor"
+  orderNo: 1
+- elementId: 31
+  elementName: "Configurations"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 1
+- elementId: 32
+  elementName: "Holiday Master"
+  parentElementId: 31
+  elementUrl: "?a=showHolidayMaster"
+  orderNo: 1
+- elementId: 33
+  elementName: "Supervisor Submit Leave"
+  parentElementId: 700165
+  elementUrl: "?a=showSupervisorSubmitLeave"
+  orderNo: 1
+- elementId: 34
+  elementName: "Reports"
+  parentElementId: -1
+  elementUrl: ""
+  orderNo: 1
+- elementId: 35
+  elementName: "Leave Register"
+  parentElementId: 34
+  elementUrl: "?a=showLeaveRegister"
+  orderNo: 1
+- elementId: 36
+  elementName: "Shift Master"
+  parentElementId: 700165
+  elementUrl: "?a=showShiftMaster"
+  orderNo: 1
+- elementId: 37
+  elementName: "Inward Entry"
+  parentElementId: 31
+  elementUrl: "?a=showInwardEntry"
+  orderNo: 1
+- elementId: 38
+  elementName: "Inward Register"
+  parentElementId: 34
+  elementUrl: "?a=showInwardRegister"
+  orderNo: 1
+- elementId: 39
+  elementName: "Attendance Register"
+  parentElementId: 34
+  elementUrl: "?a=showAttendanceRegister"
+  orderNo: 1

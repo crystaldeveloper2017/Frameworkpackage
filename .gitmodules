@@ -1,0 +1,6 @@
+[submodule "src/main/resources/META-INF/resources/frameworkjsps"]
+	path = src/main/resources/META-INF/resources/frameworkjsps
+	url = https://github.com/crystaldeveloper2017/frameworkjsps
+[submodule "src/main/java/com/crystal/Frameworkpackage"]
+	path = src/main/java/com/crystal/Frameworkpackage
+	url = https://github.com/crystaldeveloper2017/Frameworkpackage
