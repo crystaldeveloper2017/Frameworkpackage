@@ -9,10 +9,9 @@
   </session-config>
 
   
-  
    <servlet>
     <servlet-name>BaseController</servlet-name>
-    <servlet-class>com.shoaeb.basecontroller.BaseController</servlet-class>
+    <servlet-class>com.crysral.basecontroller.BaseController</servlet-class>
   </servlet>
   <listener>
     <listener-class>com.crystal.customizedpos.Configuration.Config</listener-class>

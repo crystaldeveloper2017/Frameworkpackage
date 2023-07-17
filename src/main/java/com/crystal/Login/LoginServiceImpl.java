@@ -146,20 +146,7 @@ public class LoginServiceImpl extends CommonFunctions {
 		return calculatedDetails;
 	}
 
-	public CustomResultObject showChangePassword(HttpServletRequest request, Connection con) {
-		CustomResultObject rs = new CustomResultObject();
-		HashMap<String, Object> outputMap = new HashMap<>();
-		try {
-
-			rs.setViewName("changePassword.jsp");
-			rs.setReturnObject(outputMap);
-
-		} catch (Exception e) {
-			writeErrorToDB(e);
-			rs.setHasError(true);
-		}
-		return rs;
-	}
+	
 
 	public CustomResultObject changePassword(HttpServletRequest request, Connection con) throws FileUploadException {
 		CustomResultObject rs = new CustomResultObject();
