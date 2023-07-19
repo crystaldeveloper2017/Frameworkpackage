@@ -72,7 +72,7 @@ function addEmployee()
     <div class="col-sm-3">
   	<div class="form-group">
       <label for="AadharCardNo">Aadhar Card No</label>
-      <input type="text" class="form-control" id="AadharCardNo" value="${employeeDetails.aadhar_card_no}" name="AadharCardNo" placeholder="Aadhar Card No" onkeypress="digitsOnly(event)" maxlength="10" required>
+      <input type="text" class="form-control" id="AadharCardNo" value="${employeeDetails.aadhar_card_no}" name="AadharCardNo" placeholder="Aadhar Card No" onkeypress="digitsOnly(event)" maxlength="12" required>
     </div>
   </div>
   
