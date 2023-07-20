@@ -3651,7 +3651,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 	public LinkedHashMap<String, String> getEmployeeDetailsByQrCode(String qrCode, Connection con) throws SQLException {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(qrCode);
-		return getMap(parameters, "select  * from tbl_user_mst where qr_code=?", con);
+		return getMap(parameters, "select  * from tbl_user_mst where qr_code=? and activate_flag=1", con);
 	}
 
 	public boolean mobileNoAlreadyExist(String mobileNo, long ClientId,String appId,String type, Connection con) throws SQLException {

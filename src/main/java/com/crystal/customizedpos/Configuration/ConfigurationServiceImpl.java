@@ -9803,10 +9803,10 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				
 				
 			} 
-
+			rs.setAjaxData("<script>window.location='?a=showVisitors'</script>");
 			rs.setReturnObject(outputMap);
-
-			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showVisitors'</script>");
+			
+			
 
 		} catch (Exception e) {
 			writeErrorToDB(e);
