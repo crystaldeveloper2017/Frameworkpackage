@@ -715,9 +715,15 @@ public class CommonFunctions extends PdfPageEventHelper
 							
 							
 							Role r = new Role(Long.parseLong(String.valueOf(role.get("roleId"))),String.valueOf(role.get("roleName")));
+
+							InputStream in1 = ExecuteSqlFile.class.getResourceAsStream("Admin" + ".yaml");
+							Yaml yaml1 = new Yaml(); Map<String, Object> data1 = yaml1.load(in1);
+							List<LinkedHashMap<String, Object>> lst1= (List<LinkedHashMap<String,Object>>)data1.get("role");
+							LinkedHashMap<String, Object> role1=lst1.get(0);
 							
-							String actions= (String)role.get("actions");
-							r.setActions(actions.split(","));
+							List<String> actionsList = (List<String>) data1.get("actions");
+							String[] actionsArray = actionsList.toArray(new String[0]);
+							r.setActions(actionsArray);
 							
 							if(role.get("dashboard")!=null)
 							{
