@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
@@ -45,16 +44,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
-import javax.naming.ldap.StartTlsRequest;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -65,9 +61,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.yaml.snakeyaml.Yaml;
 
-import com.crystal.Login.LoginServiceImpl;
-import com.crystal.basecontroller.BaseController;
-import com.crystal.customizedpos.Configuration.Config;
 import com.crystal.customizedpos.Configuration.ExecuteSqlFile;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -716,12 +709,12 @@ public class CommonFunctions extends PdfPageEventHelper
 							
 							Role r = new Role(Long.parseLong(String.valueOf(role.get("roleId"))),String.valueOf(role.get("roleName")));
 
-							InputStream in1 = ExecuteSqlFile.class.getResourceAsStream("Admin" + ".yaml");
-							Yaml yaml1 = new Yaml(); Map<String, Object> data1 = yaml1.load(in1);
-							List<LinkedHashMap<String, Object>> lst1= (List<LinkedHashMap<String,Object>>)data1.get("role");
-							LinkedHashMap<String, Object> role1=lst1.get(0);
+							InputStream in1 = ExecuteSqlFile.class.getResourceAsStream(String.valueOf(role.get("roleName") + ".yaml"));
+							Yaml yaml1 = new Yaml();
+							List<Map<String, Object>> rolesList = yaml1.load(in1);
+							Map<String, Object> role1 = rolesList.get(0);
 							
-							List<String> actionsList = (List<String>) data1.get("actions");
+							List<String> actionsList = (List<String>) role1.get("actions");
 							String[] actionsArray = actionsList.toArray(new String[0]);
 							r.setActions(actionsArray);
 							
@@ -732,13 +725,9 @@ public class CommonFunctions extends PdfPageEventHelper
 							}
 							
 							
-							String elementscsv= (String)role.get("elements");
-							
-							
-							int[] elements=Arrays.stream(elementscsv.split(",")).mapToInt(Integer::parseInt).toArray();
-							Integer[] elementsI = Arrays.stream( elements ).boxed().toArray( Integer[]::new );
-							
-							r.setElements(elementsI);
+							List<Integer> elementsList = (List<Integer>) role1.get("elements");
+							Integer[] elementsArray = elementsList.toArray(new Integer[0]);
+							r.setElements(elementsArray);
 							
 							roles.put(r.getRoleId(), r);
 						
