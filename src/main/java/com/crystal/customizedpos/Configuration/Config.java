@@ -21,7 +21,7 @@ public class Config implements ServletContextListener {
     	CommonFunctions cf=new CommonFunctions();
     	try {
 			cf.initializeApplication(new Class[] {ConfigurationServiceImpl.class,LoginServiceImpl.class},event.getServletContext());
-		} catch (ClassNotFoundException | SQLException | IOException e) {
+		} catch (ClassNotFoundException | SQLException | IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

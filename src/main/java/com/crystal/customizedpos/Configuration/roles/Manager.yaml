@@ -1,0 +1,21 @@
+- roleName: "Manager"
+  roleId: 5
+  actions: 
+  - showUserAudit
+  - showHomePage
+  - validateLogin
+  - Logout
+  - showUserRoleMapping
+  - getRoleDetailsForthisUser
+  - addRemoveRole
+  elements: 
+  - 11
+  - 12
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 10
+  - 700195
+  - 700197
