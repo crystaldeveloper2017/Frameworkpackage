@@ -695,58 +695,46 @@ public class CommonFunctions extends PdfPageEventHelper
 	}
 	
 	public void setRoles(Class[] scanClasses) 
-	{		
-		try 
-		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Roles.yaml");
-			Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
-			  List<LinkedHashMap<String, Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("roles");
-			  for(LinkedHashMap role: lst)
-			  {
-				  
-					
-							
-							
-							Role r = new Role(Long.parseLong(String.valueOf(role.get("roleId"))),String.valueOf(role.get("roleName")));
+	{
+    try 
+    {
+        File rolesFolder = new File(ExecuteSqlFile.class.getResource("roles/").toURI());
+        File[] roleFiles = rolesFolder.listFiles();
+        if (roleFiles != null) {
+            for (File roleFile : roleFiles) {
+                if (roleFile.isFile()) {
+                    InputStream in = ExecuteSqlFile.class.getResourceAsStream("roles/" + roleFile.getName());
+                    Yaml yaml = new Yaml();
+                    List<Map<String, Object>> rolesList = yaml.load(in);
+                    Map<String, Object> role1 = rolesList.get(0);
 
-							InputStream in1 = ExecuteSqlFile.class.getResourceAsStream(String.valueOf(role.get("roleName") + ".yaml"));
-							Yaml yaml1 = new Yaml();
-							List<Map<String, Object>> rolesList = yaml1.load(in1);
-							Map<String, Object> role1 = rolesList.get(0);
-							
-							List<String> actionsList = (List<String>) role1.get("actions");
-							String[] actionsArray = actionsList.toArray(new String[0]);
-							r.setActions(actionsArray);
-							
-							if(role.get("dashboard")!=null)
-							{
-							String dashboard= (String)role.get("dashboard");
-							r.setDashboardList(dashboard.split(","));
-							}
-							
-							
-							List<Integer> elementsList = (List<Integer>) role1.get("elements");
-							Integer[] elementsArray = elementsList.toArray(new Integer[0]);
-							r.setElements(elementsArray);
-							
-							roles.put(r.getRoleId(), r);
-						
-				
-			  }
-			  
-			  // set apptypes here
-			
-			actions=getActionServiceList(scanClasses);
-						
+                    Role r = new Role(
+                            Long.parseLong(String.valueOf(role1.get("roleId"))),
+                            String.valueOf(role1.get("roleName"))
+                    );
 
-			
-			
-			
-		} catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-	}
+                    List<String> actionsList = (List<String>) role1.get("actions");
+                    String[] actionsArray = actionsList.toArray(new String[0]);
+                    r.setActions(actionsArray);
+
+                    if (role1.get("dashboard") != null) {
+                        String dashboard = (String) role1.get("dashboard");
+                        r.setDashboardList(dashboard.split(","));
+                    }
+
+                    List<Integer> elementsList = (List<Integer>) role1.get("elements");
+                    Integer[] elementsArray = elementsList.toArray(new Integer[0]);
+                    r.setElements(elementsArray);
+
+                    roles.put(r.getRoleId(), r);
+                }
+            }
+        }
+    } catch (Exception e) {
+        // Handle exceptions
+        e.printStackTrace();
+    }
+}
 	
 	public void setByPassedActions() 
 	{		
