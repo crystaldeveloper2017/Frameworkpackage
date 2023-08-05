@@ -730,6 +730,7 @@ public class CommonFunctions extends PdfPageEventHelper
                 }
             }
         }
+		actions=getActionServiceList(scanClasses);
     } catch (Exception e) {
         // Handle exceptions
         e.printStackTrace();
