@@ -1,7 +1,6 @@
 package com.crystal.Frameworkpackage;
 
 import java.util.HashMap;
-import javax.servlet.http.HttpServletRequest;
 
 public class CustomResultObject 
 {
