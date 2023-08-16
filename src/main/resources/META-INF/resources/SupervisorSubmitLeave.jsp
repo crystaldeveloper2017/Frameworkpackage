@@ -138,13 +138,19 @@
   
    <div class="col-sm-12">
   	<div class="form-group">
-      <label for="email">Leave Date </label>
-      <input type="text" class="form-control" readonly id="txtleaveDate" placeholder="Leave Date" value="${clientDetails.leaveDate}" name="txtleaveDate" >
+      <label for="email">From Date </label>
+      <input type="text" class="form-control" readonly id="txtfromDate" placeholder="From Date" value="${clientDetails.fromDate}" name="txtfromDate" >
       
     </div>
   </div>
   
-  
+  <div class="col-sm-12">
+  	<div class="form-group">
+      <label for="email">To Date </label>
+      <input type="text" class="form-control" readonly id="txttoDate" placeholder="To Date" value="${clientDetails.toDate}" name="txttoDate" >
+      
+    </div>
+  </div>
   
   
   <div class="col-sm-12">
@@ -179,8 +185,13 @@
 
 <script>
 
-txtleaveDate.value='${todaysDate}';
-$( "#txtleaveDate" ).datepicker({ dateFormat: 'dd/mm/yy' });
+txtfromDate.value='${todaysDate}';
+$( "#txtfromDate" ).datepicker({ dateFormat: 'dd/mm/yy' });
+
+
+txttoDate.value='${todaysDate}';
+$( "#txttoDate" ).datepicker({ dateFormat: 'dd/mm/yy' });
+
 document.getElementById("divTitle").innerHTML="Supervisor Submit Leave";
 
 

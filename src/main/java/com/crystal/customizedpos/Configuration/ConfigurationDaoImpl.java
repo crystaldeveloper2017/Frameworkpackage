@@ -6600,10 +6600,11 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("employee_id"));
 		parameters.add( hm.get("supervisor_id"));
 		parameters.add( hm.get("reason"));		
-		parameters.add( getDateASYYYYMMDD(hm.get("txtleaveDate").toString()));	
+		parameters.add( getDateASYYYYMMDD(hm.get("txtfromDate").toString()));	
+		parameters.add( getDateASYYYYMMDD(hm.get("txttoDate").toString()));	
 		
 		
-		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?)";
+		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?,?)";
 		
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
@@ -6613,8 +6614,11 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(getDateASYYYYMMDD(fromDate));
 		parameters.add(getDateASYYYYMMDD(toDate));
+		parameters.add(getDateASYYYYMMDD(fromDate));
+		parameters.add(getDateASYYYYMMDD(toDate));
 		return getListOfLinkedHashHashMap(parameters,
-				"select *,tum2.name supervisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 where tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.leave_date between ? and ? order by leave_date desc" ,
+				"select *,tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 "
+				+" where ((from_date between ? and ?) or (to_date between ? and ?)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id order by from_date desc" ,
 				con);
 	}
 	

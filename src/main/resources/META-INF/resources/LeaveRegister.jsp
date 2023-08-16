@@ -14,6 +14,10 @@
 <c:set var="message" value='${requestScope["outputObject"].get("ListOfEmployees")}' />
 <c:set var="txtfromdate" value='${requestScope["outputObject"].get("txtfromdate")}' />
 <c:set var="txttodate" value='${requestScope["outputObject"].get("txttodate")}' />
+<c:set var="fromDate" value='${requestScope["outputObject"].get("fromDate")}' />
+<c:set var="toDate" value='${requestScope["outputObject"].get("toDate")}' />
+
+
 
 
 
@@ -79,20 +83,20 @@
                      <th><b>Employee Name</b></th>
                      <th><b>Supervisor Name</b></th>
                      <th><b>Reason</b></th>
-                     <th><b>Leave Date</b></th>
+                     <th><b>From Date</b></th>
+                       <th><b>To Date</b></th>
                      
-                     <th></th><th></th>
                     </tr>
                   </thead>
                   <tbody>
 				<c:forEach items="${message}" var="item">
 					<tr >
-						<td>${item.name}</td>
-						<td>${item.supervisorName}</td>
+						<td>${item.EmployeeName}</td>
+						<td>${item.SuperVisorName}</td>
 						
 						<td>${item.reason}</td>						
-						<td>${item.leave_date}</td>
-						<td><a href="?a=showLeaveRegister=${item.user_id}">
+						<td>${item.from_date}</td>
+            <td>${item.to_date}</td>
 					</tr>
 				</c:forEach>
 				

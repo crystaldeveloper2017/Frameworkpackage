@@ -9950,6 +9950,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			
 			
 			outputMap.put("todaysDate", lObjConfigDao.getDateFromDB(con));
+			
 			outputMap.put("employeeList", lObjConfigDao.getEmployeeMasterWithSupervisorId(outputMap,con));
 			rs.setViewName("../SupervisorSubmitLeave.jsp");
 			rs.setReturnObject(outputMap);
@@ -9968,10 +9969,10 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
 		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
 		
-		String leaveDate=request.getParameter("txtleaveDate");
+		String fromDate=request.getParameter("txtfromDate");
 		String empId=request.getParameter("employee_id");
 		String reason=request.getParameter("reason");
-		
+		String toDate=request.getParameter("txttoDate");
 
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
@@ -9981,9 +9982,9 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		
 		outputMap.put("employee_id", empId);
 		outputMap.put("supervisor_id", userId);
-		outputMap.put("txtleaveDate", leaveDate);
+		outputMap.put("txtfromDate", fromDate);
 		outputMap.put("reason", reason);
-		
+		outputMap.put("txttoDate", toDate);
 		
 		
 
@@ -10021,14 +10022,16 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		
 		try
 		{
-			String [] colNames= {"EmployeeName","reason","leave_date"}; // change according to dao return
+			String [] colNames= {"EmployeeName","reason","from_date","to_date"}; // change according to dao return
 			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
 
 			outputMap.put("txttodate", toDate);
 
-			
+			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				
+				outputMap.put("toDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 			if(!exportFlag.isEmpty())
 			{
 				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"LeaveRegister");
