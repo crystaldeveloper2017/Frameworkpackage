@@ -81,7 +81,7 @@
                     <tr>
                      
                      <th><b>Employee Name</b></th>
-                     <th><b>Supervisor Name</b></th>
+                     <th><b>Updated By</b></th>
                      <th><b>Reason</b></th>
                      <th><b>From Date</b></th>
                        <th><b>To Date</b></th>

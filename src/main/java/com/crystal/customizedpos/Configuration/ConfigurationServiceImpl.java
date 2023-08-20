@@ -9951,7 +9951,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			
 			outputMap.put("todaysDate", lObjConfigDao.getDateFromDB(con));
 			
-			outputMap.put("employeeList", lObjConfigDao.getEmployeeMasterWithSupervisorId(outputMap,con));
+			outputMap.put("employeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
 			rs.setViewName("../SupervisorSubmitLeave.jsp");
 			rs.setReturnObject(outputMap);
 		} catch (Exception e) {
