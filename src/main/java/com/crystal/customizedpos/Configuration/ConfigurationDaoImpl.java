@@ -6614,11 +6614,10 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(getDateASYYYYMMDD(fromDate));
 		parameters.add(getDateASYYYYMMDD(toDate));
-		parameters.add(getDateASYYYYMMDD(fromDate));
-		parameters.add(getDateASYYYYMMDD(toDate));
+		
 		return getListOfLinkedHashHashMap(parameters,
 				"select *,tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 "
-				+" where ((from_date between ? and ?) or (to_date between ? and ?)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id order by from_date desc" ,
+				+" where ((? between from_date and to_date) or (? between from_date and to_date)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id order by from_date desc" ,
 				con);
 	}
 	
