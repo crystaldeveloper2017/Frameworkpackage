@@ -6616,8 +6616,10 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(getDateASYYYYMMDD(toDate));
 		
 		return getListOfLinkedHashHashMap(parameters,
-				"select *,tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 "
-				+" where ((? between from_date and to_date) or (? between from_date and to_date)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id order by from_date desc" ,
+				"select\r\n"
+				+ "	*,date_format(from_date,'%d/%m/%Y') as FormattedFromDate,date_format(to_date,'%d/%m/%Y') as FormattedToDate, \r\n"
+				+ "	tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 \r\n "
+				+" where ((? between from_date and to_date) or (? between from_date and to_date)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id order by from_date desc",
 				con);
 	}
 	
