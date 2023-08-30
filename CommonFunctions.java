@@ -1840,6 +1840,16 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	public String getCurrentMonth(Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select SUBSTR(MONTHNAME(sysdate()),1,3) as dt1 from dual", con).get("dt1");
 	}
+
+public HashMap<String,String> getFirstAndLastDateOfCurrentMonth(Connection con) throws SQLException {
+		return getMap(new ArrayList<>(), "SELECT\r\n" + //
+				"\tDATE_FORMAT(date_add(date_add(LAST_DAY(CURDATE()), interval 1 DAY), interval -1 MONTH),'%d/%m/%Y') AS first_day,\r\n" + //
+				"\tDATE_FORMAT(LAST_DAY(CURDATE()),'%d/%m/%Y') AS last_day;\r\n" + //
+				"", con);
+	}
+	
+
+
 	
 	public String getCurrentYear(Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select (YEAR (sysdate())) as dt1 from dual", con).get("dt1");
