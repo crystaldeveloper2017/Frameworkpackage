@@ -95,8 +95,8 @@
 						<td>${item.SuperVisorName}</td>
 						
 						<td>${item.reason}</td>						
-						<td>${item.from_date}</td>
-            <td>${item.to_date}</td>
+						<td>${item.FormattedFromDate}</td>
+            <td>${item.FormattedToDate}</td>
 					</tr>
 				</c:forEach>
 				
