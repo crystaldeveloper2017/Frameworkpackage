@@ -8,12 +8,15 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.crystal.customizedpos.Configuration.ConfigurationDaoImpl;
 
 
 
@@ -95,7 +98,14 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 			// if the action is not bypassed then check if this action is mapped to list of
 			// actions available for this role
-			HashSet<String> allowedActionsForThisRole = (HashSet<String>) request.getSession().getAttribute("actions");
+			//HashSet<String> allowedActionsForThisRole = (HashSet<String>) request.getSession().getAttribute("actions");
+			String userId="0";
+			HashSet<String> allowedActionsForThisRole=null;
+			if(request.getSession().getAttribute("userdetails")!=null)
+			{
+				userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");			
+				 allowedActionsForThisRole= getActionsForthisUserDecoupled(Long.valueOf(userId), con,CommonFunctions.roles);			
+			}
 			//logger.info("List of Allowed Actions for this role" + allowedActionsForThisRole);
 			if (allowedActionsForThisRole == null) {
 				allowedActionsForThisRole = new HashSet<String>();
@@ -154,10 +164,18 @@ public class ControllerServiceImpl extends CommonFunctions {
 			rs = (CustomResultObject) method.invoke(obj, request, con);
 
 			if (rs.getViewName() != null) {
+				
+				ConfigurationDaoImpl lObjLoginDao=new ConfigurationDaoImpl();
+				List<String> roleIds = lObjLoginDao.getRoleIds(Long.valueOf(userId), con);
+
+				
 				logger.info("Found a view Name so redirecting to " + rs.getViewName());
 				HashMap<String, Object> hm = rs.getReturnObject();
 				hm.put("contentJspName", rs.getViewName());
 				hm.put(username_constant, request.getSession().getAttribute(username_constant));
+				hm.put("elementsDB",getElementsNewLogic(roleIds,CommonFunctions.elements,CommonFunctions.roles));
+				
+				
 				
 				request.setAttribute("outputObject", hm);
 
