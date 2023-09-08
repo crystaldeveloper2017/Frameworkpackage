@@ -16,7 +16,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.crystal.customizedpos.Configuration.ConfigurationDaoImpl;
+
 
 
 
@@ -165,8 +165,8 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 			if (rs.getViewName() != null) {
 				
-				ConfigurationDaoImpl lObjLoginDao=new ConfigurationDaoImpl();
-				List<String> roleIds = lObjLoginDao.getRoleIds(Long.valueOf(userId), con);
+				
+				List<String> roleIds =getRoleIds(Long.valueOf(userId), con);
 
 				
 				logger.info("Found a view Name so redirecting to " + rs.getViewName());
