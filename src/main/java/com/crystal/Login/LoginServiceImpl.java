@@ -39,13 +39,13 @@ public class LoginServiceImpl extends CommonFunctions {
 			if (loginDetails != null && !loginDetails.isEmpty() ) {
 				Long user_id = Long.valueOf(loginDetails.get("user_id").toString());				
 				
-				List<String> roleIds = lObjLoginDao.getRoleIds(user_id, con);
+				//List<String> roleIds = lObjLoginDao.getRoleIds(user_id, con);
 				request.getSession().setAttribute("username", Username);
 				request.getSession().setAttribute("userdetails", loginDetails);
 				request.getSession().setAttribute("listOfRoles", roles);
 				
-				request.getSession().setAttribute("elements", getElementsNewLogic(roleIds,CommonFunctions.elements,CommonFunctions.roles));
-				request.getSession().setAttribute("actions", getActionsForthisUserDecoupled(user_id, con,CommonFunctions.roles));
+				//request.getSession().setAttribute("elements", getElementsNewLogic(roleIds,CommonFunctions.elements,CommonFunctions.roles));
+				//request.getSession().setAttribute("actions", getActionsForthisUserDecoupled(user_id, con,CommonFunctions.roles));
 
 				copyImagesFromDBToBufferFolder(request.getServletContext(), con);
 				returnString = "Succesfully Logged In";

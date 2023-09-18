@@ -10361,4 +10361,26 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		return rs;
 	}
+
+	public CustomResultObject deleteLeave(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long leaveid=Long.parseLong(request.getParameter("leaveId"));		
+		HashMap<String, Object> outputMap=new HashMap<>();
+				
+		String returnAjaxString;
+		try
+		{	
+			
+				rs.setAjaxData(lObjConfigDao.deleteleave(leaveid,con));
+			
+			
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
 }

@@ -97,6 +97,7 @@
 						<td>${item.reason}</td>						
 						<td>${item.FormattedFromDate}</td>
             <td>${item.FormattedToDate}</td>
+            <td><button class="btn btn-danger" onclick="deleteLeave(${item.leave_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
 				
@@ -167,5 +168,36 @@
   	  		window.location="?a=showLeaveRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;
 		  
   }
+
+  
+function deleteLeave(leaveId)
+{
+	
+	var answer = window.confirm("Are you sure you want to delete ?");
+	if (!answer) 
+	{
+		return;    
+	}
+	
+	  document.getElementById("closebutton").style.display='none';
+	   document.getElementById("loader").style.display='block';
+	$('#myModal').modal({backdrop: 'static', keyboard: false});;
+
+	var xhttp = new XMLHttpRequest();
+	  xhttp.onreadystatechange = function() 
+	  {
+	    if (xhttp.readyState == 4 && xhttp.status == 200) 
+	    { 		      
+	      document.getElementById("responseText").innerHTML=xhttp.responseText;
+		  document.getElementById("closebutton").style.display='block';
+		  document.getElementById("loader").style.display='none';
+		  $('#myModal').modal({backdrop: 'static', keyboard: false});;
+	      
+		  
+		}
+	  };
+	  xhttp.open("GET","?a=deleteLeave&leaveId="+leaveId, true);    
+	  xhttp.send();
+}
   
 </script>

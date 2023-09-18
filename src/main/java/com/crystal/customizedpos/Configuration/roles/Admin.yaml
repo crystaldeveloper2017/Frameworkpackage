@@ -1,6 +1,7 @@
 - roleName: "Admin"
   roleId: 1
   actions: 
+  - deleteLeave
   - showAttendanceRegister
   - showInwardRegister
   - showInwardEntry
