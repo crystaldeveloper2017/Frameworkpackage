@@ -16,6 +16,7 @@ import java.util.List;
 import org.jsoup.select.Evaluator.IsEmpty;
 
 import com.crystal.Frameworkpackage.CommonFunctions;
+import com.crystal.Frameworkpackage.Query;
 
 
 public class ConfigurationDaoImpl extends CommonFunctions {
@@ -6737,6 +6738,45 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 				parameters, conWithF);
 		return "Leave Deleted Succesfully";
 	}
+	public List<LinkedHashMap<String, Object>> getAccessBlockEntry(Connection con)
+	throws SQLException, ClassNotFoundException {
+ArrayList<Object> parameters = new ArrayList<>();
+return getListOfLinkedHashHashMap(parameters,
+		"select * from trn_access_block_register tabr,tbl_user_mst tum where tum.user_id=tabr.employee_id and tabr.activate_flag=1  ",
+		con);
+}
+public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, Connection con) throws SQLException
+		 {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(accessblockId);
+
+		return getMap(parameters,
+				"select * from trn_access_block_register where access_block_id=?",
+				con);
+	}
+
+	public long saveAccessBlockEntry(HashMap<String, Object> hm, Connection conWithF) throws SQLException, ParseException {
+
+		HashMap<String, Object> valuesMap = new HashMap<>();
+		valuesMap.put("access_block_id", "~default");
+		valuesMap.put("employee_id", hm.get("hdnselectedemployee"));
+		valuesMap.put("remarks", hm.get("txtremarks"));
+		valuesMap.put("updated_by", hm.get("user_id"));
+		valuesMap.put("updated_date", "~sysdate()");
+		valuesMap.put("activate_flag", "~1");
+		Query q = new Query("trn_access_block_register", "insert", valuesMap);
+		return insertUpdateEnhanced(q, conWithF);
+
+	}
 
 
+	public String deleteAccessBlockEntry(long accessblockId, String userId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+
+		parameters.add(userId);
+		parameters.add(accessblockId);
+		insertUpdateDuablDB("UPDATE trn_access_block_register  SET activate_flag=0,updated_date=SYSDATE(),updated_by=? WHERE access_block_id=?",
+				parameters, conWithF);
+		return "Access Block Entry Deleted Succesfully";
+	}
       }

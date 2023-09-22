@@ -122,3 +122,8 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showAttendanceRegister"
   orderNo: 1
+- elementId: 40
+  elementName: "Block Employee Access"
+  parentElementId: 700165
+  elementUrl: "?a=showAccessBlockEntry"
+  orderNo: 1

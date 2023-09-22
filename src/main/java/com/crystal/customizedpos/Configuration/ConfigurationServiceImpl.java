@@ -10383,4 +10383,126 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+	public CustomResultObject showAccessBlockEntry(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try
+		{
+			String [] colNames= {"access_block_id","EmployeeId","EmployeeName","updated_by","remarks"}; // change according to dao return
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+
+			lst = lObjConfigDao.getAccessBlockEntry(con);
+
+		
+
+			
+			if(!exportFlag.isEmpty())
+			
+				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,
+				           "AccessBlockEntry");
+				outputMap.put("ListOfAccessBlockEntry", lst);
+
+				rs.setViewName("../BlockAccessRegister.jsp");
+				rs.setReturnObject(outputMap);
+		}
+			catch (Exception e)
+			{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+			}		
+			return rs;
+		}	
+		
+	
+		public CustomResultObject showAddAccessBlockEntry(HttpServletRequest request,Connection con) throws SQLException
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		long accessblockId=request.getParameter("accessblockId")==null?0L:Long.parseLong(request.getParameter("accessblockId"));
+			
+		try
+		{	
+			if(accessblockId!=0)
+			 {
+				outputMap.put("accessblockDetails", lObjConfigDao.getAccessblockDetails(accessblockId,con));
+		} 
+			
+		outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+	rs.setViewName("../AddAccessBlockEntry.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	public CustomResultObject saveAccessBlockEntry(HttpServletRequest request, Connection con) throws Exception {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFacroty = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFacroty);
+		// String webInfPath = cf.getPathForAttachments();
+
+		HashMap<String, Object> hm = new HashMap<>();
+
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+		String employeeId = hm.get("hdnselectedemployee").toString();
+		String remarks = hm.get("txtremarks").toString();
+
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+	
+		hm.put("hdnselectedemployee", employeeId);
+		hm.put("txtremarks", remarks);
+		hm.put("user_id", userId);
+
+		lObjConfigDao.saveAccessBlockEntry(hm, con);
+		
+		try {
+
+			rs.setReturnObject(outputMap);
+
+			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showAccessBlockEntry'</script>");
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+		}
+		return rs;
+	}
+	public CustomResultObject deleteAccessBlockEntry(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		long accessblockId = Integer.parseInt(request.getParameter("accessblockId"));
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try {
+
+			rs.setAjaxData(lObjConfigDao.deleteAccessBlockEntry(accessblockId, userId, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
 }

@@ -61,8 +61,13 @@
   - showAddGroup
   - saveClient
   - showUserDetails
+  - showAccessBlockEntry
+  - showAddAccessBlockEntry
+  - saveAccessBlockEntry
+  - deleteAccessBlockEntry
   elements: 
   - 39
+  - 40
   - 11
   - 12
   - 21
