@@ -4749,6 +4749,16 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 				+ "case when TIMESTAMPDIFF(SECOND,max(checked_time),sysdate()) <? then true else false end isDuplicate\r\n"
 				+ "from trn_checkin_register tcr  where user_id =?", conWithF).get("isDuplicate").equals("1");
 	}
+
+	public boolean isAccessBlocked(String employeeId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(employeeId);
+		
+		return !getMap(parameters, "select count(1) cnt from trn_access_block_register where employee_id=? and activate_flag=1 ", conWithF).get("cnt").equals("0");
+	}
+
+	
 	public String getCheckType(String employeeId,Connection conWithF) throws Exception {
 		String returnString="";
 		ArrayList<Object> parameters = new ArrayList<>();

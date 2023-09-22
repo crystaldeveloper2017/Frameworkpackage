@@ -9712,6 +9712,11 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				returnMessage="Check in / Check out is alreadyCaptured. Please try again after 120 Seconds for "+employeeDetails.get("name");
 			}
 			else
+			if(lObjConfigDao.isAccessBlocked(employeeDetails.get("user_id").toString(),con))
+			{
+				returnMessage="Access is blocked for this employee "+employeeDetails.get("name");
+			}
+			else
 			{
 				String getCheckType=lObjConfigDao.getCheckType(employeeDetails.get("user_id").toString(),con);
 				String time=lObjConfigDao.checkInEmployee(employeeDetails.get("user_id"),getCheckType, con);
