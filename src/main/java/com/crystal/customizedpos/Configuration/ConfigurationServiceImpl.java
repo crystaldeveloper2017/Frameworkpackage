@@ -9978,6 +9978,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String fromDate=request.getParameter("txtfromDate");
 		String empId=request.getParameter("employee_id");
 		String reason=request.getParameter("reason");
+		String remark=request.getParameter("remark");
 		String toDate=request.getParameter("txttoDate");
 
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
@@ -9990,6 +9991,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		outputMap.put("supervisor_id", userId);
 		outputMap.put("txtfromDate", fromDate);
 		outputMap.put("reason", reason);
+		outputMap.put("remark", remark);
 		outputMap.put("txttoDate", toDate);
 		
 		
@@ -10008,6 +10010,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		return rs;
 	}
 	
+
 	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
 	{
 		CustomResultObject rs=new CustomResultObject();

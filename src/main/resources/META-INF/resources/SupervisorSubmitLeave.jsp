@@ -160,6 +160,15 @@
     </div>
   </div>
   
+  <div class="col-sm-12">
+  	<div class="form-group">
+      <label for=Address>Remark</label>
+      <input type="text" class="form-control" id="remark" value="${employeeDetails.remark}" name="remark" placeholder="Remark">
+    </div>
+  </div>
+  
+  
+  
  
 </div>
   
