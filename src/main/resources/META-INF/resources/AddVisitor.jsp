@@ -89,6 +89,8 @@
 <c:set var="visitorDetails" value='${requestScope["outputObject"].get("visitorDetails")}' />
 <c:set var="distinctPurposeOfVisist" value='${requestScope["outputObject"].get("distinctPurposeOfVisist")}' />
 <c:set var="employeeList" value='${requestScope["outputObject"].get("employeeList")}' />
+<c:set var="listOfEmployees" value='${requestScope["outputObject"].get("EmployeeList")}' />
+
 
 </head>
 
@@ -156,6 +158,39 @@ function addVisitor()
 	document.getElementById("frm").submit(); 
 }
 
+function checkforMatchEmployee()
+{
+	var searchString= document.getElementById("ContactToEmployee").value;
+	
+	var options1=document.getElementById("listOfEmployee").options;
+	var employeeId=0;
+	for(var x=0;x<options1.length;x++)
+		{
+			if(searchString==options1[x].value)
+				{
+					employeeId=options1[x].id;
+					break;
+				}
+		}
+	if(employeeId!=0)
+		{
+			document.getElementById("hdnselectedemployee").value=employeeId;			
+			document.getElementById("ContactToEmployee").disabled=true;						
+		}
+	else
+		{
+			//searchForCustomer(searchString);
+		}
+	
+	
+}
+
+function resetEmployee()
+{	
+	ContactToEmployee.disabled=false;
+	ContactToEmployee.value="";
+	hdnselectedemployee.value=0;
+}
 
 
 
@@ -163,7 +198,11 @@ function addVisitor()
 
 </script>
 
-
+<datalist id="listOfEmployee">
+<c:forEach items="${listOfEmployees}" var="cat">
+ <option id="${cat.user_id}">${cat.name} </option>	
+ </c:forEach>
+</datalist>
 <br>
 
 <div class="container" style="padding:20px;background-color:white">
@@ -224,22 +263,23 @@ function addVisitor()
     </div>
   </div>
   
+
   <div class="col-sm-12">
-  	<div class="form-group">
-      <label for="ContactToEmployee">Contact To Employee</label>
-      <select class="form-control" name="ContactToEmployee" id="ContactToEmployee">
-      	
-      	
-      	<c:forEach items="${employeeList}" var="employee">
-			    			    <option value="${employee.user_id}">${employee.name}</option>
-	   </c:forEach>
-      	
-      	
-      	
-      </select> 
-      
-    </div>
-  </div>
+	<div class="form-group">
+		
+	<label for="email">Contact To Employee </label>     
+	<div class="input-group input-group-sm">
+
+	<input type="textbox" name="ContactToEmployee" id="ContactToEmployee" class="form-control form-control-sm" list="listOfEmployee" onchange="checkforMatchEmployee()"/> 
+	<input type="hidden" name="hdnselectedemployee" id="hdnselectedemployee" value="">  <span class="input-group-append">
+		<button type="button" class="btn btn-danger btn-flat" onclick="resetEmployee()">Reset</button>
+		</span>
+	</div>
+	</div>
+		</div>
+
+
+
   
   
       <div class="contentarea">
