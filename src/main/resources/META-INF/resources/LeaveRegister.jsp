@@ -10,6 +10,7 @@
 
 
 
+<c:set var="listOfEmployees" value='${requestScope["outputObject"].get("EmployeeList")}' />
 
 <c:set var="message" value='${requestScope["outputObject"].get("ListOfEmployees")}' />
 <c:set var="txtfromdate" value='${requestScope["outputObject"].get("txtfromdate")}' />
@@ -18,7 +19,12 @@
 <c:set var="toDate" value='${requestScope["outputObject"].get("toDate")}' />
 
 
-
+<datalist id="listOfEmployee">
+<c:forEach items="${listOfEmployees}" var="cat">
+ <option id="${cat.user_id}">${cat.name} </option>	
+ </c:forEach>
+</datalist>
+<br>
 
 
 <br>
@@ -50,7 +56,20 @@
 				<input type="text" id="txttodate"  onchange="checkforvalidfromtodate();ReloadFilters();"    name="txttodate" readonly class="form-control date_field"  placeholder="To Date"/>
 			</div>
 		</div>
-                
+                            
+	<div class="col-sm-3">
+	<div class="form-group">
+		
+	   
+	<div class="input-group input-group-sm">
+
+	<input type="textbox" name="ContactToEmployee" id="ContactToEmployee" class="form-control form-control-sm" list="listOfEmployee" onchange="checkforMatchEmployee()"/> 
+	<input type="hidden" name="hdnselectedemployee" id="hdnselectedemployee" value="">  <span class="input-group-append">
+		<button type="button" class="btn btn-danger btn-flat" onclick="resetEmployee()">Reset</button>
+		</span>
+	</div>
+	</div>
+		</div>
                 <div class="card-tools">
                   <div class="input-group input-group-sm" align="center" style="width: 200px;display:inherit">
                     <div class="icon-bar" style="font-size:22px;color:firebrick">
@@ -61,16 +80,12 @@
                   </div>
                 </div>
                 
-                
-                
-                
-                
+ 
 
-                
+
               </div>
               
-              
-              
+       
               
               
               
@@ -83,6 +98,7 @@
                      <th><b>Employee Name</b></th>
                      <th><b>Updated By</b></th>
                      <th><b>Reason</b></th>
+					  <th><b>Remark</b></th>
                      <th><b>From Date</b></th>
                        <th><b>To Date</b></th>
                      
@@ -94,7 +110,8 @@
 						<td>${item.EmployeeName}</td>
 						<td>${item.SuperVisorName}</td>
 						
-						<td>${item.reason}</td>						
+						<td>${item.reason}</td>		
+						<td>${item.remark}</td>						
 						<td>${item.FormattedFromDate}</td>
             <td>${item.FormattedToDate}</td>
             <td><button class="btn btn-danger" onclick="deleteLeave(${item.leave_id})">Delete</button></td>
@@ -199,5 +216,40 @@ function deleteLeave(leaveId)
 	  xhttp.open("GET","?a=deleteLeave&leaveId="+leaveId, true);    
 	  xhttp.send();
 }
+
+function checkforMatchEmployee()
+{
+	var searchString= document.getElementById("ContactToEmployee").value;
+	
+	var options1=document.getElementById("listOfEmployee").options;
+	var employeeId=0;
+	for(var x=0;x<options1.length;x++)
+		{
+			if(searchString==options1[x].value)
+				{
+					employeeId=options1[x].id;
+					break;
+				}
+		}
+	if(employeeId!=0)
+		{
+			document.getElementById("hdnselectedemployee").value=employeeId;			
+			document.getElementById("ContactToEmployee").disabled=true;						
+		}
+	else
+		{
+			//searchForCustomer(searchString);
+		}
+	
+	
+}
+
+function resetEmployee()
+{	
+	ContactToEmployee.disabled=false;
+	ContactToEmployee.value="";
+	hdnselectedemployee.value=0;
+}
+
   
 </script>

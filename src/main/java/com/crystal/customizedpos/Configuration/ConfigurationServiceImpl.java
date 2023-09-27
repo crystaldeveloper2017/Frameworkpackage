@@ -9896,7 +9896,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			}
 			
 			
-			
+			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
 			outputMap.put("employeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
 			outputMap.put("distinctPurposeOfVisist", lObjConfigDao.getDistinctPurposeOfVisitList(con, appId));
 			rs.setViewName("../AddVisitor.jsp");
@@ -10037,6 +10038,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 				
 				outputMap.put("toDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
 			if(!exportFlag.isEmpty())
 			{
 				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"LeaveRegister");
