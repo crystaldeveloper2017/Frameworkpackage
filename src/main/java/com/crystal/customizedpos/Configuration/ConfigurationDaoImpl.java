@@ -6610,12 +6610,13 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(hm.get("employee_id"));
 		parameters.add( hm.get("supervisor_id"));
-		parameters.add( hm.get("reason"));		
+		parameters.add( hm.get("reason"));
+		parameters.add( hm.get("remark"));		
 		parameters.add( getDateASYYYYMMDD(hm.get("txtfromDate").toString()));	
 		parameters.add( getDateASYYYYMMDD(hm.get("txttoDate").toString()));	
 		
 		
-		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?,?,1)";
+		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?,?,?,1)";
 		
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
