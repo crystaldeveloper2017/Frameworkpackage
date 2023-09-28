@@ -6527,7 +6527,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add( hm.get("MobileNo"));	
 		parameters.add( hm.get("EmailId"));	
 		parameters.add( hm.get("app_id"));
-		parameters.add( hm.get("ContactToEmployee"));
+		parameters.add( hm.get("hdnselectedemployee"));
 		
 		
 		String insertQuery = "insert into visitor_entry values (default,?,?,?,?,?,?,sysdate(),?,sysdate(),1,?,null)";
