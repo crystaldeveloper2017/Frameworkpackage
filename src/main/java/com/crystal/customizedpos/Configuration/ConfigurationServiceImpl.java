@@ -10020,6 +10020,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
 		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String emp_id = request.getParameter("emp_id") == null ? "" : request.getParameter("emp_id");
+
 		
 		if (fromDate.equals("")) {
 			fromDate = lObjConfigDao.getDateFromDB(con);
@@ -10032,7 +10034,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try
 		{
 			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
-			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,con);
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,emp_id,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
 
