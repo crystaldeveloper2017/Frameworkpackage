@@ -182,7 +182,7 @@
   
   function ReloadFilters()
   {	 	  
-  	  		window.location="?a=showLeaveRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;
+  	  		window.location="?a=showLeaveRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value+"&emp_id="+hdnselectedemployee.value;
 		  
   }
 
@@ -234,7 +234,9 @@ function checkforMatchEmployee()
 	if(employeeId!=0)
 		{
 			document.getElementById("hdnselectedemployee").value=employeeId;			
-			document.getElementById("ContactToEmployee").disabled=true;						
+			document.getElementById("ContactToEmployee").disabled=true;	
+          ReloadFilters();
+
 		}
 	else
 		{
