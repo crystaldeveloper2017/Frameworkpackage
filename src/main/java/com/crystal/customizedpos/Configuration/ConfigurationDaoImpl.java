@@ -6801,4 +6801,41 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				parameters, conWithF);
 		return "Access Block Entry Deleted Succesfully";
 	}
+
+	public String getInVisitorsCount(Connection con) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();		
+		String query="" + 
+		"select\n" + 
+		"count(1) visitorsInside\n" + 
+		"from\n" + 
+		"visitor_entry ve\n" + 
+		"where\n" + 
+		"checkin_time is not null\n" + 
+		"and checkout_time is null\n" + 
+		"and activate_flag =1;\n";
+
+		return getMap(parameters,
+		query, con).get("visitorsInside");
+		
+
+	}
+
+	public List<LinkedHashMap<String, Object>> getInEmployeesCount(Connection con) throws SQLException, ClassNotFoundException {
+
+		ArrayList<Object> parameters = new ArrayList<>();		
+		String query="select count(1) insideCount,type from trn_checkin_register tcr2,tbl_user_mst tum2 ,\n" + 
+		"(select max(checked_time) c1time,tcr.user_id  from tbl_user_mst tum, trn_checkin_register tcr\n" + 
+		"where tum.user_id =tcr.user_id group by tcr.user_id) as T\n" + 
+		"where tcr2.user_id =T.user_id and tcr2.checked_time =T.c1time and tcr2.check_in_type ='I'\n" + 
+		"and T.user_id=tum2.user_id\n" + 
+		"group by type order by type\n";
+
+		return getListOfLinkedHashHashMap(parameters,
+		query, con);
+		
+
+	}
+
+	
       }

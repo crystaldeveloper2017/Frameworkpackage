@@ -24,7 +24,7 @@ public class LoginServiceImpl extends CommonFunctions {
 
 	}
 	
-
+	ConfigurationDaoImpl lobjConfigdao=new ConfigurationDaoImpl();
 
 	public CustomResultObject validateLogin(HttpServletRequest request, Connection con) {
 		CustomResultObject rs = new CustomResultObject();
@@ -106,10 +106,15 @@ public class LoginServiceImpl extends CommonFunctions {
 				
 				
 				
-
 				
-			
+				outputMap.put("InVisitorsCount", lobjConfigdao.getInVisitorsCount(con));
+				List<LinkedHashMap<String, Object>> listOfInEmployees=lobjConfigdao.getInEmployeesCount(con);
 				
+				String inPermanenet=listOfInEmployees.get(1).get("insideCount").toString();
+				String inContract=listOfInEmployees.get(0).get("insideCount").toString();
+				
+				outputMap.put("inPermanenet", inPermanenet);
+				outputMap.put("inContract", inContract);
 				
 
 				outputMap.put("todaysDate", getDateFromDB(con));

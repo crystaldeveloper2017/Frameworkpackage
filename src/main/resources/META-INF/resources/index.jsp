@@ -16,7 +16,9 @@
 </style>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="HomePageContent" value='${requestScope["outputObject"]}' />
+<c:set var="InVisitorsCount" value='${requestScope["outputObject"].get("InVisitorsCount")}' />
+<c:set var="inPermanenet" value='${requestScope["outputObject"].get("inPermanenet")}' />
+<c:set var="inContract" value='${requestScope["outputObject"].get("inContract")}' />
 
 
 <br>
@@ -105,7 +107,7 @@
 <div class="row">
 	
 	
-		<div class="col-lg-3 col-6" onclick="window.location='?a=showItemMaster'">
+		<div class="col-lg-3 col-6" >
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
@@ -113,24 +115,24 @@
               
 
 
-                <h3>${HomePageContent.get('ActiveItems')}</h3>
+                <h3>${InVisitorsCount}</h3>
 
                 <p>Total Items</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
-              <a href="#" onclick="window.location='?a=showItemMaster'" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6" onclick="window.location='?a=showCategoryMasterNew'">
+          <div class="col-lg-3 col-6">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>${HomePageContent.get('ActiveCategories')}</h3>
+                <h3>${inPermanenet}</h3>
 
-                <p>Total Categories</p>
+                <p>Total Permanent Employees</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
@@ -139,18 +141,18 @@
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6" onclick="window.location='?a=showCustomerMaster'">
+          <div class="col-lg-3 col-6" >
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>${HomePageContent.get('ActiveCustomers')}</h3>
+                <h3>${inContract}</h3>
 
-                <p>Total Customers</p>
+                <p>Inside Contract Employees</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
               </div>
-              <a href="#"  onclick="window.location='?a=showCustomerMaster'" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           
@@ -783,6 +785,63 @@
     
     </section>
     </c:if>
+
+
+    <div class="row">
+	
+	
+		<div class="col-lg-3 col-6" >
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+              
+              
+
+
+                <h3>${InVisitorsCount}</h3>
+
+                <p>Visitors Inside</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-bag"></i>
+              </div>
+              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6" >
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>${inPermanenet}</h3>
+
+                <p>Permanent Employees Inside</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>${inContract}</h3>
+
+                <p>Contract Employees Inside</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          
+          
+
+</div>
     
     
     <!-- below is the link to find more icons -->
