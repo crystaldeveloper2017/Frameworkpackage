@@ -1299,7 +1299,8 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		{
 			
 			Role r=rolesMaster.get(Long.parseLong(s));
-			finalListRequired.addAll(Arrays.asList(r.getDashboardList()));
+			if(r.getDashboardList()!=null)
+				finalListRequired.addAll(Arrays.asList(r.getDashboardList()));
 		}	
 		
 		return finalListRequired;
