@@ -9774,6 +9774,9 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		outputMap.put("app_id", appId);
 		HashMap<String, Object> hm = new HashMap<>();
 		hm.put("app_id", appId);
+		String imageName = request.getParameter("photo");
+		String textfield = request.getParameter("textfield");
+		
 		List<FileItem> toUpload = new ArrayList<>();
 		if (ServletFileUpload.isMultipartContent(request)) {
 			List<FileItem> items = upload.parseRequest(request);
@@ -10511,6 +10514,116 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try {
 
 			rs.setAjaxData(lObjConfigDao.deleteAccessBlockEntry(accessblockId, userId, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	public CustomResultObject showVendorMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String searchString=request.getParameter("searchString");
+		
+		try {
+			String[] colNames = { "vendorName","contactPerson", "address", "state" , "country","email","contact1"};
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+			lst = lObjConfigDao.getVendorMaster(con,searchString);
+
+			if (!exportFlag.isEmpty())
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"VendorMaster");
+			else {
+				outputMap.put("ListOfVendor", lst);
+				rs.setViewName("../VendorMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+	public CustomResultObject showAddVendor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long vendorId = request.getParameter("vendorId") == null ? 0L : Long.parseLong(request.getParameter("vendorId"));
+
+		try {
+			if (vendorId != 0) {
+				outputMap.put("vendorDetails", lObjConfigDao.getVendorDetails(vendorId, con));
+			}
+			outputMap.put("ListOfCountries", lObjConfigDao.getCountriesList(con));
+			rs.setViewName("../AddVendor.jsp");
+			rs.setReturnObject(outputMap);
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	public CustomResultObject addVendor(HttpServletRequest request, Connection con)
+			throws FileUploadException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFactory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFactory);
+		String appId = request.getParameter("app_id");
+		outputMap.put("app_id", appId);
+		HashMap<String, Object> hm = new HashMap<>();
+		hm.put("app_id", appId);
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+		long hdnvendorId = hm.get("hdnvendorId").equals("") ? 0l : Long.parseLong(hm.get("hdnvendorId").toString());
+		try {
+
+			if (hdnvendorId == 0) {
+				hdnvendorId = lObjConfigDao.addVendor(con, hm);
+			} else {
+				lObjConfigDao.updateVendor(hdnvendorId, con, hm);
+			}
+
+			rs.setReturnObject(outputMap);
+
+			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showVendorMaster'</script>");
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+
+	}
+	public CustomResultObject deleteVendor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		long vendorId = Long.parseLong(request.getParameter("vendorId"));
+
+		try {
+
+			rs.setAjaxData(lObjConfigDao.deleteVendor(vendorId, con));
 
 		} catch (Exception e) {
 			writeErrorToDB(e);

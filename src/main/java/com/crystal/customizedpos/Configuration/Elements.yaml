@@ -127,3 +127,8 @@ elements:
   parentElementId: 700165
   elementUrl: "?a=showAccessBlockEntry"
   orderNo: 1
+- elementId: 41
+  elementName: "Vendor Master"
+  parentElementId: 31
+  elementUrl: "?a=showVendorMaster"
+  orderNo: 1

@@ -1,6 +1,10 @@
 - roleName: "Admin"
   roleId: 1
   actions: 
+  - showVendorMaster
+  - showAddVendor
+  - addVendor
+  - deleteVendor
   - deleteLeave
   - showAttendanceRegister
   - showInwardRegister
@@ -92,3 +96,4 @@
   - 36
   - 37
   - 38
+  - 41
