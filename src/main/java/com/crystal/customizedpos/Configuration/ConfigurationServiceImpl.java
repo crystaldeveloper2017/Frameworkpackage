@@ -6935,7 +6935,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try
 		{		 
 			
-			rs.setViewName("../changePassword.jsp");
+			rs.setViewName("changePassword.jsp");
 			rs.setReturnObject(outputMap);
 
 		}
@@ -9774,6 +9774,9 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		outputMap.put("app_id", appId);
 		HashMap<String, Object> hm = new HashMap<>();
 		hm.put("app_id", appId);
+		String imageName = request.getParameter("photo");
+		String textfield = request.getParameter("textfield");
+		
 		List<FileItem> toUpload = new ArrayList<>();
 		if (ServletFileUpload.isMultipartContent(request)) {
 			List<FileItem> items = upload.parseRequest(request);
@@ -10011,7 +10014,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 	
 
-	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
+	public CustomResultObject showCurrentLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
 	{
 		CustomResultObject rs=new CustomResultObject();
 		HashMap<String, Object> outputMap=new HashMap<>();
@@ -10052,7 +10055,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		else
 			{
 				
-				rs.setViewName("../LeaveRegister.jsp");
+				rs.setViewName("../CurrentLeaveRegister.jsp");
 				
 			}	
 			
@@ -10516,6 +10519,173 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			writeErrorToDB(e);
 			rs.setHasError(true);
 		}
+		return rs;
+	}
+	public CustomResultObject showVendorMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String searchString=request.getParameter("searchString");
+		
+		try {
+			String[] colNames = { "vendorName","contactPerson", "address", "state" , "country","email","contact1"};
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+			lst = lObjConfigDao.getVendorMaster(con,searchString);
+
+			if (!exportFlag.isEmpty())
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"VendorMaster");
+			else {
+				outputMap.put("ListOfVendor", lst);
+				rs.setViewName("../VendorMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+	public CustomResultObject showAddVendor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long vendorId = request.getParameter("vendorId") == null ? 0L : Long.parseLong(request.getParameter("vendorId"));
+
+		try {
+			if (vendorId != 0) {
+				outputMap.put("vendorDetails", lObjConfigDao.getVendorDetails(vendorId, con));
+			}
+			outputMap.put("ListOfCountries", lObjConfigDao.getCountriesList(con));
+			rs.setViewName("../AddVendor.jsp");
+			rs.setReturnObject(outputMap);
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	public CustomResultObject addVendor(HttpServletRequest request, Connection con)
+			throws FileUploadException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFactory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFactory);
+		String appId = request.getParameter("app_id");
+		outputMap.put("app_id", appId);
+		HashMap<String, Object> hm = new HashMap<>();
+		hm.put("app_id", appId);
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+		long hdnvendorId = hm.get("hdnvendorId").equals("") ? 0l : Long.parseLong(hm.get("hdnvendorId").toString());
+		try {
+
+			if (hdnvendorId == 0) {
+				hdnvendorId = lObjConfigDao.addVendor(con, hm);
+			} else {
+				lObjConfigDao.updateVendor(hdnvendorId, con, hm);
+			}
+
+			rs.setReturnObject(outputMap);
+
+			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showVendorMaster'</script>");
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+
+	}
+	public CustomResultObject deleteVendor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		long vendorId = Long.parseLong(request.getParameter("vendorId"));
+
+		try {
+
+			rs.setAjaxData(lObjConfigDao.deleteVendor(vendorId, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String emp_id = request.getParameter("emp_id") == null ? "" : request.getParameter("emp_id");
+
+		
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+		
+		
+		try
+		{
+			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,emp_id,con);
+			outputMap.put("ListOfEmployees", lst);
+			outputMap.put("txtfromdate", fromDate);
+
+			outputMap.put("txttodate", toDate);
+
+			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				
+				outputMap.put("toDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
+			if(!exportFlag.isEmpty())
+			{
+				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"LeaveRegister");
+			}
+		else
+			{
+				
+				rs.setViewName("../LeaveRegister.jsp");
+				
+			}	
+			
+			
+
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		rs.setReturnObject(outputMap);
+
 		return rs;
 	}
 }

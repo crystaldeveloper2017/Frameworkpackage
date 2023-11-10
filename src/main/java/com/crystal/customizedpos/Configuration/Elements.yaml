@@ -98,9 +98,9 @@ elements:
   elementUrl: ""
   orderNo: 1
 - elementId: 35
-  elementName: "Leave Register"
+  elementName: "Current Leave Register"
   parentElementId: 34
-  elementUrl: "?a=showLeaveRegister"
+  elementUrl: "?a=showCurrentLeaveRegister"
   orderNo: 1
 - elementId: 36
   elementName: "Shift Master"
@@ -126,4 +126,14 @@ elements:
   elementName: "Block Employee Access"
   parentElementId: 700165
   elementUrl: "?a=showAccessBlockEntry"
+  orderNo: 1
+- elementId: 41
+  elementName: "Vendor Master"
+  parentElementId: 31
+  elementUrl: "?a=showVendorMaster"
+  orderNo: 1
+- elementId: 42
+  elementName: "Leave Register"
+  parentElementId: 34
+  elementUrl: "?a=showLeaveRegister"
   orderNo: 1

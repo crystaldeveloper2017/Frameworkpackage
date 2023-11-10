@@ -6836,6 +6836,91 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		
 
 	}
+	public List<LinkedHashMap<String, Object>> getVendorMaster(Connection con,String searchString)
+	throws ClassNotFoundException, SQLException {				
 
-	
+		ArrayList<Object> parameters = new ArrayList<>();
+		String query="select * from mst_vendor vendor, cmn_country_mst country where activate_flag=1 and country.country_id=vendor.country_id";
+		if(searchString!=null && !searchString.equals(""))
+		{
+			query+=" and vendor.vendor_name like ?";					
+			parameters.add("%"+searchString+"%");
+		}
+		return getListOfLinkedHashHashMap(parameters,query,con);
+
+		}
+
+
+		public LinkedHashMap<String, String> getVendorDetails(long vendorId, Connection con) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(vendorId);
+		return getMap(parameters,
+			"select * from mst_vendor where vendor_id=?", con);
+
+		}	
+		public long addVendor(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("vendorName"));
+		parameters.add(hm.get("address")); 
+		parameters.add(hm.get("state"));
+		parameters.add(hm.get("country"));
+		parameters.add(hm.get("pincode"));
+		parameters.add(hm.get("contactNo1"));
+		parameters.add(hm.get("contactNo2"));
+		parameters.add(hm.get("email"));
+		parameters.add(hm.get("gst"));
+		parameters.add(hm.get("contactPerson"));
+		parameters.add(hm.get("panNo"));
+		parameters.add(hm.get("ismsme"));
+		parameters.add(hm.get("uAdhaar"));
+		String insertQuery = "insert into mst_vendor values (default,?,?,?,?,?,?,?,?,?,?,?,?,?,1)";	
+
+		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
+
+		}
+		public String updateVendor(long vendorId, Connection conWithF, HashMap<String, Object> hm) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("vendorName"));
+		parameters.add( hm.get("address"));
+		parameters.add( hm.get("state"));
+		parameters.add(hm.get("country"));
+		parameters.add(hm.get("pincode"));
+		parameters.add(hm.get("contactNo1"));
+		parameters.add(hm.get("contactNo2"));
+		parameters.add(hm.get("email"));
+		parameters.add(hm.get("gst"));
+		parameters.add(hm.get("contactPerson"));
+		parameters.add(hm.get("panNo"));
+		parameters.add(hm.get("ismsme"));
+		parameters.add(hm.get("uAdhaar"));
+
+		parameters.add(vendorId);
+		insertUpdateDuablDB(
+				"UPDATE mst_vendor  SET vendor_name=?,address=?, state = ?, country_id=?, pincode=?,contact_no1=?,contact_no2=?,email=?,gst=?,contact_person=?,pan_no=?,ismsme=?,u_adhaar=?  WHERE vendor_id=?",
+				parameters, conWithF);
+		return "Vendor Updated Succesfully";
+
+		}
+
+		public String deleteVendor(long vendorId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(vendorId);
+
+		insertUpdateDuablDB("UPDATE mst_vendor  SET activate_flag=0 WHERE vendor_id=?",
+				parameters, conWithF);
+		return "Vendor  Deleted Succesfully";
+		}
+		public List<LinkedHashMap<String, Object>> getCountriesList(Connection con) throws SQLException, ClassNotFoundException 
+	{
+		
+		
+		ArrayList<Object> parameters = new ArrayList<>();
+		String query="select country_id countryId,country_name countryName from cmn_country_mst";
+		return getListOfLinkedHashHashMap(parameters, query, con);		
+		
+	}
+			
       }
