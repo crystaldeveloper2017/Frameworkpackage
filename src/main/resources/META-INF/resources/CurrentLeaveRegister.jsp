@@ -155,7 +155,7 @@
   txtfromdate.value='${txtfromdate}';
   txttodate.value='${txttodate}';
   
-  document.getElementById("divTitle").innerHTML="Leave Register";
+  document.getElementById("divTitle").innerHTML="Current Leave Register";
   
   
   function checkforvalidfromtodate()

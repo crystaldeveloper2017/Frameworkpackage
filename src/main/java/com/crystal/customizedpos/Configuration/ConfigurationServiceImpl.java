@@ -6935,7 +6935,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try
 		{		 
 			
-			rs.setViewName("../changePassword.jsp");
+			rs.setViewName("changePassword.jsp");
 			rs.setReturnObject(outputMap);
 
 		}
@@ -10014,7 +10014,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 	
 
-	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
+	public CustomResultObject showCurrentLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
 	{
 		CustomResultObject rs=new CustomResultObject();
 		HashMap<String, Object> outputMap=new HashMap<>();
@@ -10055,7 +10055,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		else
 			{
 				
-				rs.setViewName("../LeaveRegister.jsp");
+				rs.setViewName("../CurrentLeaveRegister.jsp");
 				
 			}	
 			
@@ -10629,6 +10629,63 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			writeErrorToDB(e);
 			rs.setHasError(true);
 		}
+		return rs;
+	}
+	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String emp_id = request.getParameter("emp_id") == null ? "" : request.getParameter("emp_id");
+
+		
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+		
+		
+		try
+		{
+			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,emp_id,con);
+			outputMap.put("ListOfEmployees", lst);
+			outputMap.put("txtfromdate", fromDate);
+
+			outputMap.put("txttodate", toDate);
+
+			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				
+				outputMap.put("toDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+				outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
+			if(!exportFlag.isEmpty())
+			{
+				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"LeaveRegister");
+			}
+		else
+			{
+				
+				rs.setViewName("../LeaveRegister.jsp");
+				
+			}	
+			
+			
+
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		rs.setReturnObject(outputMap);
+
 		return rs;
 	}
 }

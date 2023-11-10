@@ -1,6 +1,7 @@
 - roleName: "Admin"
   roleId: 1
   actions: 
+  - showLeaveRegister
   - showVendorMaster
   - showAddVendor
   - addVendor
@@ -14,7 +15,7 @@
   - deleteShift
   - showAddShift
   - saveSupervisorSubmitLeave
-  - showLeaveRegister
+  - showCurrentLeaveRegister
   - checkoutVisitor
   - checkInThisEmployee
   - getClientServiceMappingForThisClient
@@ -97,3 +98,4 @@
   - 37
   - 38
   - 41
+  - 42
