@@ -1230,6 +1230,10 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return getMap(new ArrayList<>(), "select date_format(DATE_SUB(sysdate(),INTERVAL 1 MONTH),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
 				.toString();
 	}
+	public String getDateFromDBMinusSixMonth(Connection con) throws SQLException {
+		return getMap(new ArrayList<>(), "select date_format(DATE_SUB(sysdate(),INTERVAL 6 MONTH),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
+				.toString();
+	}
 	
 	public String getDateFromDBMinusOneDay(String date,Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select date_format(DATE_SUB('"+date+"',INTERVAL 1 DAY),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
