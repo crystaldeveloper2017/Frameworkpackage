@@ -130,6 +130,8 @@ function checkoutVisitor(visitorId)
                       <th><b>Contact To Employee</b></th>
                      <th><b>Checkin Time</b></th>
                      <th><b>Checkout Time</b></th>
+					 <th><b>Image</b></th>
+					 
                      </th><th></th>
                     </tr>
                   </thead>
@@ -144,6 +146,16 @@ function checkoutVisitor(visitorId)
 						<td>${item.name}</td>
 						<td>${item.checkin_time}</td>
 						<td>${item.checkout_time}</td>
+						
+						<td>
+						
+						<c:if test="${item.attachment_id ne null}">
+							
+							<img onclick="getVisitorImage('${item.attachment_id}')" src="BufferedImagesFolder/dummyImage.jpg" height="30px" width="30px">
+						</c:if>
+
+						</td>
+						
 						
 						<td>
 						
@@ -245,6 +257,13 @@ function checkoutVisitor(visitorId)
 			}
 			
 	}
+
+function getVisitorImage(attachment_id)
+{
+	$.get("?a=getFileFromDbToBuffer&attachment_id="+attachment_id, function(data, status){
+    window.open("BufferedImagesFolder/"+data);
+  });
+}
 
   
 </script>

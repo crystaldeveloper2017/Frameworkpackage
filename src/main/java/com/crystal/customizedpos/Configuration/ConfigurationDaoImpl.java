@@ -6556,9 +6556,9 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(getDateASYYYYMMDD(hm.get("txttodate").toString()));
 		return getListOfLinkedHashHashMap(parameters,
 				"select\r\n"
-				+ "	*\r\n"
+				+ "	ve.*,tum.*,tam.attachment_id \r\n"
 				+ "from\r\n"
-				+ "	visitor_entry ve left outer join 	tbl_user_mst tum on tum.user_id=ve.contact_to_employee \r\n"
+				+ "	visitor_entry ve left outer join 	tbl_user_mst tum on tum.user_id=ve.contact_to_employee left outer join tbl_attachment_mst tam  on tam.file_id=ve.visitor_id\r\n"
 				+ "	\r\n"
 				+ "where\r\n"
 				+ "	\r\n"

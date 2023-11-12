@@ -100,6 +100,9 @@
 
 function addVisitor()
 {	
+
+  hdnphotobase64.value=document.getElementById("photo").src;
+  
 	
 	 if(visitorname.value=="")
 	  {
@@ -293,6 +296,8 @@ function resetEmployee()
   <div class="output">
     <img id="photo" name="photo" alt="The screen capture will appear in this box."> 
   </div>
+
+  <input type="hidden" name="hdnphotobase64" id="hdnphotobase64" value="">
   
 </div>
   

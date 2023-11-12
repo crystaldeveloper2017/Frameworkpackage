@@ -2,11 +2,15 @@ package com.crystal.customizedpos.Configuration;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -18,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -9763,7 +9768,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
-	public CustomResultObject addVisitor(HttpServletRequest request, Connection con) throws FileUploadException {
+	public CustomResultObject addVisitor(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
 
 		CustomResultObject rs = new CustomResultObject();
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -9791,22 +9796,27 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 
 		long visitorId = hm.get("hdnvisitorId").equals("") ? 0l : Long.parseLong(hm.get("hdnvisitorId").toString());
+		String base64ImageContent=hm.get("hdnphotobase64").toString();
+		base64ImageContent=base64ImageContent.split(",")[1];
+		byte[] decodedImg = Base64.getDecoder()
+                    .decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		
+
+		
+
+
 		try {
 
 			if (visitorId == 0) {
 				visitorId = lObjConfigDao.AddVisitor(con, hm);
+				Path destinationFile = Paths.get(DestinationPath, "/myImage"+visitorId+".png");
+				Files.write(destinationFile, decodedImg);
+				uploadFileToDB(DestinationPath+"/myImage"+visitorId+".png", con, "Image", visitorId);
+				Files.delete(destinationFile);
 				
 				
-				String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
-				if(!toUpload.isEmpty())
-				{
-					for(FileItem f:toUpload)
-					{
-						f.write(new File(DestinationPath+f.getName()));					
-						long attachmentId=cf.uploadFileToDBDual(DestinationPath+f.getName(), con, "Image", visitorId);					
-						Files.copy(Paths.get(DestinationPath+f.getName()), Paths.get(DestinationPath+attachmentId+f.getName()),StandardCopyOption.REPLACE_EXISTING);
-					}
-				}
+				
 				
 				
 				
