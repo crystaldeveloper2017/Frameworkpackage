@@ -10698,4 +10698,31 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		return rs;
 	}
+
+	
+
+	public CustomResultObject getFileFromDbToBuffer(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long attachment_id=request.getParameter("attachment_id").equals("")?-1:Integer.parseInt(request.getParameter("attachment_id"));		
+		HashMap<String, Object> outputMap=new HashMap<>();				
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";
+		String returnAjaxString;
+		try
+		{
+			String FileName=copyAttachmentsFromDBToGivenPath(DestinationPath,String.valueOf(attachment_id),con);
+			rs.setAjaxData(FileName);
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+
+	
+
+
 }
