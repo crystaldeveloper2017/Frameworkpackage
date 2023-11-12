@@ -1090,7 +1090,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			List<String> listFromServerFolder = Arrays.asList(f1.list());
 			ArrayList<Object> parameters = new ArrayList<>();
 			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 ",
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1  ",
 					con);
 			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
 			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
@@ -1104,6 +1104,34 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			}
 
 		}
+	}
+
+
+	public String copyAttachmentsFromDBToGivenPath(String persistentPath,String attachmentId,Connection con) throws ClassNotFoundException, SQLException, IOException
+	{
+		String DestinationPath = persistentPath;
+		logger.error("Destination path is"+DestinationPath);
+		logger.error("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);		
+		
+		
+			
+			
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(attachmentId);
+			List<String> lstFromDb = getListOfString(parameters,
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 and attachment_id=? ",
+					con);
+			
+			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);			
+			ArrayList<String> namesList = new ArrayList<>(setFromDb);
+
+			
+
+			actualCopy(DestinationPath, con, namesList);
+				
+			return namesList.get(0);
+
+		
 	}
 	
 	public void copyFromSrcToDesitnationIfNotExist(String sourcePath,String destinationPath) throws IOException
