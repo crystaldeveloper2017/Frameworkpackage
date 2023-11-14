@@ -9796,11 +9796,20 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 
 		long visitorId = hm.get("hdnvisitorId").equals("") ? 0l : Long.parseLong(hm.get("hdnvisitorId").toString());
-		String base64ImageContent=hm.get("hdnphotobase64").toString();
-		base64ImageContent=base64ImageContent.split(",")[1];
-		byte[] decodedImg = Base64.getDecoder()
-                    .decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
-		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+		List<String> lstBase64ImageContent=new ArrayList<>();
+		for(int i=0;i<10;i++)
+		{			
+			if(hm.get("hdnphotobase64"+i)==null)
+			{
+				break;
+			}
+
+			lstBase64ImageContent.add(hm.get("hdnphotobase64"+i).toString());
+		}
+
+
+		
 		
 
 		
@@ -9808,19 +9817,28 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		try {
 
-			if (visitorId == 0) {
+			
 				visitorId = lObjConfigDao.AddVisitor(con, hm);
+				for(String base64ImageContent:lstBase64ImageContent)
+				{
+					
+					base64ImageContent=base64ImageContent.split(",")[1];
+					byte[] decodedImg = Base64.getDecoder()
+								.decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
+					String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
 				Path destinationFile = Paths.get(DestinationPath, "/myImage"+visitorId+".png");
 				Files.write(destinationFile, decodedImg);
 				uploadFileToDB(DestinationPath+"/myImage"+visitorId+".png", con, "Image", visitorId);
 				Files.delete(destinationFile);
+				}
 				
 				
 				
 				
 				
 				
-			} 
+			
 			rs.setAjaxData("<script>window.location='?a=showVisitors'</script>");
 			rs.setReturnObject(outputMap);
 			

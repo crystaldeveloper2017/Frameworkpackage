@@ -149,11 +149,14 @@ function checkoutVisitor(visitorId)
 						
 						<td>
 						
-						<c:if test="${item.attachment_id ne null}">
-							
-							<img onclick="getVisitorImage('${item.attachment_id}')" src="BufferedImagesFolder/dummyImage.jpg" height="30px" width="30px">
-						</c:if>
 
+						<c:forTokens items="${item.attachmentIds}" delims="," var="mySplit">
+   							
+							<img onclick="getVisitorImage('${mySplit}')" src="BufferedImagesFolder/dummyImage.jpg" height="30px" width="30px">
+						</c:forTokens>
+
+
+						
 						</td>
 						
 						

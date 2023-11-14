@@ -6555,20 +6555,19 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(getDateASYYYYMMDD(hm.get("txtfromdate").toString()));
 		parameters.add(getDateASYYYYMMDD(hm.get("txttodate").toString()));
 		return getListOfLinkedHashHashMap(parameters,
-				"select\r\n"
-				+ "	ve.*,tum.*,tam.attachment_id \r\n"
-				+ "from\r\n"
-				+ "	visitor_entry ve left outer join 	tbl_user_mst tum on tum.user_id=ve.contact_to_employee left outer join tbl_attachment_mst tam  on tam.file_id=ve.visitor_id\r\n"
-				+ "	\r\n"
-				+ "where\r\n"
-				+ "	\r\n"
-				+ "	 ve.app_id =?\r\n"
-				+ "	and date(in_time) between ? and ?\r\n"
-				+ "	and ve.activate_flag = 1\r\n"
-				+ "order by\r\n"
-				+ "	in_time desc;\r\n"
-				+ "	\r\n"
-				+ "",
+		"select\n" + 
+		"ve.*,tum.*,\n" + 
+		"(\n" + 
+		"select group_concat(attachment_id) from tbl_attachment_mst tam where file_id =ve.visitor_id\n" + 
+		") as attachmentIds\n" + 
+		"from\n" + 
+		"visitor_entry ve\n" + 
+		"left outer join tbl_user_mst tum on tum.user_id=ve.contact_to_employee\n" + 
+		"where\n" + 
+		"ve.app_id =? and ve.activate_flag = 1\n" + 
+		"and date(in_time) between ? and ?\n" + 
+		"order by\n" + 
+		"in_time desc\n",
 				con);
 
 	}
