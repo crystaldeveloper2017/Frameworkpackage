@@ -6621,15 +6621,43 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
 	}
-	public List<LinkedHashMap<String, Object>> getLeaves(String fromDate,String toDate,String emp_id,Connection con)
+	public List<LinkedHashMap<String, Object>> getLeaves(String fromDate,String emp_id,Connection con)
+			throws SQLException, ClassNotFoundException, ParseException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(getDateASYYYYMMDD(fromDate));
+		String query="select\r\n"
+		+ "	*,date_format(from_date,'%d/%m/%Y') as FormattedFromDate,date_format(to_date,'%d/%m/%Y') as FormattedToDate, \r\n"
+		+ "	tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 \r\n "
+		+" where (? between from_date and to_date) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
+
+		if (!emp_id.equals(""))
+		{
+
+			parameters.add(emp_id);
+			query+=" and tlr.employee_id=?";
+
+
+		}
+	 query+=" order by from_date desc";
+		
+		return getListOfLinkedHashHashMap(parameters,
+				query, con
+				);
+	}
+
+	public List<LinkedHashMap<String, Object>> getLeavesRegister(String fromDate,String toDate,String emp_id,Connection con)
 			throws SQLException, ClassNotFoundException, ParseException {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(getDateASYYYYMMDD(fromDate));
 		parameters.add(getDateASYYYYMMDD(toDate));
+
+		parameters.add(getDateASYYYYMMDD(fromDate));
+		parameters.add(getDateASYYYYMMDD(toDate));
+	
 		String query="select\r\n"
 		+ "	*,date_format(from_date,'%d/%m/%Y') as FormattedFromDate,date_format(to_date,'%d/%m/%Y') as FormattedToDate, \r\n"
 		+ "	tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 \r\n "
-		+" where ((? between from_date and to_date) or (? between from_date and to_date)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
+		+" where ((from_date between ? and ?) or (to_date between ? and ?) )  and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
 
 		if (!emp_id.equals(""))
 		{
