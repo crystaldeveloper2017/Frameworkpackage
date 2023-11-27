@@ -18,6 +18,8 @@
 <c:set var="fromDate" value='${requestScope["outputObject"].get("fromDate")}' />
 <c:set var="toDate" value='${requestScope["outputObject"].get("toDate")}' />
 
+<c:set var="empdetails" value='${requestScope["outputObject"].get("empdetails")}' />
+
 
 <datalist id="listOfEmployee">
 <c:forEach items="${listOfEmployees}" var="cat">
@@ -103,6 +105,9 @@
                        <th><b>To Date</b></th>
 					    <th><b>Updated Date</b></th>
 					   
+
+					    <th></th>
+
                      
                     </tr>
                   </thead>
@@ -142,7 +147,7 @@
       "paging": true,      
       "lengthChange": false,
       "searching": false,
-      "ordering": false,
+      "ordering": true,
       "info": true,
       "autoWidth": false,
       "responsive": true,
@@ -255,6 +260,14 @@ function resetEmployee()
 	ContactToEmployee.disabled=false;
 	ContactToEmployee.value="";
 	hdnselectedemployee.value=0;
+}
+if ('${param.emp_id}'!="")
+{
+
+
+
+ContactToEmployee.value='${empdetails.name}'
+ContactToEmployee.disabled=true;
 }
 
   

@@ -14,9 +14,10 @@
 
 <c:set var="message" value='${requestScope["outputObject"].get("ListOfEmployees")}' />
 <c:set var="txtfromdate" value='${requestScope["outputObject"].get("txtfromdate")}' />
-<c:set var="txttodate" value='${requestScope["outputObject"].get("txttodate")}' />
+
 <c:set var="fromDate" value='${requestScope["outputObject"].get("fromDate")}' />
-<c:set var="toDate" value='${requestScope["outputObject"].get("toDate")}' />
+<c:set var="empdetails" value='${requestScope["outputObject"].get("empdetails")}' />
+
 
 
 <datalist id="listOfEmployee">
@@ -43,20 +44,11 @@
 		
 		<div class="col-sm-2" align="center">
 			<div class="input-group input-group-sm" style="width: 200px;">
-			 	<input type="text" id="txtfromdate" onchange="checkforvalidfromtodate();ReloadFilters();"  name="txtfromdate" readonly class="form-control date_field" placeholder="From Date"/>
+			 	<input type="text" id="txtfromdate" onchange="ReloadFilters();"  name="txtfromdate" readonly class="form-control date_field" placeholder="From Date"/>
 			</div>
 		</div>
 		
-		<div class="col-sm-1" align="center">
-			<label for="txttodate">To Date</label>
-		</div>
-		
-		<div class="col-sm-2" align="center">
-			<div class="input-group input-group-sm" style="width: 200px;">
-				<input type="text" id="txttodate"  onchange="checkforvalidfromtodate();ReloadFilters();"    name="txttodate" readonly class="form-control date_field"  placeholder="To Date"/>
-			</div>
-		</div>
-                            
+		          
 	<div class="col-sm-3">
 	<div class="form-group">
 		
@@ -101,7 +93,10 @@
 					  <th><b>Remark</b></th>
                      <th><b>From Date</b></th>
                        <th><b>To Date</b></th>
+
 					    <th><b>Updated Date</b></th>
+					   <th></th>
+
 					   
                      
                     </tr>
@@ -141,7 +136,7 @@
       "paging": true,      
       "lengthChange": false,
       "searching": false,
-      "ordering": false,
+      "ordering": true,
       "info": true,
       "autoWidth": false,
       "responsive": true,
@@ -151,41 +146,18 @@
   
   
   $( "#txtfromdate" ).datepicker({ dateFormat: 'dd/mm/yy' });
-  $( "#txttodate" ).datepicker({ dateFormat: 'dd/mm/yy' });
-
+  
 
 
   txtfromdate.value='${txtfromdate}';
-  txttodate.value='${txttodate}';
   
   document.getElementById("divTitle").innerHTML="Current Leave Register";
   
   
-  function checkforvalidfromtodate()
-  {        	
-  	var fromDate=document.getElementById("txtfromdate").value;
-  	var toDate=document.getElementById("txttodate").value;
-  	
-  	var fromDateArr=fromDate.split("/");
-  	var toDateArr=toDate.split("/");
-  	
-  	
-  	var fromDateArrDDMMYYYY=fromDate.split("/");
-  	var toDateArrDDMMYYYY=toDate.split("/");
-  	
-  	var fromDateAsDate=new Date(fromDateArrDDMMYYYY[2],fromDateArrDDMMYYYY[1]-1,fromDateArrDDMMYYYY[0]);
-  	var toDateAsDate=new Date(toDateArrDDMMYYYY[2],toDateArrDDMMYYYY[1]-1,toDateArrDDMMYYYY[0]);
-  	
-  	if(fromDateAsDate>toDateAsDate)
-  		{
-  			alert("From Date should be less than or equal to To Date");
-  			window.location.reload();        			
-  		}
-  }
   
   function ReloadFilters()
   {	 	  
-  	  		window.location="?a=showLeaveRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value+"&emp_id="+hdnselectedemployee.value;
+  	  		window.location="?a=showCurrentLeaveRegister&txtfromdate="+txtfromdate.value+"&emp_id="+hdnselectedemployee.value;
 		  
   }
 
@@ -255,6 +227,15 @@ function resetEmployee()
 	ContactToEmployee.value="";
 	hdnselectedemployee.value=0;
 }
+if ('${param.emp_id}'!="")
+{
+
+
+
+ContactToEmployee.value='${empdetails.name}'
+ContactToEmployee.disabled=true;
+}
+
 
   
 </script>

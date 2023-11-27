@@ -2,11 +2,15 @@ package com.crystal.customizedpos.Configuration;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -18,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -9763,7 +9768,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
-	public CustomResultObject addVisitor(HttpServletRequest request, Connection con) throws FileUploadException {
+	public CustomResultObject addVisitor(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
 
 		CustomResultObject rs = new CustomResultObject();
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -9791,26 +9796,49 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 
 		long visitorId = hm.get("hdnvisitorId").equals("") ? 0l : Long.parseLong(hm.get("hdnvisitorId").toString());
+
+		List<String> lstBase64ImageContent=new ArrayList<>();
+		for(int i=0;i<10;i++)
+		{			
+			if(hm.get("hdnphotobase64"+i)==null)
+			{
+				break;
+			}
+
+			lstBase64ImageContent.add(hm.get("hdnphotobase64"+i).toString());
+		}
+
+
+		
+		
+
+		
+
+
 		try {
 
-			if (visitorId == 0) {
+			
 				visitorId = lObjConfigDao.AddVisitor(con, hm);
-				
-				
-				String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
-				if(!toUpload.isEmpty())
+				for(String base64ImageContent:lstBase64ImageContent)
 				{
-					for(FileItem f:toUpload)
-					{
-						f.write(new File(DestinationPath+f.getName()));					
-						long attachmentId=cf.uploadFileToDBDual(DestinationPath+f.getName(), con, "Image", visitorId);					
-						Files.copy(Paths.get(DestinationPath+f.getName()), Paths.get(DestinationPath+attachmentId+f.getName()),StandardCopyOption.REPLACE_EXISTING);
-					}
+					
+					base64ImageContent=base64ImageContent.split(",")[1];
+					byte[] decodedImg = Base64.getDecoder()
+								.decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
+					String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+				Path destinationFile = Paths.get(DestinationPath, "/myImage"+visitorId+".png");
+				Files.write(destinationFile, decodedImg);
+				uploadFileToDB(DestinationPath+"/myImage"+visitorId+".png", con, "Image", visitorId);
+				Files.delete(destinationFile);
 				}
 				
 				
 				
-			} 
+				
+				
+				
+			
 			rs.setAjaxData("<script>window.location='?a=showVisitors'</script>");
 			rs.setReturnObject(outputMap);
 			
@@ -10022,26 +10050,26 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
-		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
 		String emp_id = request.getParameter("emp_id") == null ? "" : request.getParameter("emp_id");
 
 		
 		if (fromDate.equals("")) {
 			fromDate = lObjConfigDao.getDateFromDB(con);
 		}
-		if (toDate.equals("")) {
-			toDate = lObjConfigDao.getDateFromDB(con);
-		}
 		
 		
 		try
 		{
 			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
-			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,emp_id,con);
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,emp_id,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
 
-			outputMap.put("txttodate", toDate);
+			if (!emp_id.equals(""))
+			{
+				outputMap.put("empdetails", lObjConfigDao.getEmployeeDetails(Long.valueOf(emp_id),con));
+
+			}
 
 			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 				
@@ -10654,11 +10682,17 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try
 		{
 			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
-			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,toDate,emp_id,con);
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeavesRegister(fromDate,toDate,emp_id,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
 
 			outputMap.put("txttodate", toDate);
+			if (!emp_id.equals(""))
+			{
+				outputMap.put("empdetails", lObjConfigDao.getEmployeeDetails(Long.valueOf(emp_id),con));
+
+			}
+
 
 			outputMap.put("fromDate", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 				
@@ -10688,4 +10722,31 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		return rs;
 	}
+
+	
+
+	public CustomResultObject getFileFromDbToBuffer(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long attachment_id=request.getParameter("attachment_id").equals("")?-1:Integer.parseInt(request.getParameter("attachment_id"));		
+		HashMap<String, Object> outputMap=new HashMap<>();				
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";
+		String returnAjaxString;
+		try
+		{
+			String FileName=copyAttachmentsFromDBToGivenPath(DestinationPath,String.valueOf(attachment_id),con);
+			rs.setAjaxData(FileName);
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+
+	
+
+
 }

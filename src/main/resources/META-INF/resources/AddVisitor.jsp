@@ -100,6 +100,20 @@
 
 function addVisitor()
 {	
+
+  var listofPhotosImage=document.getElementsByClassName("photosimg");
+  for(var m=0;m<listofPhotosImage.length;m++)
+  {
+    hdnphotosbase64div.innerHTML+="<input type='hidden' name='hdnphotobase64"+m+"' value='"+document.getElementById("photo"+m).src+"'>";
+  }
+
+
+  
+
+  
+  
+  
+  
 	
 	 if(visitorname.value=="")
 	  {
@@ -282,17 +296,22 @@ function resetEmployee()
 
   
   
-      <div class="contentarea">
+      <div class="contentarea col-sm-12">
  
-  <div class="camera">
+  <div class="camera " >
     <video id="video">Video stream not available.</video>
     <button id="startbutton">Take photo (F4)</button> 
   </div>
   <canvas id="canvas">
   </canvas>
-  <div class="output">
-    <img id="photo" name="photo" alt="The screen capture will appear in this box."> 
   </div>
+  <div class="output col-sm-12" id="output">
+    
+  </div>
+
+<div id="hdnphotosbase64div">
+  
+</div>
   
 </div>
   
@@ -439,7 +458,7 @@ callerUrl.value=(arr[0]+"//"+arr[1]+arr[2]+"/"+arr[3]+"/");
   // format data URL. By drawing it on an offscreen canvas and then
   // drawing that to the screen, we can change its size and/or apply
   // other changes before drawing it.
-
+  var clicknumber=0;
   function takepicture() {
     var context = canvas.getContext('2d');
     if (width && height) {
@@ -448,7 +467,12 @@ callerUrl.value=(arr[0]+"//"+arr[1]+arr[2]+"/"+arr[3]+"/");
       context.drawImage(video, 0, 0, width, height);
     
       var data = canvas.toDataURL('image/png');
-      photo.setAttribute('src', data);
+
+  document.getElementById("output").innerHTML+=`<img class="col-sm-3 photosimg" id="photo`+clicknumber+`"  name="photo" alt="The screen capture will appear in this box."> `;
+    
+
+      document.getElementById("photo"+clicknumber).setAttribute('src', data);
+      clicknumber++;
     } else {
       clearphoto();
     }

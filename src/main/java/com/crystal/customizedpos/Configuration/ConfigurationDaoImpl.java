@@ -6555,20 +6555,19 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(getDateASYYYYMMDD(hm.get("txtfromdate").toString()));
 		parameters.add(getDateASYYYYMMDD(hm.get("txttodate").toString()));
 		return getListOfLinkedHashHashMap(parameters,
-				"select\r\n"
-				+ "	*\r\n"
-				+ "from\r\n"
-				+ "	visitor_entry ve left outer join 	tbl_user_mst tum on tum.user_id=ve.contact_to_employee \r\n"
-				+ "	\r\n"
-				+ "where\r\n"
-				+ "	\r\n"
-				+ "	 ve.app_id =?\r\n"
-				+ "	and date(in_time) between ? and ?\r\n"
-				+ "	and ve.activate_flag = 1\r\n"
-				+ "order by\r\n"
-				+ "	in_time desc;\r\n"
-				+ "	\r\n"
-				+ "",
+		"select\n" + 
+		"ve.*,tum.*,\n" + 
+		"(\n" + 
+		"select group_concat(attachment_id) from tbl_attachment_mst tam where file_id =ve.visitor_id\n" + 
+		") as attachmentIds\n" + 
+		"from\n" + 
+		"visitor_entry ve\n" + 
+		"left outer join tbl_user_mst tum on tum.user_id=ve.contact_to_employee\n" + 
+		"where\n" + 
+		"ve.app_id =? and ve.activate_flag = 1\n" + 
+		"and date(in_time) between ? and ?\n" + 
+		"order by\n" + 
+		"in_time desc\n",
 				con);
 
 	}
@@ -6621,15 +6620,43 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
 	}
-	public List<LinkedHashMap<String, Object>> getLeaves(String fromDate,String toDate,String emp_id,Connection con)
+	public List<LinkedHashMap<String, Object>> getLeaves(String fromDate,String emp_id,Connection con)
+			throws SQLException, ClassNotFoundException, ParseException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(getDateASYYYYMMDD(fromDate));
+		String query="select\r\n"
+		+ "	*,date_format(from_date,'%d/%m/%Y') as FormattedFromDate,date_format(to_date,'%d/%m/%Y') as FormattedToDate, \r\n"
+		+ "	tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 \r\n "
+		+" where (? between from_date and to_date) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
+
+		if (!emp_id.equals(""))
+		{
+
+			parameters.add(emp_id);
+			query+=" and tlr.employee_id=?";
+
+
+		}
+	 query+=" order by from_date desc";
+		
+		return getListOfLinkedHashHashMap(parameters,
+				query, con
+				);
+	}
+
+	public List<LinkedHashMap<String, Object>> getLeavesRegister(String fromDate,String toDate,String emp_id,Connection con)
 			throws SQLException, ClassNotFoundException, ParseException {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(getDateASYYYYMMDD(fromDate));
 		parameters.add(getDateASYYYYMMDD(toDate));
+
+		parameters.add(getDateASYYYYMMDD(fromDate));
+		parameters.add(getDateASYYYYMMDD(toDate));
+	
 		String query="select\r\n"
 		+ "	*,date_format(from_date,'%d/%m/%Y') as FormattedFromDate,date_format(to_date,'%d/%m/%Y') as FormattedToDate, \r\n"
 		+ "	tum.name as EmployeeName,tum2.name as SuperVisorName from trn_leave_register tlr,tbl_user_mst tum,tbl_user_mst tum2 \r\n "
-		+" where ((? between from_date and to_date) or (? between from_date and to_date)) and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
+		+" where ((from_date between ? and ?) or (to_date between ? and ?) )  and tum.user_id=tlr.employee_id and tum2.user_id=tlr.supervisor_id and tlr.activate_flag=1 ";
 
 		if (!emp_id.equals(""))
 		{

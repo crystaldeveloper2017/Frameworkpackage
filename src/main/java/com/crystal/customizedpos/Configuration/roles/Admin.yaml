@@ -70,6 +70,7 @@
   - showAddAccessBlockEntry
   - saveAccessBlockEntry
   - deleteAccessBlockEntry
+  - getFileFromDbToBuffer
   elements: 
   - 39
   - 40
