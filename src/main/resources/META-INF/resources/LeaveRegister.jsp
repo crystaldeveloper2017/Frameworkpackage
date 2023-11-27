@@ -101,6 +101,8 @@
 					  <th><b>Remark</b></th>
                      <th><b>From Date</b></th>
                        <th><b>To Date</b></th>
+					    <th><b>Updated Date</b></th>
+					   
                      
                     </tr>
                   </thead>
@@ -114,6 +116,8 @@
 						<td>${item.remark}</td>						
 						<td>${item.FormattedFromDate}</td>
             <td>${item.FormattedToDate}</td>
+			<td>${item.updated_date}
+			
             <td><button class="btn btn-danger" onclick="deleteLeave(${item.leave_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
