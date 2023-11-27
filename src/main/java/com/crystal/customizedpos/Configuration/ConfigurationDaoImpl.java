@@ -6615,7 +6615,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add( getDateASYYYYMMDD(hm.get("txttoDate").toString()));	
 		
 		
-		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?,?,?,1)";
+		String insertQuery = "insert into trn_leave_register values (default,?,?,?,?,?,?,1,sysdate())";
 		
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
