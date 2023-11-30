@@ -1,0 +1,23 @@
+name: Deploy to Ubuntu
+
+on:
+  push:
+    branches:
+      - SKPSecurityGate
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.UBUNTU_PRIVATE_KEY }}
+
+    - name: SSH into Ubuntu machine
+      run: |
+        BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@hisaabcloud.in "cd gitrepos && sudo ./patch.sh ${BRANCH_NAME}"
