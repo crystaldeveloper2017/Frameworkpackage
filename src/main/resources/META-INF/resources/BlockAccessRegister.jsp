@@ -152,7 +152,7 @@ function addCategory()
               
               
               <!-- /.card-header -->
-              <div class="card-body table-responsive p-0" style="height: 580px;">                
+              <div class="card-body table-responsive p-0" style="height: 800px;">                
                 <table id="example1"class="table table-head-fixed  table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                   <thead>
                     <tr>
@@ -162,6 +162,7 @@ function addCategory()
 					 <th><b>Employee Name</b></th>
                      <th><b>Remarks</b></th>
 					  <th><b>Updated By</b></th>
+					   <th><b>Qr Code</b></th>
                      
                      <th></th>
                     </tr>
@@ -174,6 +175,7 @@ function addCategory()
 						<td>${item.name}</td>
 						<td>${item.remarks}</td>
 							<td>${item.updated_by}</td>	
+							<td>${item.qr_code}</td>
 				<td><button class="btn btn-danger" onclick="deleteAccessBlockEntry(${item.access_block_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
@@ -202,7 +204,7 @@ function addCategory()
       "info": true,
       "autoWidth": false,
       "responsive": true,
-      "pageLength": 50
+      "pageLength": 100
     });
   });
   
