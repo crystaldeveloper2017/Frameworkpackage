@@ -1,16 +1,80 @@
 - roleName: "Manager"
   roleId: 5
   actions: 
+  - showLeaveRegister
+  - showVendorMaster
+  - showAddVendor
+  - addVendor
+  - deleteVendor
+  - deleteLeave
+  - showAttendanceRegister
+  - showInwardRegister
+  - showInwardEntry
+  - showShiftMaster
+  - addShift
+  - deleteShift
+  - showAddShift
+  - saveSupervisorSubmitLeave
+  - showCurrentLeaveRegister
+  - checkoutVisitor
+  - checkInThisEmployee
+  - getClientServiceMappingForThisClient
+  - showAddEmployee
+  - showSupervisorSubmitLeave
+  - saveSupervisorSubmittedLeave
+  - showChangePassword
+  - showHolidayMaster
+  - showAddHoliday
+  - addHoliday
+  - deleteHoliday
+  - showVisitors
+  - showAddVisitor
+  - addVisitor
+  - deleteVisitor
+  - showCheckInScreen
+  - addRemoveClientServiceMapping
+  - getServiceMappingForthisClient
+  - showClientServicesMapping
+  - notifyjsp
+  - showTechnicals
+  - showCheckInScreengetOrderDetailsById
   - showUserAudit
   - showHomePage
+  - showCategoryMasterNew
+  - deleteCategory
   - validateLogin
   - Logout
   - showUserRoleMapping
   - getRoleDetailsForthisUser
   - addRemoveRole
+  - showEmployeeMaster
+  - addEmployee
+  - deleteEmployee
+  - showAddEmployee
+  - showClientMaster
+  - showAddClient
+  - addClient
+  - deleteClient
+  - searchForClient
+  - showServiceMaster
+  - showAddCategory
+  - addService
+  - deleteService
+  - showAddService
+  - showGroupMaster
+  - addGroup
+  - showAddGroup
+  - saveClient
+  - showUserDetails
+  - showAccessBlockEntry
+  - showAddAccessBlockEntry
+  - saveAccessBlockEntry
+  - deleteAccessBlockEntry
+  - getFileFromDbToBuffer
   elements: 
+  - 39
+  - 40
   - 11
-  - 12
   - 21
   - 22
   - 23
@@ -19,3 +83,18 @@
   - 10
   - 700195
   - 700197
+  - 700165
+  - 700168
+  - 700157
+  - 700158
+  - 700160
+  - 700165
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 41
+  - 42

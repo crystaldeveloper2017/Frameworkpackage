@@ -1,21 +1,18 @@
 - roleName: "Supervisor"
   roleId: 2
   actions: 
-  - showUserAudit
+  - showSupervisorSubmitLeave
+  - showAccessBlockEntry
+  - showLeaveRegister
   - showHomePage
   - validateLogin
   - Logout
-  - showUserRoleMapping
   - getRoleDetailsForthisUser
-  - addRemoveRole
   elements:
-  - 11
-  - 12
-  - 21
-  - 22
-  - 23
-  - 24
-  - 25
-  - 10
-  - 700195
-  - 700197
+  - 700165
+  - 33
+  - 34
+  - 42
+  - 35
+  - 40
+ 
