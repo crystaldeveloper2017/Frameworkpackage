@@ -8,6 +8,7 @@
   - validateLogin
   - Logout
   - getRoleDetailsForthisUser
+  - saveSupervisorSubmitLeave
   elements:
   - 700165
   - 33
