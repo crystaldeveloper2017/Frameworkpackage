@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -51,6 +52,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -1090,7 +1092,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			List<String> listFromServerFolder = Arrays.asList(f1.list());
 			ArrayList<Object> parameters = new ArrayList<>();
 			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1  ",
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 ",
 					con);
 			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
 			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
@@ -1104,34 +1106,6 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			}
 
 		}
-	}
-
-
-	public String copyAttachmentsFromDBToGivenPath(String persistentPath,String attachmentId,Connection con) throws ClassNotFoundException, SQLException, IOException
-	{
-		String DestinationPath = persistentPath;
-		logger.error("Destination path is"+DestinationPath);
-		logger.error("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);		
-		
-		
-			
-			
-			ArrayList<Object> parameters = new ArrayList<>();
-			parameters.add(attachmentId);
-			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 and attachment_id=? ",
-					con);
-			
-			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);			
-			ArrayList<String> namesList = new ArrayList<>(setFromDb);
-
-			
-
-			actualCopy(DestinationPath, con, namesList);
-				
-			return namesList.get(0);
-
-		
 	}
 	
 	public void copyFromSrcToDesitnationIfNotExist(String sourcePath,String destinationPath) throws IOException
@@ -2079,7 +2053,23 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 	
 	
-	
+	public LinkedHashMap<String,String> getMapFromRequest(HttpServletRequest req)
+	{
+		LinkedHashMap<String,String> lhm=new LinkedHashMap<>();
+
+		Enumeration<String> parameterNames = req.getParameterNames();
+        // Iterate through parameter names and print key-value pairs
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            
+            // Using getParameter for a single-value parameter
+            String paramValue = req.getParameter(paramName);
+			logger.debug("getMapFromRequest : Putting Parameter Key " + paramName + " and Value "+paramValue + " in the Linked Hashmap");
+            lhm.put(paramName, paramValue);
+        }
+		return lhm;
+		
+	}
 	
 	
 	
