@@ -2053,9 +2053,9 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 	
 	
-	public LinkedHashMap<String,String> getMapFromRequest(HttpServletRequest req)
+	public HashMap<String,Object> getMapFromRequest(HttpServletRequest req)
 	{
-		LinkedHashMap<String,String> lhm=new LinkedHashMap<>();
+		HashMap<String,Object> lhm=new HashMap<>();
 
 		Enumeration<String> parameterNames = req.getParameterNames();
         // Iterate through parameter names and print key-value pairs
@@ -2064,7 +2064,7 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
             
             // Using getParameter for a single-value parameter
             String paramValue = req.getParameter(paramName);
-			logger.debug("getMapFromRequest : Putting Parameter Key " + paramName + " and Value "+paramValue + " in the Linked Hashmap");
+			logger.debug("getMapFromRequest : Putting Parameter Key " + paramName + " and Value "+paramValue + " in the Hashmap");
             lhm.put(paramName, paramValue);
         }
 		return lhm;
