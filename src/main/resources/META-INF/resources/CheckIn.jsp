@@ -208,8 +208,9 @@ docReady(function() {
               
               if(resposneTextReceived[0].includes("Access is blocked for this employee"))
               {
-                    errorBeep();
+                    
                     alert(resposneTextReceived[0]);
+                    errorBeep();
               }
               else
               {
