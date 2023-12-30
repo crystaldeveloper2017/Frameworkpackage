@@ -1,6 +1,7 @@
 - roleName: "Admin"
   roleId: 1
   actions: 
+  - showAccessDenied
   - showLeaveRegister
   - showVendorMaster
   - showAddVendor

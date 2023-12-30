@@ -9605,6 +9605,18 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+	public CustomResultObject showAccessDenied(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		rs.setReturnObject(outputMap);
+		rs.setViewName("../AccessDenied.jsp");		
+		return rs;
+	}
+	
+
+	
 	
 	
 	public CustomResultObject addHoliday(HttpServletRequest request,Connection con) throws Exception

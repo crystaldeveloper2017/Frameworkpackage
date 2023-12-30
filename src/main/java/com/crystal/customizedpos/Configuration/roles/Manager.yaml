@@ -66,6 +66,7 @@
   - saveAccessBlockEntry
   - deleteAccessBlockEntry
   - getFileFromDbToBuffer
+  - showAccessDenied
   elements: 
   - 39
   - 40

@@ -9,6 +9,7 @@
   - Logout
   - getRoleDetailsForthisUser
   - saveSupervisorSubmitLeave
+  - showAccessDenied
   elements:
   - 700165
   - 33

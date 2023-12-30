@@ -208,9 +208,7 @@ docReady(function() {
               
               if(resposneTextReceived[0].includes("Access is blocked for this employee"))
               {
-                    
-                    alert(resposneTextReceived[0]);
-                    errorBeep();
+                window.location="?a=showAccessDenied";
               }
               else
               {
