@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div class="error-template">
+            <div class="error-template" style="color:red">
                 <h1>
                     Access Denied for this employee</h1>
                 <h2>
