@@ -6866,12 +6866,8 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	throws ClassNotFoundException, SQLException {				
 
 		ArrayList<Object> parameters = new ArrayList<>();
-		String query="select * from mst_vendor vendor, cmn_country_mst country where activate_flag=1 and country.country_id=vendor.country_id";
-		if(searchString!=null && !searchString.equals(""))
-		{
-			query+=" and vendor.vendor_name like ?";					
-			parameters.add("%"+searchString+"%");
-		}
+		String query="select * from mst_vendor where activate_flag=1 ";
+		
 		return getListOfLinkedHashHashMap(parameters,query,con);
 
 		}
@@ -6891,7 +6887,6 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		parameters.add(hm.get("vendorName"));
 		parameters.add(hm.get("address")); 
 		parameters.add(hm.get("state"));
-		parameters.add(hm.get("country"));
 		parameters.add(hm.get("pincode"));
 		parameters.add(hm.get("contactNo1"));
 		parameters.add(hm.get("contactNo2"));
@@ -6901,7 +6896,9 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		parameters.add(hm.get("panNo"));
 		parameters.add(hm.get("ismsme"));
 		parameters.add(hm.get("uAdhaar"));
-		String insertQuery = "insert into mst_vendor values (default,?,?,?,?,?,?,?,?,?,?,?,?,?,1)";	
+		parameters.add(hm.get("qrCode"));
+		parameters.add(hm.get("firmName"));
+		String insertQuery = "insert into mst_vendor values (default,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?)";	
 
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
@@ -6912,7 +6909,6 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		parameters.add(hm.get("vendorName"));
 		parameters.add( hm.get("address"));
 		parameters.add( hm.get("state"));
-		parameters.add(hm.get("country"));
 		parameters.add(hm.get("pincode"));
 		parameters.add(hm.get("contactNo1"));
 		parameters.add(hm.get("contactNo2"));
@@ -6922,10 +6918,12 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		parameters.add(hm.get("panNo"));
 		parameters.add(hm.get("ismsme"));
 		parameters.add(hm.get("uAdhaar"));
+		parameters.add(hm.get("qrCode"));
+		parameters.add(hm.get("firmName"));
 
 		parameters.add(vendorId);
 		insertUpdateDuablDB(
-				"UPDATE mst_vendor  SET vendor_name=?,address=?, state = ?, country_id=?, pincode=?,contact_no1=?,contact_no2=?,email=?,gst=?,contact_person=?,pan_no=?,ismsme=?,u_adhaar=?  WHERE vendor_id=?",
+				"UPDATE mst_vendor  SET vendor_name=?,address=?, state = ?, pincode=?,contact_no1=?,contact_no2=?,email=?,gst=?,contact_person=?,pan_no=?,ismsme=?,u_adhaar=?,qr_code=?,firm_name=?  WHERE vendor_id=?",
 				parameters, conWithF);
 		return "Vendor Updated Succesfully";
 

@@ -10571,7 +10571,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String searchString=request.getParameter("searchString");
 		
 		try {
-			String[] colNames = { "vendorName","contactPerson", "address", "state" , "country","email","contact1"};
+			String[] colNames = { "vendorName","contactPerson", "address", "state" ,"email","contact1"};
 
 			List<LinkedHashMap<String, Object>> lst = null;
 
@@ -10603,7 +10603,6 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			if (vendorId != 0) {
 				outputMap.put("vendorDetails", lObjConfigDao.getVendorDetails(vendorId, con));
 			}
-			outputMap.put("ListOfCountries", lObjConfigDao.getCountriesList(con));
 			rs.setViewName("../AddVendor.jsp");
 			rs.setReturnObject(outputMap);
 		} catch (Exception e) {
@@ -10648,7 +10647,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 			rs.setReturnObject(outputMap);
 
-			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showVendorMaster'</script>");
+			rs.setAjaxData("<script>window.location='?a=showVendorMaster'</script>");
+
 
 		} catch (Exception e) {
 			writeErrorToDB(e);

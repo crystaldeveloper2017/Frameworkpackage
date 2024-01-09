@@ -80,14 +80,14 @@ function deleteVendor(vendorId)
                 <table id="example1"class="table table-head-fixed  table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                 <thead>
                    <tr>
-                   	<th><b>Vendor Id</b></th><th><b>Vendor Name</b></th><th><b>Contact Person</b></th><th><b>Address</b></th><th><b>State</b></th><th><b>Country</b></th><th><b>Email</b></th><th><b>Contact No1</b></th>
+                   	<th><b>Vendor Id</b></th><th><b>Vendor Name</b></th><th><b>Contact Person</b></th><th><b>Address</b></th><th><b>State</b></th><th><b>Email</b></th><th><b>Contact No1</b></th>
                    	<th></th><th></th>
                    </tr>
                  </thead>
                  <tbody>
 				 <c:forEach items="${message}" var="item">
 					<tr>
-						<td>${item.vendor_id}</td><td>${item.vendor_name}</td><td>${item.contact_person}</td><td>${item.address}</td><td>${item.state}</td><td>${item.country_name}</td><td>${item.email}</td><td>${item.contact_no1}</td>
+						<td>${item.vendor_id}</td><td>${item.vendor_name}</td><td>${item.contact_person}</td><td>${item.address}</td><td>${item.state}</td><td>${item.email}</td><td>${item.contact_no1}</td>
 						<td><a href="?a=showAddVendor&vendorId=${item.vendor_id}">Edit</a></td><td><button class="btn btn-danger" onclick="deleteVendor(${item.vendor_id})">Delete</button></td>
 					</tr>
 				</c:forEach>			
