@@ -10571,7 +10571,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String searchString=request.getParameter("searchString");
 		
 		try {
-			String[] colNames = { "vendorName","contactPerson", "address", "state" ,"email","contact1"};
+			String[] colNames = { "vendor_name","contact_person", "address", "state" ,"email","contact_no1"};
 
 			List<LinkedHashMap<String, Object>> lst = null;
 
