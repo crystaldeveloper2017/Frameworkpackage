@@ -889,8 +889,8 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		try
 		{
 		Class.forName("com.mysql.jdbc.Driver");
-		System.out.println("check if Mysql is running");
-		System.out.println(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+		logger.debug("check if Mysql is running");
+		logger.debug(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		}
 		catch(Exception e) {
@@ -901,6 +901,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 			break;
 				}catch(Exception e1){
+					logger.error(e1);
 					logger.debug("Mysql is not running yet");
 					Thread.sleep(1000);
 					continue;
