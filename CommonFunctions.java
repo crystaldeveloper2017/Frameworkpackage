@@ -728,6 +728,13 @@ public class CommonFunctions extends PdfPageEventHelper
                     Integer[] elementsArray = elementsList.toArray(new Integer[0]);
                     r.setElements(elementsArray);
 
+					List<Integer> reportsList = (List<Integer>) role1.get("reports");
+					if(reportsList!=null)
+					{
+						Integer[] reportsArray = reportsList.toArray(new Integer[0]);
+						r.setReports(reportsArray);
+					}
+
                     roles.put(r.getRoleId(), r);
                 }
             }
@@ -1385,6 +1392,24 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return distinctActions;
 
 	}
+
+	public HashSet<Integer> getReportsForthisUserDecoupled(long userId, Connection con,HashMap<Long, Role> roles) throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<Object>();
+		parameters.add(userId);
+		
+		String query = "select role_id from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
+		HashSet<Integer> distinctReports=new HashSet<>();
+		for(String roleName:getListOfString(parameters, query, con))
+		{
+			Integer[] roleNameReports=roles.get(Long.valueOf(roleName)).getReports();
+			 List<Integer> lst=Arrays.asList(roleNameReports);
+			 distinctReports.addAll(lst);
+		}
+		return distinctReports;
+
+	}
+
+	
 	
 	public List<String> getRoles(Long userId,Connection con) throws SQLException, ClassNotFoundException
 	{
@@ -1432,7 +1457,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		}
 	}
 
-	public void generatePDFFromList(String FileName, List<LinkedHashMap<String, Object>> listHm, String[] colNames,BigDecimal total)
+	public void generatePDFFromList(String FileName, List<LinkedHashMap<String, Object>> listHm, String[] colNames,BigDecimal total,String ReportHeading)
 			throws IOException, DocumentException {
 
 		Document document = new Document(PageSize.A4.rotate(), 20, 20, 20, 60);
@@ -1444,7 +1469,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		PdfPTable table = new PdfPTable(1);
 		PdfPCell cell;
 
-		cell = new PdfPCell(new Phrase("Export Data", new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD)));
+		cell = new PdfPCell(new Phrase(ReportHeading, new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD)));
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
 		table.addCell(cell);
@@ -1454,9 +1479,9 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		table = new PdfPTable(colNames.length);
 
 		for (String s : colNames) {
-			cell = new PdfPCell(new Phrase(s, new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL)));
+			cell = new PdfPCell(new Phrase(s, new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD)));
 			cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-			cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_MIDDLE);
+			cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_MIDDLE);			
 			table.addCell(cell);
 		}
 
@@ -1568,7 +1593,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 	public HashMap<String, Object> getCommonFileGenerator(String[] colNames, List<LinkedHashMap<String, Object>> lst,
-			String exportFlag, String DestinationPath, String userId, String documentName)
+			String exportFlag, String DestinationPath, String userId, String documentName,String ReportHeading)
 					throws IOException, DocumentException {
 
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -1586,7 +1611,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L));
+			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L),ReportHeading);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
@@ -1600,7 +1625,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	
 	
 	public HashMap<String, Object> getCommonFileGeneratorWithTotal(String[] colNames, HashMap<String, Object> hm,
-			String exportFlag, String DestinationPath, String userId, String documentName)
+			String exportFlag, String DestinationPath, String userId, String documentName,String reportHeading)
 					throws IOException, DocumentException {
 
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -1618,7 +1643,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()));
+			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()),reportHeading);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
@@ -2071,6 +2096,93 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		return lhm;
 		
 	}
+
+	public CustomResultObject showReport(HttpServletRequest request,Connection con) throws SQLException
+	{
+	 	CustomResultObject rs=new CustomResultObject();
+		
+	 	HashMap<String, Object> outputMap=new HashMap<>();			
+		
+		String report_id=request.getParameter("report_id")==null?"":request.getParameter("report_id");
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";	
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+
+		try
+	 	{   
+			LinkedHashMap reportDetails=lobjCommonDaoImpl.getReportdetails(report_id,con);
+		List<LinkedHashMap<String, Object>> listOfParameters=lobjCommonDaoImpl.getReportParameters(report_id,con);
+		List<LinkedHashMap<String, Object>> listOfColumns=lobjCommonDaoImpl.getReportColumns(report_id,con);
+
+		LinkedHashMap<String, Object> defaultParameterValues=new LinkedHashMap<>();
+
+		for(LinkedHashMap<String, Object> param:listOfParameters)
+		{
+			var parameterValue=request.getParameter(param.get("parameter_form_id").toString());
+			if(parameterValue==null &&  param.get("parameter_type").equals("date") && param.get("default_value").equals("~todaysdate"))
+			{
+				String dateFromDB=getDateFromDB(con);
+				outputMap.put(param.get("parameter_form_id").toString(),dateFromDB);	
+				defaultParameterValues.put(param.get("parameter_form_id").toString(),dateFromDB);
+			}
+			else if(parameterValue==null &&  param.get("parameter_type").equals("select"))
+			{
+				outputMap.put(param.get("parameter_form_id").toString(),param.get("default_value").toString());	
+				defaultParameterValues.put(param.get("parameter_form_id").toString(), param.get("default_value").toString());
+			}
+			else
+			{
+				outputMap.put(param.get("parameter_form_id").toString(), request.getParameter(param.get("parameter_form_id").toString()));
+			}
+		}
+
+		
+
+		
+		Class<?>[] paramString = new Class[2];
+			paramString[0] = HashMap.class;
+			paramString[1] = Connection.class;
+
+		Class<?> cls = Class.forName(reportDetails.get("class_name").toString());
+			Object obj = cls.newInstance();
+			//Thread.sleep(4000);
+			Method method = cls.getDeclaredMethod(reportDetails.get("method_name").toString(), paramString);
+			
+			
+			
+			List<LinkedHashMap<String, Object>> reportData =  (List<LinkedHashMap<String, Object>>) method.invoke(obj,outputMap, con);
+
+		 //lObjConfigDao.getWPOStatistics(outputMap,con);
+
+
+		
+		reportDetails.put("parameters", listOfParameters);
+		reportDetails.put("columns", listOfColumns);
+		outputMap.put("reportData", reportData);
+		outputMap.put("defaultParameterValues", defaultParameterValues);
+		
+		if(!exportFlag.isEmpty())
+				{				
+					List<String> columnNames=lobjCommonDaoImpl.getListOfColumns(report_id,con);
+					outputMap = getCommonFileGenerator(columnNames.toArray(new String[0]),reportData,exportFlag,DestinationPath,userId,reportDetails.get("report_name").toString(),reportDetails.get("report_name").toString());
+				}
+				else
+				{			
+					outputMap.put("reportDetails", reportDetails);
+					rs.setViewName("../Reports.jsp");		
+				}
+		rs.setReturnObject(outputMap);
+
+	 	}
+	 	catch (Exception e)
+	 	{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		return rs;
+	}
+	CommonDaoImpl lobjCommonDaoImpl=new CommonDaoImpl();
 	
 	
 	

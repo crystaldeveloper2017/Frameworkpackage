@@ -101,10 +101,14 @@ public class ControllerServiceImpl extends CommonFunctions {
 			//HashSet<String> allowedActionsForThisRole = (HashSet<String>) request.getSession().getAttribute("actions");
 			String userId="0";
 			HashSet<String> allowedActionsForThisRole=null;
+			HashSet<Integer> allowedReportsForThisRole=null;
+			
 			if(request.getSession().getAttribute("userdetails")!=null)
 			{
 				userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");			
 				 allowedActionsForThisRole= getActionsForthisUserDecoupled(Long.valueOf(userId), con,CommonFunctions.roles);			
+				 allowedReportsForThisRole= getReportsForthisUserDecoupled(Long.valueOf(userId), con,CommonFunctions.roles);			
+				 
 			}
 			//logger.info("List of Allowed Actions for this role" + allowedActionsForThisRole);
 			if (allowedActionsForThisRole == null) {
@@ -114,8 +118,17 @@ public class ControllerServiceImpl extends CommonFunctions {
 				allowedActionsForThisRole.add(action);
 			}
 
-			if (action != null && !allowedActionsForThisRole.contains(action)) {
+			if (action != null && !allowedActionsForThisRole.contains(action) ) {
 				logger.debug("Redirecting to Unauthorized Page as Action is "+action + "Allowed actions for this role is "+allowedActionsForThisRole);				
+				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
+				dispatcher.forward(request, response);
+				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);				
+				return;
+			}
+
+			String reportId=request.getParameter("report_id");
+			if (action != null && action.equals("showReport") && !allowedReportsForThisRole.contains(Integer.valueOf(reportId))) {
+				logger.debug("Redirecting to Unauthorized Page as Report is "+reportId + "Allowed Reports for this role is "+allowedReportsForThisRole);				
 				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
 				dispatcher.forward(request, response);
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);				
