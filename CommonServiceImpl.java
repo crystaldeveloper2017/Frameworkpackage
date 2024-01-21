@@ -29,12 +29,10 @@ public class CommonServiceImpl extends CommonFunctions {
 		try
 	 	{   
 			LinkedHashMap reportDetails=lobjCommonDaoImpl.getReportdetails(report_id,con);
-		List<LinkedHashMap<String, Object>> listOfParameters=lobjCommonDaoImpl.getReportParameters(report_id,con);
-		List<LinkedHashMap<String, Object>> listOfColumns=lobjCommonDaoImpl.getReportColumns(report_id,con);
 
 		LinkedHashMap<String, Object> defaultParameterValues=new LinkedHashMap<>();
 
-		for(LinkedHashMap<String, Object> param:listOfParameters)
+		for(LinkedHashMap<String, Object> param:(List<LinkedHashMap<String,Object>>) reportDetails.get("paramtersWithOptions"))
 		{
 			var parameterValue=request.getParameter(param.get("parameter_form_id").toString());
 			if(parameterValue==null &&  param.get("parameter_type").equals("date") && param.get("default_value").equals("~todaysdate"))
@@ -74,8 +72,7 @@ public class CommonServiceImpl extends CommonFunctions {
 
 
 		
-		reportDetails.put("parameters", listOfParameters);
-		reportDetails.put("columns", listOfColumns);
+		
 		outputMap.put("reportData", reportData);
 		outputMap.put("defaultParameterValues", defaultParameterValues);
 		
