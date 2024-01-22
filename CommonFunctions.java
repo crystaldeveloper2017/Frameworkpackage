@@ -1402,8 +1402,11 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		for(String roleName:getListOfString(parameters, query, con))
 		{
 			Integer[] roleNameReports=roles.get(Long.valueOf(roleName)).getReports();
+			if(roleNameReports!=null)
+			{
 			 List<Integer> lst=Arrays.asList(roleNameReports);
 			 distinctReports.addAll(lst);
+			}
 		}
 		return distinctReports;
 
