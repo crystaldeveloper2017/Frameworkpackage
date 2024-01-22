@@ -1596,7 +1596,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 	public HashMap<String, Object> getCommonFileGenerator(String[] colNames, List<LinkedHashMap<String, Object>> lst,
-			String exportFlag, String DestinationPath, String userId, String documentName,String ReportHeading)
+			String exportFlag, String DestinationPath, String userId, String documentName)
 					throws IOException, DocumentException {
 
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -1614,7 +1614,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L),ReportHeading);
+			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L),documentName);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
@@ -1628,7 +1628,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	
 	
 	public HashMap<String, Object> getCommonFileGeneratorWithTotal(String[] colNames, HashMap<String, Object> hm,
-			String exportFlag, String DestinationPath, String userId, String documentName,String reportHeading)
+			String exportFlag, String DestinationPath, String userId, String documentName)
 					throws IOException, DocumentException {
 
 		HashMap<String, Object> outputMap = new HashMap<>();
@@ -1646,7 +1646,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()),reportHeading);
+			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()),documentName);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);

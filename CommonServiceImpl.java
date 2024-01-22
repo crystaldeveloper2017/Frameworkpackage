@@ -79,7 +79,7 @@ public class CommonServiceImpl extends CommonFunctions {
 		if(!exportFlag.isEmpty())
 				{				
 					List<String> columnNames=lobjCommonDaoImpl.getListOfColumns(report_id,con);
-					outputMap = getCommonFileGenerator(columnNames.toArray(new String[0]),reportData,exportFlag,DestinationPath,userId,reportDetails.get("report_name").toString(),reportDetails.get("report_name").toString());
+					outputMap = getCommonFileGenerator(columnNames.toArray(new String[0]),reportData,exportFlag,DestinationPath,userId,reportDetails.get("report_name").toString());
 				}
 				else
 				{			
