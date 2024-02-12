@@ -9749,6 +9749,38 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+
+	
+	public CustomResultObject showVendorCheckIn(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+		try
+		{	
+			
+			LinkedHashMap<String, String> empDetails=lObjConfigDao.getEmployeeDetails(Long.valueOf(userId), connections);
+			
+			
+			outputMap.put("empDetails", empDetails);
+			outputMap.put("checkInType", lObjConfigDao.getLastCheckInType(userId,connections));
+			outputMap.put("lstLastCheckIns", lObjConfigDao.getListOfLastCheckIns(userId,10,connections));
+			
+			
+			rs.setViewName("../VendorCheckIn.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
 	
 	
 	public CustomResultObject showCheckInScreen(HttpServletRequest request,Connection connections)

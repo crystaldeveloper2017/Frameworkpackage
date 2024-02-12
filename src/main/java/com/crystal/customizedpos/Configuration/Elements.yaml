@@ -137,3 +137,8 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showLeaveRegister"
   orderNo: 1
+- elementId: 43
+  elementName: "Vendor Check In"
+  parentElementId: 700165
+  elementUrl: "?a=showVendorCheckIn"
+  orderNo: 1
