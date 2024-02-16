@@ -185,7 +185,9 @@ docReady(function() {
 	function onScanSuccess(decodedText, decodedResult) {
 		beep();
 		html5QrCode.stop();
-		
+
+        window.location="?a=showCheckInForThisVendor&qrCodeForVendor="+decodedText;
+		return;
 		
 		
 		//document.getElementById("closebutton").style.display='none';
@@ -226,7 +228,7 @@ docReady(function() {
  		  //window.location.reload();
  		}
  	  };
- 	  xhttp.open("GET","?a=checkInThisvendor&qr_code="+decodedText, true);    
+ 	  xhttp.open("GET","?a=showCheckInForThisVendor&qrCodeForVendor="+decodedText, true);    
  	  xhttp.send();
 		
 		

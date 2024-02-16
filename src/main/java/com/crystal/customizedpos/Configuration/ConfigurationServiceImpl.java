@@ -9810,8 +9810,42 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				writeErrorToDB(e);
 				rs.setHasError(true);
 		}		
+	
 		return rs;
 	}
+
+	public CustomResultObject showCheckInForThisVendor(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String qrCodeForVendor=request.getParameter("qrCodeForVendor");
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+		try
+		{	
+			
+			LinkedHashMap<String, String> vendorDetails=lObjConfigDao.getVendorDetailsByVendorCode(qrCodeForVendor, connections);
+			
+			
+			outputMap.put("vendorDetails", vendorDetails);
+			
+			
+			rs.setViewName("../CheckInScreenForThisVendor.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+	
+		return rs;
+	}
+	
+
+
 	public CustomResultObject addVisitor(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
 
 		CustomResultObject rs = new CustomResultObject();
@@ -9896,6 +9930,174 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 	}
 
+	public CustomResultObject checkoutVendor(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFactory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFactory);
+		
+		HashMap<String, Object> hm = new HashMap<>();
+		
+		String imageName = request.getParameter("photo");
+		String textfield = request.getParameter("textfield");
+		
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+		long vendor_checkin_id = hm.get("vendor_checkin_id").equals("") ? 0l : Long.parseLong(hm.get("vendor_checkin_id").toString());
+
+		List<String> lstBase64ImageContent=new ArrayList<>();
+		for(int i=0;i<10;i++)
+		{			
+			if(hm.get("hdnphotobase64"+i)==null)
+			{
+				break;
+			}
+
+			lstBase64ImageContent.add(hm.get("hdnphotobase64"+i).toString());
+		}
+
+
+		
+		
+
+		
+
+
+		try {
+
+			
+			lObjConfigDao.checkoutVendor(con, hm);
+				for(String base64ImageContent:lstBase64ImageContent)
+				{
+					
+					base64ImageContent=base64ImageContent.split(",")[1];
+					byte[] decodedImg = Base64.getDecoder()
+								.decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
+					String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+				Path destinationFile = Paths.get(DestinationPath, "/myImage"+vendor_checkin_id+".png");
+				Files.write(destinationFile, decodedImg);
+				uploadFileToDB(DestinationPath+"/myImage"+vendor_checkin_id+".png", con, "VendorImage", vendor_checkin_id);
+				Files.delete(destinationFile);
+				}
+				
+				
+				
+				
+				
+				
+			
+			rs.setAjaxData("<script>window.location='?a=showVendorsCheckIn'</script>");
+			rs.setReturnObject(outputMap);
+			
+			
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+
+	}
+
+	public CustomResultObject addVendorCheckIn(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFactory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFactory);
+		String appId = request.getParameter("app_id");
+		outputMap.put("app_id", appId);
+		HashMap<String, Object> hm = new HashMap<>();
+		hm.put("app_id", appId);
+		String imageName = request.getParameter("photo");
+		String textfield = request.getParameter("textfield");
+		
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+
+		List<String> lstBase64ImageContent=new ArrayList<>();
+		for(int i=0;i<10;i++)
+		{			
+			if(hm.get("hdnphotobase64"+i)==null)
+			{
+				break;
+			}
+
+			lstBase64ImageContent.add(hm.get("hdnphotobase64"+i).toString());
+		}
+
+
+		
+		
+
+		
+
+
+		try {
+
+			
+				long vendorCheckInId = lObjConfigDao.AddVendorCheckIn(con, hm);
+				for(String base64ImageContent:lstBase64ImageContent)
+				{
+					
+					base64ImageContent=base64ImageContent.split(",")[1];
+					byte[] decodedImg = Base64.getDecoder()
+								.decode(base64ImageContent.getBytes(StandardCharsets.UTF_8));
+					String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+				Path destinationFile = Paths.get(DestinationPath, "/myImageVendor"+vendorCheckInId+".png");
+				Files.write(destinationFile, decodedImg);
+				uploadFileToDB(DestinationPath+"/myImageVendor"+vendorCheckInId+".png", con, "VendorImage", vendorCheckInId);
+				Files.delete(destinationFile);
+				}
+				
+				
+				
+				
+				
+				
+			
+			rs.setAjaxData("<script>window.location='?a=showVendorsCheckIn'</script>");
+			rs.setReturnObject(outputMap);
+			
+			
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+
+	}
+
+	
+
 	public CustomResultObject showVisitors(HttpServletRequest request, Connection con)
 			throws SQLException, ClassNotFoundException {
 
@@ -9955,6 +10157,92 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		rs.setReturnObject(outputMap);
 		return rs;
 	}
+
+
+	public CustomResultObject showVendorsCheckIn(HttpServletRequest request, Connection con)
+			throws SQLException, ClassNotFoundException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String storeId = request.getParameter("storeId") == null ? "" : request.getParameter("storeId");
+
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		outputMap.put("app_id", appId);
+
+		// if parameters are blank then set to defaults
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+
+		outputMap.put("txtfromdate", fromDate);
+		outputMap.put("txttodate", toDate);
+
+		try {
+			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "name","checkin_time","checkout_time","image" };
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+			lst = lObjConfigDao.showVendorCheckIn(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId, "VisitorEntry");
+			} else {
+
+				Date toDateDate = new SimpleDateFormat("dd/MM/yyyy").parse(fromDate);
+
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(toDateDate);
+				cal.add(Calendar.DATE, -1);
+				toDateDate = cal.getTime();
+
+				toDate = new SimpleDateFormat("dd/MM/yyyy").format(toDateDate);
+				String startOfApplication = "23/01/1992";
+				outputMap.put("ListOfVendors", lst);
+
+				rs.setViewName("../VendorsCheckInRegister.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+
+	
+	public CustomResultObject showCheckoutForVendor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long vendor_checkin_id = request.getParameter("vendor_checkin_id") == null ? 0L
+				: Long.parseLong(request.getParameter("vendor_checkin_id"));
+
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+
+		try {
+		
+			
+			
+			outputMap.put("vendor_checkin_id",vendor_checkin_id);
+			rs.setViewName("../CheckoutVendor.jsp");
+			rs.setReturnObject(outputMap);
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	
 
 	public CustomResultObject showAddVisitor(HttpServletRequest request, Connection con) {
 		CustomResultObject rs = new CustomResultObject();
@@ -10703,6 +10991,23 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 		return rs;
 	}
+
+	public CustomResultObject deleteVendorCheckIn(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		long vendor_checkin_id = Long.parseLong(request.getParameter("vendor_checkin_id"));
+
+		try {
+
+			rs.setAjaxData(lObjConfigDao.deleteVendorCheckIn(vendor_checkin_id, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+
+	
 	public CustomResultObject showLeaveRegister(HttpServletRequest request,Connection con) throws SQLException
 	{
 		CustomResultObject rs=new CustomResultObject();

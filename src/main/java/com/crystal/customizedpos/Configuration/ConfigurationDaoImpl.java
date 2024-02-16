@@ -6535,6 +6535,33 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
 	}
+
+	public long checkoutVendor(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("vendor_checkin_id"));
+		
+		
+		String insertQuery = "update vendor_check_in_register set check_out_time=sysdate() where vendor_checkin_id=?";
+		
+		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
+
+	}
+	
+
+	public long AddVendorCheckIn(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("vendor_qr_code"));
+		parameters.add(hm.get("remarks"));
+
+		
+		
+		String insertQuery = "insert into vendor_check_in_register values (default,?,sysdate(),null,?,1)";
+		
+		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
+
+	}
 	
 	
 	
@@ -6568,6 +6595,28 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		"and date(in_time) between ? and ?\n" + 
 		"order by\n" + 
 		"in_time desc\n",
+				con);
+
+	}
+
+	public List<LinkedHashMap<String, Object>> showVendorCheckIn(HashMap<String, Object> hm, Connection con)
+			throws ClassNotFoundException, SQLException, ParseException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(getDateASYYYYMMDD(hm.get("txtfromdate").toString()));
+		parameters.add(getDateASYYYYMMDD(hm.get("txttodate").toString()));
+		return getListOfLinkedHashHashMap(parameters,
+		"select\n" + 
+"ve.*,mv.*,\n" + 
+"(\n" + 
+"select group_concat(attachment_id) from tbl_attachment_mst tam where file_id =ve.vendor_checkin_id and type='VendorImage'\n" + 
+") as attachmentIds\n" + 
+"from\n" + 
+"vendor_check_in_register ve,mst_vendor mv\n" + 
+"where\n" + 
+"ve.activate_flag = 1\n" + 
+"and date(check_in_time) between ? and ? and mv.qr_code =ve.vendor_qr_code\n" + 
+"order by\n" + 
+"check_in_time desc\n",
 				con);
 
 	}
@@ -6881,6 +6930,16 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 			"select * from mst_vendor where vendor_id=?", con);
 
 		}	
+		
+		public LinkedHashMap<String, String> getVendorDetailsByVendorCode(String vendorCode, Connection con) throws SQLException {
+
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(vendorCode);
+			return getMap(parameters,
+				"select * from mst_vendor where qr_code=?", con);
+	
+			}	
+		
 		public long addVendor(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
 
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -6937,6 +6996,17 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				parameters, conWithF);
 		return "Vendor  Deleted Succesfully";
 		}
+
+		public String deleteVendorCheckIn(long vendorId, Connection conWithF) throws Exception {
+			ArrayList<Object> parameters = new ArrayList<>();
+			parameters.add(vendorId);
+	
+			insertUpdateDuablDB("UPDATE vendor_check_in_register  SET activate_flag=0 WHERE vendor_checkin_id=?",
+					parameters, conWithF);
+			return "Vendor CheckIn Deleted Succesfully";
+			}
+			
+
 		public List<LinkedHashMap<String, Object>> getCountriesList(Connection con) throws SQLException, ClassNotFoundException 
 	{
 		

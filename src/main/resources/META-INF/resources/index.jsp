@@ -32,7 +32,7 @@
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-pencil-square-o"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Add Visitor</span>
+                <span class="info-box-text">Visitor CheckIn</span>
                 
               </div>
               <!-- /.info-box-content -->
@@ -87,7 +87,31 @@
         
           
           
-      
+                  <div class="col-12 col-sm-6 col-md-3" onclick="window.location='?a=showVendorCheckIn'">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-pencil-square-o"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Vendor CheckIn</span>
+                
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          
+           <div class="col-12 col-sm-6 col-md-3" onclick="window.location='?a=showVendorsCheckIn'">
+            <div class="info-box">
+              <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Vendor CheckIn Register</span>
+                
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
        
           
          

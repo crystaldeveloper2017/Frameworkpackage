@@ -73,6 +73,12 @@
   - deleteAccessBlockEntry
   - getFileFromDbToBuffer
   - showVendorCheckIn
+  - showCheckInForThisVendor
+  - addVendorCheckIn
+  - showVendorsCheckIn
+  - deleteVendorCheckIn
+  - showCheckoutForVendor
+  - checkoutVendor
   elements: 
   - 39
   - 40
@@ -103,3 +109,4 @@
   - 41
   - 42
   - 43
+  - 44

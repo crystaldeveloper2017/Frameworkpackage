@@ -142,3 +142,8 @@ elements:
   parentElementId: 700165
   elementUrl: "?a=showVendorCheckIn"
   orderNo: 1
+- elementId: 44
+  elementName: "Vendor CheckIn Register"
+  parentElementId: 34
+  elementUrl: "?a=showVendorsCheckIn"
+  orderNo: 1
