@@ -8,7 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      JAVA_HOME: "/home/ubuntu/jdk-21.0.1"
     steps:
 
 
@@ -20,4 +21,4 @@ jobs:
     - name: SSH into Ubuntu machine
       run: |
         BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
-        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@hisaabcloud.in "cd gitrepos && sudo ./patch.sh ${BRANCH_NAME}"
+        ssh -o StrictHostKeyChecking=no -p 22 ubuntu@hisaabcloud.in "export PATH='$PATH:/home/ubuntu/jdk-21.0.1/bin' && cd gitrepos && ./patch.sh ${BRANCH_NAME}"
