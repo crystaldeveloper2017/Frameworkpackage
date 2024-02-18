@@ -1218,6 +1218,55 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	}
 
+
+	public String actualCopyNew(String DestinationPath, Connection con, long attachmentId)
+			throws SQLException, IOException {
+		PreparedStatement ps = null;
+		FileOutputStream fos = null;
+		try {
+			String reqString = "";
+			int m = 1;
+			String fileName="";
+
+
+
+			ps = con.prepareStatement(
+					"select concat(attachment_id,file_name) as file_name,attachment_asblob from 	tbl_attachment_mst where activate_flag=1 and attachment_id=? limit 100");
+				ps.setLong(1, attachmentId);
+			
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					m++;
+					String PathToNewFile = DestinationPath + rs.getString("file_name");
+					logger.info(PathToNewFile);
+					File f = new File(PathToNewFile);
+					fileName=rs.getString(1);
+					if (!f.exists()) {
+						fos = new FileOutputStream(f);
+						byte b[];
+						Blob blob;
+						blob = rs.getBlob("attachment_asblob");
+						b = blob.getBytes(1, (int) blob.length());
+						fos.write(b);
+						fos.close();
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			return fileName;
+
+		} finally {
+			if(ps!=null)
+				ps.close();
+			if(fos!=null)
+				fos.close();
+		}
+
+	}
+
 	public String getDateTime(Connection con) throws SQLException {
 		logger.info("will fire db query 1");
 		return getMap(new ArrayList<>(), "select sysdate() as dt1 from dual", con).get("dt1");
