@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -51,6 +52,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -726,6 +728,13 @@ public class CommonFunctions extends PdfPageEventHelper
                     Integer[] elementsArray = elementsList.toArray(new Integer[0]);
                     r.setElements(elementsArray);
 
+					List<Integer> reportsList = (List<Integer>) role1.get("reports");
+					if(reportsList!=null)
+					{
+						Integer[] reportsArray = reportsList.toArray(new Integer[0]);
+						r.setReports(reportsArray);
+					}
+
                     roles.put(r.getRoleId(), r);
                 }
             }
@@ -887,8 +896,8 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		try
 		{
 		Class.forName("com.mysql.jdbc.Driver");
-		System.out.println("check if Mysql is running");
-		System.out.println(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+		logger.debug("check if Mysql is running");
+		logger.debug(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		}
 		catch(Exception e) {
@@ -899,6 +908,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 			break;
 				}catch(Exception e1){
+					logger.error(e1);
 					logger.debug("Mysql is not running yet");
 					Thread.sleep(1000);
 					continue;
@@ -1090,7 +1100,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			List<String> listFromServerFolder = Arrays.asList(f1.list());
 			ArrayList<Object> parameters = new ArrayList<>();
 			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1  ",
+					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 ",
 					con);
 			HashSet<String> setFromServerFolder = new HashSet<String>(listFromServerFolder);
 			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);
@@ -1104,34 +1114,6 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			}
 
 		}
-	}
-
-
-	public String copyAttachmentsFromDBToGivenPath(String persistentPath,String attachmentId,Connection con) throws ClassNotFoundException, SQLException, IOException
-	{
-		String DestinationPath = persistentPath;
-		logger.error("Destination path is"+DestinationPath);
-		logger.error("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);		
-		
-		
-			
-			
-			ArrayList<Object> parameters = new ArrayList<>();
-			parameters.add(attachmentId);
-			List<String> lstFromDb = getListOfString(parameters,
-					"select concat(attachment_id,file_name) as file_name from 	tbl_attachment_mst where activate_flag=1 and attachment_id=? ",
-					con);
-			
-			HashSet<String> setFromDb = new HashSet<String>(lstFromDb);			
-			ArrayList<String> namesList = new ArrayList<>(setFromDb);
-
-			
-
-			actualCopy(DestinationPath, con, namesList);
-				
-			return namesList.get(0);
-
-		
 	}
 	
 	public void copyFromSrcToDesitnationIfNotExist(String sourcePath,String destinationPath) throws IOException
@@ -1459,6 +1441,27 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return distinctActions;
 
 	}
+
+	public HashSet<Integer> getReportsForthisUserDecoupled(long userId, Connection con,HashMap<Long, Role> roles) throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<Object>();
+		parameters.add(userId);
+		
+		String query = "select role_id from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
+		HashSet<Integer> distinctReports=new HashSet<>();
+		for(String roleName:getListOfString(parameters, query, con))
+		{
+			Integer[] roleNameReports=roles.get(Long.valueOf(roleName)).getReports();
+			if(roleNameReports!=null)
+			{
+			 List<Integer> lst=Arrays.asList(roleNameReports);
+			 distinctReports.addAll(lst);
+			}
+		}
+		return distinctReports;
+
+	}
+
+	
 	
 	public List<String> getRoles(Long userId,Connection con) throws SQLException, ClassNotFoundException
 	{
@@ -1506,7 +1509,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		}
 	}
 
-	public void generatePDFFromList(String FileName, List<LinkedHashMap<String, Object>> listHm, String[] colNames,BigDecimal total)
+	public void generatePDFFromList(String FileName, List<LinkedHashMap<String, Object>> listHm, String[] colNames,BigDecimal total,String ReportHeading)
 			throws IOException, DocumentException {
 
 		Document document = new Document(PageSize.A4.rotate(), 20, 20, 20, 60);
@@ -1518,7 +1521,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		PdfPTable table = new PdfPTable(1);
 		PdfPCell cell;
 
-		cell = new PdfPCell(new Phrase("Export Data", new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD)));
+		cell = new PdfPCell(new Phrase(ReportHeading, new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD)));
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
 		table.addCell(cell);
@@ -1528,9 +1531,9 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		table = new PdfPTable(colNames.length);
 
 		for (String s : colNames) {
-			cell = new PdfPCell(new Phrase(s, new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL)));
+			cell = new PdfPCell(new Phrase(s, new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD)));
 			cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-			cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_MIDDLE);
+			cell.setVerticalAlignment(com.itextpdf.text.Element.ALIGN_MIDDLE);			
 			table.addCell(cell);
 		}
 
@@ -1660,7 +1663,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L));
+			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L),documentName);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
@@ -1692,7 +1695,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
 			outputMap.put(filename_constant, userId + documentName + ".xlsx");
 		} else if (exportFlag.equals("P")) {
-			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()));
+			generatePDFFromList(DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(hm.get("totalAmount").toString()),documentName);
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
@@ -2128,6 +2131,24 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 	
 	
+	public HashMap<String,Object> getMapFromRequest(HttpServletRequest req)
+	{
+		HashMap<String,Object> lhm=new HashMap<>();
+
+		Enumeration<String> parameterNames = req.getParameterNames();
+        // Iterate through parameter names and print key-value pairs
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            
+            // Using getParameter for a single-value parameter
+            String paramValue = req.getParameter(paramName);
+			logger.debug("getMapFromRequest : Putting Parameter Key " + paramName + " and Value "+paramValue + " in the Hashmap");
+            lhm.put(paramName, paramValue);
+        }
+		return lhm;
+		
+	}
+
 	
 	
 	

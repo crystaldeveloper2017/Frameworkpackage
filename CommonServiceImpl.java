@@ -1,65 +1,101 @@
-// package com.crystal.Frameworkpackage;
+package com.crystal.Frameworkpackage;
 
-// import java.sql.Connection;
-// import java.sql.SQLException;
-// import java.util.ArrayList;
-// import java.util.HashMap;
-// import java.util.LinkedHashMap;
-// import java.util.List;
-// import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-// import com.crystal.Configuration.ConfigurationDaoImpl;
-// import com.crystal.Login.LoginDaoImpl;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-// public class CommonServiceImpl extends CommonFunctions {
 
-//     	public CustomResultObject reloadSession(HttpServletRequest request, Connection con) throws ClassNotFoundException, SQLException {
-// 		LoginDaoImpl lObjLoginDao =new LoginDaoImpl();
-// 		ConfigurationDaoImpl lObjConfigDao=new ConfigurationDaoImpl();
-// 		CustomResultObject rs = new CustomResultObject();
-// 		HashMap<String, Object> outputMap = new HashMap<>();
+
+public class CommonServiceImpl extends CommonFunctions {
+
+    CommonDaoImpl lobjCommonDaoImpl=new CommonDaoImpl();
+    public CustomResultObject showReport(HttpServletRequest request,Connection con) throws SQLException
+	{
+	 	CustomResultObject rs=new CustomResultObject();
+		
+	 	HashMap<String, Object> outputMap=new HashMap<>();			
+		
+		String report_id=request.getParameter("report_id")==null?"":request.getParameter("report_id");
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";	
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+
+		try
+	 	{   
+			LinkedHashMap reportDetails=lobjCommonDaoImpl.getReportdetails(report_id,con);
+
+		LinkedHashMap<String, Object> defaultParameterValues=new LinkedHashMap<>();
+
+		for(LinkedHashMap<String, Object> param:(List<LinkedHashMap<String,Object>>) reportDetails.get("paramtersWithOptions"))
+		{
+			var parameterValue=request.getParameter(param.get("parameter_form_id").toString());
+			if(parameterValue==null &&  param.get("parameter_type").equals("date") && param.get("default_value").equals("~todaysdate"))
+			{
+				String dateFromDB=getDateFromDB(con);
+				outputMap.put(param.get("parameter_form_id").toString(),dateFromDB);	
+				defaultParameterValues.put(param.get("parameter_form_id").toString(),dateFromDB);
+			}
+			else if(parameterValue==null &&  param.get("parameter_type").equals("select"))
+			{
+				outputMap.put(param.get("parameter_form_id").toString(),param.get("default_value").toString());	
+				defaultParameterValues.put(param.get("parameter_form_id").toString(), param.get("default_value").toString());
+			}
+			else
+			{
+				outputMap.put(param.get("parameter_form_id").toString(), request.getParameter(param.get("parameter_form_id").toString()));
+			}
+		}
 
 		
-// 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
-// 		long userIdL=Long.valueOf(userId);
-// 		List<String> roles=getRoles( userIdL,con);
-// 					List<String> roleIds = lObjLoginDao.getRoleIds( userIdL, con);
-
-// 					request.getSession().setAttribute("listOfRoles", roles);
-					
-// 					request.getSession().setAttribute("adminFlag", roles.contains("Admin"));
-					
-// 					request.getSession().setAttribute("projectName", projectName);
-
-					
-					
-// 					request.getSession().setAttribute("elements", getElementsNewLogic(roleIds,CommonFunctions.elements,CommonFunctions.roles));
-// 					request.getSession().setAttribute("listOfDashboardForThisUser", getDashboardForThisUser(roleIds,CommonFunctions.roles));
-// 					request.getSession().setAttribute("actions", getActionsForthisUserDecoupled( userIdL,con,CommonFunctions.roles));
 
 		
-// 					List<LinkedHashMap<String, Object>> lstUserRoleDetails = lObjConfigDao.getUserRoleDetails(Long.valueOf(userId), con);
-// 					HashMap<String,Object> hm = new HashMap<>();
-// 					hm.put("lstUserRoleDetails", lstUserRoleDetails);
-					
-					
-// 					LinkedHashMap<Long, Role> roleMaster=apptypes.get("Master");
+		Class<?>[] paramString = new Class[2];
+			paramString[0] = HashMap.class;
+			paramString[1] = Connection.class;
+
+		Class<?> cls = Class.forName(reportDetails.get("class_name").toString());
+			Object obj = cls.newInstance();
+			//Thread.sleep(4000);
+			Method method = cls.getDeclaredMethod(reportDetails.get("method_name").toString(), paramString);
+			
+			
+			
+			List<LinkedHashMap<String, Object>> reportData =  (List<LinkedHashMap<String, Object>>) method.invoke(obj,outputMap, con);
+
+		 //lObjConfigDao.getWPOStatistics(outputMap,con);
+
+
 		
 		
-// 					List<LinkedHashMap<String, Object>> lstUserRoleDetailsNew = new ArrayList<>();
-// 					for(LinkedHashMap<String, Object> lm:lstUserRoleDetails)
-// 					{
-// 						Role realRole=roleMaster.get(Long.valueOf(lm.get("role_id").toString()));
-// 						lm.put("role_name", realRole.getRoleName());
-// 						lstUserRoleDetailsNew.add(lm);
-						
-// 					}
-// 					outputMap.put("userDetails", lObjConfigDao.getuserDetailsById(Long.valueOf(userId), con));
-// 					outputMap.put("lstUserRoleDetails", lstUserRoleDetailsNew);
+		outputMap.put("reportData", reportData);
+		outputMap.put("defaultParameterValues", defaultParameterValues);
 		
-// 		rs.setViewName("../UserDetails.jsp");
-// 		rs.setReturnObject(outputMap);	
-// 		return rs;
-// 	}
+		if(!exportFlag.isEmpty())
+				{				
+					List<String> columnNames=lobjCommonDaoImpl.getListOfColumns(report_id,con);
+					outputMap = getCommonFileGenerator(columnNames.toArray(new String[0]),reportData,exportFlag,DestinationPath,userId,reportDetails.get("report_name").toString());
+				}
+				else
+				{			
+					outputMap.put("reportDetails", reportDetails);
+					rs.setViewName("../Reports.jsp");		
+				}
+		rs.setReturnObject(outputMap);
+
+	 	}
+	 	catch (Exception e)
+	 	{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
     
-// }
+}
