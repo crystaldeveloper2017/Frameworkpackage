@@ -10778,7 +10778,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String returnAjaxString;
 		try
 		{
-			String FileName=copyAttachmentsFromDBToGivenPath(DestinationPath,String.valueOf(attachment_id),con);
+			String FileName=actualCopyNew(DestinationPath,con,attachment_id);
 			rs.setAjaxData(FileName);
 		}
 		catch (Exception e)
