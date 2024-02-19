@@ -128,6 +128,7 @@ function checkoutVendor(visitorId)
                      <th><b>Purpose Of Visit</b></th>
                      <th><b>Mobile No</b></th>
                      <th><b>Email</b></th>
+					 <th><b>Contact To Employee</b></th>
                      <th><b>Checkin Time</b></th>
                      <th><b>Checkout Time</b></th>
 					 <th><b>Image</b></th>
@@ -143,6 +144,8 @@ function checkoutVendor(visitorId)
 						<td>${item.purpose_of_visit}</td>
 						<td>${item.contact_no1}</td>
 						<td>${item.email}</td>
+						<td>${item.contact_person}</td>
+
 						
 						<td>${item.check_in_time}</td>
 						<td>${item.check_out_time}</td>
@@ -163,7 +166,7 @@ function checkoutVendor(visitorId)
 						<td>
 						
 						
-						<c:if test="${item.checkout_time eq null}">							  				
+						<c:if test="${item.check_out_time eq null}">							  				
 					  				<button class="btn btn-primary" onclick="checkoutVendor(${item.vendor_checkin_id})">Checkout</button>					  
 	  					</c:if>
 						
@@ -248,7 +251,7 @@ function checkoutVendor(visitorId)
   
   function ReloadFilters()
   {	  
-  	  window.location="?a=showVendors&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;  	  
+  	  window.location="?a=showVendorsCheckIn&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;  	  
   }
   
   function searchprod(elementInput,evnt)
@@ -256,7 +259,7 @@ function checkoutVendor(visitorId)
 		if(evnt.which==13)
 			{
 				// do some search stuff
-				window.location="?a=showVendors&colNames="+document.getElementById("colNames").value+"&searchInput="+elementInput.value;
+				window.location="?a=showVendorsCheckIn&colNames="+document.getElementById("colNames").value+"&searchInput="+elementInput.value;
 			}
 			
 	}

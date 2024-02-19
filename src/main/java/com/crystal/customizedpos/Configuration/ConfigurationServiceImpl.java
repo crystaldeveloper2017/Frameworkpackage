@@ -10126,7 +10126,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		outputMap.put("txttodate", toDate);
 
 		try {
-			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "name","checkin_time","checkout_time","image" };
+			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "contact_person","checkin_time","checkout_time","image" };
 
 			List<LinkedHashMap<String, Object>> lst = null;
 
@@ -10187,7 +10187,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		outputMap.put("txttodate", toDate);
 
 		try {
-			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "name","checkin_time","checkout_time","image" };
+			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id","name", "name","checkin_time","checkout_time","image" };
 
 			List<LinkedHashMap<String, Object>> lst = null;
 
