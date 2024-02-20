@@ -13,6 +13,8 @@
   - Logout
   - checkInThisEmployee
   - showAccessDenied
+  - showVendorCheckIn
+  - showVendorsCheckIn
   elements: 
   - 11
   - 21
@@ -26,3 +28,7 @@
   - 700160
   - 700157
   - 700158
+  - 43
+  - 700165
+  - 34
+  - 44

@@ -129,6 +129,9 @@ function checkoutVendor(visitorId)
                      <th><b>Mobile No</b></th>
                      <th><b>Email</b></th>
 					 <th><b>Contact To Employee</b></th>
+					<th><b>Firm Name</b></th>
+					 <th><b>Remarks</b></th>
+
                      <th><b>Checkin Time</b></th>
                      <th><b>Checkout Time</b></th>
 					 <th><b>Image</b></th>
@@ -145,6 +148,10 @@ function checkoutVendor(visitorId)
 						<td>${item.contact_no1}</td>
 						<td>${item.email}</td>
 						<td>${item.contact_person}</td>
+						<td>${item.firm_name}</td>
+
+						<td>${item.remarks}</td>
+
 
 						
 						<td>${item.check_in_time}</td>
