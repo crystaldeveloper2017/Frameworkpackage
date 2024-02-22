@@ -15,6 +15,10 @@
   - showAccessDenied
   - showVendorCheckIn
   - showVendorsCheckIn
+  - showCheckInForThisVendor
+  - addVendorCheckIn
+  - showCheckoutForVendor
+  - checkoutVendor 
   elements: 
   - 11
   - 21
