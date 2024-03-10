@@ -1644,6 +1644,37 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	}
 
+
+	public HashMap<String, Object> getCommonFileGenerator(String[] colNames, List<LinkedHashMap<String, Object>> lst,
+			String exportFlag, String DestinationPath, String userId, String documentName)
+					throws IOException, DocumentException {
+
+		HashMap<String, Object> outputMap = new HashMap<>();
+		List<LinkedHashMap<String, Object>> requiredList = new ArrayList<>();
+
+		for (HashMap<String, Object> tempHm : lst) {
+			LinkedHashMap<String, Object> tempLink = new LinkedHashMap<>();
+			for (String s : colNames) {
+				tempLink.put(s, tempHm.get(s));
+			}
+			requiredList.add(tempLink);
+		}
+
+		if (exportFlag.equals("E")) {
+			generateExcelFromList(DestinationPath + userId + documentName + ".xlsx", requiredList);
+			outputMap.put(filename_constant, userId + documentName + ".xlsx");
+		} else if (exportFlag.equals("P")) {
+			generatePDFFromList (DestinationPath + userId + documentName + ".pdf", requiredList, colNames,new BigDecimal(0L),documentName);
+			outputMap.put(filename_constant, userId + documentName + ".pdf");
+		} else if (exportFlag.equals("T")) {
+			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
+			outputMap.put(filename_constant, userId + documentName + ".txt");
+
+		}
+
+		return outputMap;
+	}
+
 	public HashMap<String, Object> getCommonFileGenerator(String[] colNames, List<LinkedHashMap<String, Object>> lst,
 			String exportFlag, String DestinationPath, String userId, String documentName,String title)
 					throws IOException, DocumentException {
