@@ -84,7 +84,7 @@ public class CommonServiceImpl extends CommonFunctions {
 				else
 				{			
 					outputMap.put("reportDetails", reportDetails);
-					rs.setViewName("../Reports.jsp");		
+					rs.setViewName("Reports.jsp");		
 				}
 		rs.setReturnObject(outputMap);
 
