@@ -1645,7 +1645,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 	public HashMap<String, Object> getCommonFileGenerator(String[] colNames, List<LinkedHashMap<String, Object>> lst,
-			String exportFlag, String DestinationPath, String userId, String documentName)
+			String exportFlag, String DestinationPath, String userId, String documentName,String title)
 					throws IOException, DocumentException {
 
 		HashMap<String, Object> outputMap = new HashMap<>();
