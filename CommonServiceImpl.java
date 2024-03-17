@@ -24,11 +24,13 @@ public class CommonServiceImpl extends CommonFunctions {
 		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
 		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";	
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
 		
 
 		try
 	 	{   
 			LinkedHashMap reportDetails=lobjCommonDaoImpl.getReportdetails(report_id,con);
+			outputMap.put("app_id", appId);
 
 		LinkedHashMap<String, Object> defaultParameterValues=new LinkedHashMap<>();
 
