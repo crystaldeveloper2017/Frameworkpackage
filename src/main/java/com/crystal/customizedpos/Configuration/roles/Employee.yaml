@@ -5,17 +5,14 @@
   - showHomePage
   - validateLogin
   - Logout
-  - showUserRoleMapping
   - getRoleDetailsForthisUser
   - addRemoveRole
+  - showAttendanceRegister
   elements: 
   - 11
-  - 12
   - 21
   - 22
   - 23
-  - 24
-  - 25
   - 10
-  - 700195
-  - 700197
+  - 34
+  - 39

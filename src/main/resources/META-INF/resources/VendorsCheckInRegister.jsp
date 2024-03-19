@@ -111,7 +111,7 @@ function checkoutVendor(visitorId)
 		 
 		<div class="col-sm-3" align="center">
 			<div class="input-group input-group-sm" style="width: 200px;">                    
-				<input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showVendorCheckIn'" value="V Vendor" class="form-control float-right" >                      
+				<input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showVendorCheckIn'" value="Add Vendor CheckIn" class="form-control float-right" >                      
 			</div>
 		</div>     
                 
@@ -130,10 +130,13 @@ function checkoutVendor(visitorId)
                      <th><b>Email</b></th>
 					 <th><b>Contact To Employee</b></th>
 					<th><b>Firm Name</b></th>
-					 <th><b>Remarks</b></th>
+					 
 
                      <th><b>Checkin Time</b></th>
+					 <th><b>Checkin Remark</b></th>
                      <th><b>Checkout Time</b></th>
+					<th><b>Checkout Remark</b></th>
+
 					 <th><b>Image</b></th>
 					 
                      </th><th></th>
@@ -150,12 +153,15 @@ function checkoutVendor(visitorId)
 						<td>${item.contact_person}</td>
 						<td>${item.firm_name}</td>
 
-						<td>${item.remarks}</td>
+						
 
 
 						
 						<td>${item.check_in_time}</td>
+						<td>${item.remarks}</td>
 						<td>${item.check_out_time}</td>
+						<td>${item.check_out_remark}</td>
+
 						
 						<td>
 						

@@ -194,6 +194,14 @@ function resetEmployee()
 <div id="hdnphotosbase64div">
   
 </div>
+
+ <div class="col-sm-12">
+  	<div class="form-group">
+      <label for="Check Out Remark">Check Out Remark</label>
+      <input type="text" class="form-control"  id="check_out_remark" value="${vendorDetails.check_out_remark}" name="check_out_remark" placeholder="Check Out Remark">
+    </div>
+  </div>
+  
   
 </div>
   

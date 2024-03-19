@@ -6539,10 +6539,12 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 	public long checkoutVendor(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
 
 		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("check_out_remark"));
+
 		parameters.add(hm.get("vendor_checkin_id"));
+
 		
-		
-		String insertQuery = "update vendor_check_in_register set check_out_time=sysdate() where vendor_checkin_id=?";
+		String insertQuery = "update vendor_check_in_register set check_out_time=sysdate(),check_out_remark=? where vendor_checkin_id=?";
 		
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 
@@ -6555,9 +6557,10 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("vendor_qr_code"));
 		parameters.add(hm.get("remarks"));
 
+		parameters.add(hm.get("purpose_of_visit"));
+
 		
-		
-		String insertQuery = "insert into vendor_check_in_register values (default,?,sysdate(),null,?,1)";
+		String insertQuery = "insert into vendor_check_in_register values (default,?,sysdate(),null,?,1,?,null)";
 		
 		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
 

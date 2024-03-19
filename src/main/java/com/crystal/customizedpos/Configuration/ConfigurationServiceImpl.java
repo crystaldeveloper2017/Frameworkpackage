@@ -10392,7 +10392,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		
 		try
 		{
-			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
+			String [] colNames= {"EmployeeName","reason","remark","from_date","to_date", "SuperVisorName"}; // change according to dao return
 			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeaves(fromDate,emp_id,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
@@ -10891,7 +10891,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String searchString=request.getParameter("searchString");
 		
 		try {
-			String[] colNames = { "vendor_name","contact_person", "address", "state" ,"email","contact_no1"};
+			String[] colNames = { "vendor_name","firm_name","contact_person", "address", "state" ,"email","contact_no1"};
 
 			List<LinkedHashMap<String, Object>> lst = null;
 
