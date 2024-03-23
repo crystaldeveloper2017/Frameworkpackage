@@ -103,6 +103,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static Boolean isSendEmail;
 	public static String mySqlPath;
 	public static List<String> lstbypassedActions;
+	public static List<String> lstbypassedReports;
+	
 	public static int threadSleep;
 	public static String persistentPath;
     
@@ -755,6 +757,9 @@ public class CommonFunctions extends PdfPageEventHelper
 			Map<String, Object> data = yaml.load(in);
 			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
 			lstbypassedActions= Arrays.asList(bypassedActions);
+
+			String[] bypassedReports=((String) data.get("bypassedReports")).split(",");
+			lstbypassedReports= Arrays.asList(bypassedReports);
 			
 			
 		} catch (Exception e) 

@@ -72,6 +72,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			//System.out.println(actions);			
 			boolean isBypassed =  lstbypassedActions.contains(action);
 			
+			
 			logger.debug("is ByPassed :-" + isBypassed);
 			if ((action == null || action.equals("")) && request.getSession().getAttribute(username_constant) != null) {
 				logger.info("Redirecting Back to homepage");
@@ -127,7 +128,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			}
 
 			String reportId=request.getParameter("report_id");
-			if (action != null && action.equals("showReport") && !allowedReportsForThisRole.contains(Integer.valueOf(reportId))) {
+			if (action != null && action.equals("showReport") && !lstbypassedReports.contains(reportId) && !allowedReportsForThisRole.contains(Integer.valueOf(reportId))) {
 				logger.debug("Redirecting to Unauthorized Page as Report is "+reportId + "Allowed Reports for this role is "+allowedReportsForThisRole);				
 				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
 				dispatcher.forward(request, response);
