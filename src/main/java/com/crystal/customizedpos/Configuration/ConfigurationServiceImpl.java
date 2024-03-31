@@ -6894,44 +6894,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
-	public CustomResultObject changePassword(HttpServletRequest request,Connection con) throws FileUploadException
-	{
-		CustomResultObject rs=new CustomResultObject();	
-		HashMap<String, Object> outputMap=new HashMap<>();
-		try
-		{		
-			
-			String oldPassword=URLDecoder.decode(request.getParameter("oldPassword"),"UTF-8");
-			String newPassword=URLDecoder.decode(request.getParameter("newPassword"),"UTF-8");
-			
-			String username=request.getSession().getAttribute("username").toString();
-			LoginDaoImpl loginDao= new LoginDaoImpl();
-			HashMap<String,String> loginDetails= loginDao.validateLoginUSingJDBC(username, oldPassword,con);
-			String message="";
-			if(loginDetails!=null)
-			{	
-				loginDao.changePassword(username,newPassword,con);
-				message="Password Changed Succesfully ";
-			}
-			else
-			{
-				message="Invalid Old Password";
-			}
-			
-			
-			
-			
-			rs.setReturnObject(outputMap);
-			rs.setAjaxData(message);			
-
-		}
-		catch (Exception e)
-		{
-			writeErrorToDB(e);
-			rs.setHasError(true);
-		}		
-		return rs;
-	}
+	
 	
 	public CustomResultObject showChangePassword(HttpServletRequest request,Connection con)
 	{
@@ -11030,7 +10993,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		
 		try
 		{
-			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName"}; // change according to dao return
+			String [] colNames= {"EmployeeName","reason","from_date","to_date", "SuperVisorName","remark"}; // change according to dao return
 			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getLeavesRegister(fromDate,toDate,emp_id,con);
 			outputMap.put("ListOfEmployees", lst);
 			outputMap.put("txtfromdate", fromDate);
