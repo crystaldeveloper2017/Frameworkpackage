@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
@@ -2185,8 +2186,13 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		
 	}
 
+
+	public char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
 	
-	
+	public static int indexOfCF(char[] arr, char val) {
+		return IntStream.range(0, arr.length).filter(i -> arr[i] == val).findFirst().orElse(-1);
+	}
 	
 	
 	
