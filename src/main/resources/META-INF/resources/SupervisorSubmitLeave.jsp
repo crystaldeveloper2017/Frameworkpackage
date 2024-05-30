@@ -89,6 +89,8 @@
 <c:set var="employeeList" value='${requestScope["outputObject"].get("employeeList")}' />
 <c:set var="distinctPurposeOfVisist" value='${requestScope["outputObject"].get("distinctPurposeOfVisist")}' />
 <c:set var="todaysDate" value='${requestScope["outputObject"].get("todaysDate")}' />
+<c:set var="listOfEmployee" value='${requestScope["outputObject"].get("EmployeeList")}' />
+
 
 </head>
 
@@ -97,7 +99,39 @@
 
 
 
+function checkforMatchEmployee()
+{
+	var searchString= document.getElementById("employee_id").value;
+	
+	var options1=document.getElementById("listOfEmployee").options;
+	var employeeId=0;
+	for(var x=0;x<options1.length;x++)
+		{
+			if(searchString==options1[x].value)
+				{
+					employeeId=options1[x].id;
+					break;
+				}
+		}
+	if(employeeId!=0)
+		{
+			document.getElementById("hdnselectedemployee").value=employeeId;			
+			document.getElementById("employee_id").disabled=true;						
+		}
+	else
+		{
+			//searchForCustomer(searchString);
+		}
+	
+	
+}
 
+function resetEmployee()
+{	
+	employee_id.disabled=false;
+	employee_id.value="";
+	hdnselectedemployee.value=0;
+}
 
 
 
@@ -107,6 +141,13 @@
 
 </script>
 
+<datalist id="listOfEmployee">
+<c:forEach items="${listOfEmployee}" var="employee">
+ <option id="${employee.user_id}">${employee.name} - ${employee.qr_code}</option>	
+ </c:forEach>
+</datalist>
+
+ 
 
 <br>
 
@@ -119,22 +160,24 @@
 <input type="hidden" name="callerUrl" id="callerUrl" value="">
 
 
-      	<div class="col-sm-12">
-  	<div class="form-group">
-      <label for="EmployeeName">Employee Name</label>
-      <select class="form-control" name="employee_id" id="employee_id">
-      	
-      	
-      	<c:forEach items="${employeeList}" var="employee">
-			    			    <option value="${employee.user_id}">${employee.name}</option>
-	   </c:forEach>
-      	
-      	
-      	
-      </select> 
-      
-    </div>
-  </div>
+ 
+
+  <div class="col-sm-12">
+	<div class="form-group">
+		
+	<label for="email">Employee Name </label>     
+	<div class="input-group input-group-sm">
+
+	<input type="textbox" name="employee_id" id="employee_id" class="form-control form-control-sm" list="listOfEmployee" onchange="checkforMatchEmployee()"/> 
+	<input type="hidden" name="hdnselectedemployee" id="hdnselectedemployee" value="">  <span class="input-group-append">
+		<button type="button" class="btn btn-danger btn-flat" onclick="resetEmployee()">Reset</button>
+		</span>
+	</div>
+	</div>
+		</div>
+
+
+
   
    <div class="col-sm-12">
   	<div class="form-group">

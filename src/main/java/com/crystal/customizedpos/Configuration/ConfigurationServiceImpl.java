@@ -10282,6 +10282,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			
 			
 			outputMap.put("todaysDate", lObjConfigDao.getDateFromDB(con));
+			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
 			
 			outputMap.put("employeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
 			rs.setViewName("../SupervisorSubmitLeave.jsp");
@@ -10302,7 +10304,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
 		
 		String fromDate=request.getParameter("txtfromDate");
-		String empId=request.getParameter("employee_id");
+		String empId=request.getParameter("hdnselectedemployee");
 		String reason=request.getParameter("reason");
 		String remark=request.getParameter("remark");
 		String toDate=request.getParameter("txttoDate");
