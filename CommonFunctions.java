@@ -48,7 +48,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
@@ -104,8 +103,6 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static Boolean isSendEmail;
 	public static String mySqlPath;
 	public static List<String> lstbypassedActions;
-	public static List<String> lstbypassedReports;
-	
 	public static int threadSleep;
 	public static String persistentPath;
     
@@ -181,7 +178,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	            	columnNames+=entry.getKey()+",";
 					if(entry.getValue() == null){
 						System.out.println("null value on column "+entry.getKey());
-						return 0;
+						throw new Exception("null value on column "+entry.getKey());						
 					}
 					else if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
 	                {
@@ -264,7 +261,7 @@ public class CommonFunctions extends PdfPageEventHelper
         catch(Exception e)
         {
         	writeErrorToDB(e);
-        	throw e;
+        	
         }
         finally 
 		{
@@ -758,9 +755,6 @@ public class CommonFunctions extends PdfPageEventHelper
 			Map<String, Object> data = yaml.load(in);
 			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
 			lstbypassedActions= Arrays.asList(bypassedActions);
-
-			String[] bypassedReports=((String) data.get("bypassedReports")).split(",");
-			lstbypassedReports= Arrays.asList(bypassedReports);
 			
 			
 		} catch (Exception e) 
@@ -2186,13 +2180,8 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		
 	}
 
-
-	public char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
 	
-	public static int indexOfCF(char[] arr, char val) {
-		return IntStream.range(0, arr.length).filter(i -> arr[i] == val).findFirst().orElse(-1);
-	}
+	
 	
 	
 	
