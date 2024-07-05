@@ -131,6 +131,8 @@ function checkoutVisitor(visitorId)
                      <th><b>Checkin Time</b></th>
                      <th><b>Checkout Time</b></th>
 					 <th><b>Image</b></th>
+					  <th><b>Remarks</b></th>
+					 
 					 
                      </th><th></th>
                     </tr>
@@ -158,7 +160,7 @@ function checkoutVisitor(visitorId)
 
 						
 						</td>
-						
+						<td>${item.remarks}</td>
 						
 						<td>
 						
