@@ -1742,7 +1742,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return outputMap;
 	}
 
-	public void generateQRForThisString(String qrString, String DestinationPath, int height, int width,String type)
+	public void generateQRForThisString(String qrString, String pathToQr, int height, int width,String type)
 			throws IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append(qrString);
@@ -1780,7 +1780,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		BufferedImage bi = new BufferedImage(myImage.getWidth(null), myImage.getHeight(null),
 				BufferedImage.TYPE_INT_RGB);
 		bi.getGraphics().drawImage(myImage, 0, 0, null);
-		ImageIO.write(bi, "JPG", new File(DestinationPath + qrString +type +".jpg"));
+		ImageIO.write(bi, "JPG", new File(pathToQr +".jpg"));
 	}
 
 
