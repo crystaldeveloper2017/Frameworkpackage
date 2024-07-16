@@ -51,6 +51,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.crypto.Cipher;
@@ -187,7 +188,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	            	columnNames+=entry.getKey()+",";
 					if(entry.getValue() == null){
 						System.out.println("null value on column "+entry.getKey());
-						return 0;
+						throw new Exception("null value on column "+entry.getKey());						
 					}
 					else if(entry.getValue().getClass().equals(String.class) && entry.getValue().toString().startsWith("~"))
 	                {
@@ -270,7 +271,7 @@ public class CommonFunctions extends PdfPageEventHelper
         catch(Exception e)
         {
         	writeErrorToDB(e);
-        	throw e;
+        	
         }
         finally 
 		{
@@ -1749,7 +1750,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return outputMap;
 	}
 
-	public void generateQRForThisString(String qrString, String DestinationPath, int height, int width,String type)
+	public void generateQRForThisString(String qrString, String pathToQr, int height, int width,String type)
 			throws IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append(qrString);
@@ -1787,7 +1788,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		BufferedImage bi = new BufferedImage(myImage.getWidth(null), myImage.getHeight(null),
 				BufferedImage.TYPE_INT_RGB);
 		bi.getGraphics().drawImage(myImage, 0, 0, null);
-		ImageIO.write(bi, "JPG", new File(DestinationPath + qrString +type +".jpg"));
+		ImageIO.write(bi, "JPG", new File(pathToQr +".jpg"));
 	}
 
 
@@ -2192,8 +2193,13 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		
 	}
 
+
+	public char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
 	
-	
+	public static int indexOfCF(char[] arr, char val) {
+		return IntStream.range(0, arr.length).filter(i -> arr[i] == val).findFirst().orElse(-1);
+	}
 	
 	public String getAESEncryptedString(String plainText,String AES_KEY_STRING) throws Exception
     {
