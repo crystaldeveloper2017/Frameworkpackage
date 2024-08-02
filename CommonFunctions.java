@@ -20,8 +20,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -35,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -51,6 +54,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +68,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.yaml.snakeyaml.Yaml;
 
 import com.crystal.customizedpos.Configuration.ExecuteSqlFile;
@@ -1748,7 +1755,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return outputMap;
 	}
 
-	public void generateQRForThisString(String qrString, String DestinationPath, int height, int width,String type)
+	public void generateQRForThisString(String qrString, String pathToQr, int height, int width,String type)
 			throws IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append(qrString);
@@ -1786,7 +1793,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		BufferedImage bi = new BufferedImage(myImage.getWidth(null), myImage.getHeight(null),
 				BufferedImage.TYPE_INT_RGB);
 		bi.getGraphics().drawImage(myImage, 0, 0, null);
-		ImageIO.write(bi, "JPG", new File(DestinationPath + qrString +type +".jpg"));
+		ImageIO.write(bi, "JPG", new File(pathToQr +".jpg"));
 	}
 
 
@@ -2199,6 +2206,59 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		return IntStream.range(0, arr.length).filter(i -> arr[i] == val).findFirst().orElse(-1);
 	}
 	
+	// public String getAESEncryptedString(String plainText,String AES_KEY_STRING) throws Exception
+    // {
+    //     Security.addProvider(new BouncyCastleProvider());
+
+    //     // Derive AES key from the string
+    //     SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
+
+    //     // Encrypt and decrypt "Hello, World!"
+    //     String encryptedMessage = encrypt(plainText, secretKey);
+
+    //     // Print results
+    //     // System.out.println("Original: " + originalMessage);
+    //     // System.out.println("Encrypted: " + encryptedMessage);
+    //     // System.out.println("Decrypted: " + decryptedMessage);
+    //     return encryptedMessage;
+    // }
+
+    // public String getPlainTextFromCiper(String ciperText,String AES_KEY_STRING) throws Exception
+    // {
+    //     Security.addProvider(new BouncyCastleProvider());
+
+    //     // Derive AES key from the string
+    //     SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
+    //     String decryptedMessage = decrypt(ciperText, secretKey);
+
+    //     // Print results
+    //     // System.out.println("Original: " + originalMessage);
+    //     // System.out.println("Encrypted: " + encryptedMessage);
+    //     // System.out.println("Decrypted: " + decryptedMessage);
+    //     return decryptedMessage;
+    // }
+
+    // private static SecretKey deriveAESKey(String keyString) throws Exception {
+    //     // Use SHA-256 hash function to derive a 256-bit key (32 bytes)
+    //     MessageDigest sha = MessageDigest.getInstance("SHA-256");
+    //     byte[] keyBytes = sha.digest(keyString.getBytes(StandardCharsets.UTF_8));
+    //     return new SecretKeySpec(keyBytes, "AES");
+    // }
+
+    // private static String encrypt(String plaintext, SecretKey key) throws Exception {
+    //     Cipher cipher = Cipher.getInstance("AES", "BC");
+    //     cipher.init(Cipher.ENCRYPT_MODE, key);
+    //     byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
+    //     return Base64.getEncoder().encodeToString(encryptedBytes);
+    // }
+
+    // private static String decrypt(String encryptedText, SecretKey key) throws Exception {
+    //     Cipher cipher = Cipher.getInstance("AES", "BC");
+    //     cipher.init(Cipher.DECRYPT_MODE, key);
+    //     byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+    //     byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+    //     return new String(decryptedBytes);
+    // }
 	
 	
 	
