@@ -585,6 +585,11 @@ public class CommonFunctions extends PdfPageEventHelper
 		Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateAsDDMMYYYY);
 		return new SimpleDateFormat("yyyy-MM-dd").format(d1);
 	}
+
+	public String getDateASDDMMYYYY(String dateAsDDMMYYYY) throws ParseException {
+		Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateAsDDMMYYYY);
+		return new SimpleDateFormat("dd-MM-yyyy").format(d1);
+	}
 	
 	public String getDateASYYYYMMDDHHMM(String dateAsDDMMYYYY) throws ParseException {
 		Date d1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dateAsDDMMYYYY);
