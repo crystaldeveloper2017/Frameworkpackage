@@ -168,7 +168,7 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	}
 	
-	public long insertUpdateEnhanced(Query q,Connection con) throws SQLException
+	public long insertUpdateEnhanced(Query q,Connection con) throws Exception
     {
         String query="";        
         String updateValues="";
@@ -271,7 +271,7 @@ public class CommonFunctions extends PdfPageEventHelper
         catch(Exception e)
         {
         	writeErrorToDB(e);
-        	
+        	throw e;
         }
         finally 
 		{
