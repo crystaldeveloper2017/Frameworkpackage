@@ -168,7 +168,7 @@ public class CommonFunctions extends PdfPageEventHelper
 
 	}
 	
-	public long insertUpdateEnhanced(Query q,Connection con) throws SQLException
+	public long insertUpdateEnhanced(Query q,Connection con) throws Exception
     {
         String query="";        
         String updateValues="";
@@ -271,7 +271,7 @@ public class CommonFunctions extends PdfPageEventHelper
         catch(Exception e)
         {
         	writeErrorToDB(e);
-        	
+        	throw e;
         }
         finally 
 		{
@@ -591,6 +591,11 @@ public class CommonFunctions extends PdfPageEventHelper
 	public String getDateASYYYYMMDD(String dateAsDDMMYYYY) throws ParseException {
 		Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateAsDDMMYYYY);
 		return new SimpleDateFormat("yyyy-MM-dd").format(d1);
+	}
+
+	public String getDateASDDMMYYYY(String dateAsDDMMYYYY) throws ParseException {
+		Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateAsDDMMYYYY);
+		return new SimpleDateFormat("dd-MM-yyyy").format(d1);
 	}
 	
 	public String getDateASYYYYMMDDHHMM(String dateAsDDMMYYYY) throws ParseException {
