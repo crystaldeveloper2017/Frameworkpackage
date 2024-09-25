@@ -49,13 +49,13 @@ public class ControllerServiceImpl extends CommonFunctions {
 				logger.debug(s);
 			}
 
-			logger.debug("JVM freeMemory: " + freeMemory);
-			logger.debug("JVM totalMemory also equals to initial heap size of JVM : " + totalMemory);
-			logger.debug("JVM maxMemory also equals to maximum heap size of JVM: " + maxMemory);
+			//logger.debug("JVM freeMemory: " + freeMemory);
+			//logger.debug("JVM totalMemory also equals to initial heap size of JVM : " + totalMemory);
+			//logger.debug("JVM maxMemory also equals to maximum heap size of JVM: " + maxMemory);
 
-			logger.debug("Request Start Time " + startDatetime);
+			//logger.debug("Request Start Time " + startDatetime);
 			String ApplicationName = ((HttpServletRequest) request).getContextPath().replace("/", "");
-			logger.debug("Inside Serve Request" + ApplicationName);
+			//logger.debug("Inside Serve Request" + ApplicationName);
 			String action = request.getParameter("a") == null ? request.getParameter("actionName")
 					: request.getParameter("a");
 			action = action == null ? "showHomePage" : action;
@@ -64,9 +64,9 @@ public class ControllerServiceImpl extends CommonFunctions {
 			con = getConnectionJDBC();
 			con.setAutoCommit(false);
 
-			logger.debug("Connection Opened Succesfully");
+			//logger.debug("Connection Opened Succesfully");
 			reqStartTime = getDateTime(con);
-			logger.debug("Datetime From DB Received as" + reqStartTime);
+			//logger.debug("Datetime From DB Received as" + reqStartTime);
 
 			
 			//System.out.println(actions);			
@@ -120,7 +120,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 			}
 
 			if (action != null && !allowedActionsForThisRole.contains(action) ) {
-				logger.debug("Redirecting to Unauthorized Page as Action is "+action + "Allowed actions for this role is "+allowedActionsForThisRole);				
+				logger.debug("Redirecting to Unauthorized Page as Action is "+action );				
 				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
 				dispatcher.forward(request, response);
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);				
@@ -231,20 +231,20 @@ public class ControllerServiceImpl extends CommonFunctions {
 			totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
 			maxMemory = Runtime.getRuntime().maxMemory() / MegaBytes;
 
-			logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
-			logger.info("freeMemory in JVM: " + freeMemory);
-			logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
-			logger.info("maxMemory in JVM: " + maxMemory);
+			//logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
+			//logger.info("freeMemory in JVM: " + freeMemory);
+			//logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
+			//logger.info("maxMemory in JVM: " + maxMemory);
 			if (freeMemory <= 20) {
 				logger.info("Calling System GC");
 				System.gc();
 				logger.info("Call Completed");
 			}
 
-			logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
-			logger.info("freeMemory in JVM: " + freeMemory);
-			logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
-			logger.info("maxMemory in JVM: " + maxMemory);
+			//logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
+			//logger.info("freeMemory in JVM: " + freeMemory);
+			//logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
+			//logger.info("maxMemory in JVM: " + maxMemory);
 
 		} catch (Exception e) {
 			
