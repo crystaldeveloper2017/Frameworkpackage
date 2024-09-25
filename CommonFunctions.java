@@ -2206,59 +2206,59 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 		return IntStream.range(0, arr.length).filter(i -> arr[i] == val).findFirst().orElse(-1);
 	}
 	
-	// public String getAESEncryptedString(String plainText,String AES_KEY_STRING) throws Exception
-    // {
-    //     Security.addProvider(new BouncyCastleProvider());
+	public String getAESEncryptedString(String plainText,String AES_KEY_STRING) throws Exception
+    {
+        Security.addProvider(new BouncyCastleProvider());
 
-    //     // Derive AES key from the string
-    //     SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
+        // Derive AES key from the string
+        SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
 
-    //     // Encrypt and decrypt "Hello, World!"
-    //     String encryptedMessage = encrypt(plainText, secretKey);
+        // Encrypt and decrypt "Hello, World!"
+        String encryptedMessage = encrypt(plainText, secretKey);
 
-    //     // Print results
-    //     // System.out.println("Original: " + originalMessage);
-    //     // System.out.println("Encrypted: " + encryptedMessage);
-    //     // System.out.println("Decrypted: " + decryptedMessage);
-    //     return encryptedMessage;
-    // }
+        // Print results
+        // System.out.println("Original: " + originalMessage);
+        // System.out.println("Encrypted: " + encryptedMessage);
+        // System.out.println("Decrypted: " + decryptedMessage);
+        return encryptedMessage;
+    }
 
-    // public String getPlainTextFromCiper(String ciperText,String AES_KEY_STRING) throws Exception
-    // {
-    //     Security.addProvider(new BouncyCastleProvider());
+    public String getPlainTextFromCiper(String ciperText,String AES_KEY_STRING) throws Exception
+    {
+        Security.addProvider(new BouncyCastleProvider());
 
-    //     // Derive AES key from the string
-    //     SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
-    //     String decryptedMessage = decrypt(ciperText, secretKey);
+        // Derive AES key from the string
+        SecretKey secretKey = deriveAESKey(AES_KEY_STRING);
+        String decryptedMessage = decrypt(ciperText, secretKey);
 
-    //     // Print results
-    //     // System.out.println("Original: " + originalMessage);
-    //     // System.out.println("Encrypted: " + encryptedMessage);
-    //     // System.out.println("Decrypted: " + decryptedMessage);
-    //     return decryptedMessage;
-    // }
+        // Print results
+        // System.out.println("Original: " + originalMessage);
+        // System.out.println("Encrypted: " + encryptedMessage);
+        // System.out.println("Decrypted: " + decryptedMessage);
+        return decryptedMessage;
+    }
 
-    // private static SecretKey deriveAESKey(String keyString) throws Exception {
-    //     // Use SHA-256 hash function to derive a 256-bit key (32 bytes)
-    //     MessageDigest sha = MessageDigest.getInstance("SHA-256");
-    //     byte[] keyBytes = sha.digest(keyString.getBytes(StandardCharsets.UTF_8));
-    //     return new SecretKeySpec(keyBytes, "AES");
-    // }
+    private static SecretKey deriveAESKey(String keyString) throws Exception {
+        // Use SHA-256 hash function to derive a 256-bit key (32 bytes)
+        MessageDigest sha = MessageDigest.getInstance("SHA-256");
+        byte[] keyBytes = sha.digest(keyString.getBytes(StandardCharsets.UTF_8));
+        return new SecretKeySpec(keyBytes, "AES");
+    }
 
-    // private static String encrypt(String plaintext, SecretKey key) throws Exception {
-    //     Cipher cipher = Cipher.getInstance("AES", "BC");
-    //     cipher.init(Cipher.ENCRYPT_MODE, key);
-    //     byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
-    //     return Base64.getEncoder().encodeToString(encryptedBytes);
-    // }
+    private static String encrypt(String plaintext, SecretKey key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES", "BC");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
+        return Base64.getEncoder().encodeToString(encryptedBytes);
+    }
 
-    // private static String decrypt(String encryptedText, SecretKey key) throws Exception {
-    //     Cipher cipher = Cipher.getInstance("AES", "BC");
-    //     cipher.init(Cipher.DECRYPT_MODE, key);
-    //     byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
-    //     byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-    //     return new String(decryptedBytes);
-    // }
+    private static String decrypt(String encryptedText, SecretKey key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES", "BC");
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes);
+    }
 	
 	
 	
