@@ -11064,7 +11064,112 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+	   
+
 	
+	public CustomResultObject showVisitorsInside(HttpServletRequest request, Connection con)
+			throws SQLException, ClassNotFoundException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String storeId = request.getParameter("storeId") == null ? "" : request.getParameter("storeId");
+
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		outputMap.put("app_id", appId);
+
+		// if parameters are blank then set to defaults
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+
+		outputMap.put("txtfromdate", fromDate);
+		outputMap.put("txttodate", toDate);
+
+		try {
+			String[] colNames = { "visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "contact_person","checkin_time","checkout_time","image","remarks" };
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+			lst = lObjConfigDao.showIVisitorsInside(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId, "VisitorEntry");
+			} else {
+
+				Date toDateDate = new SimpleDateFormat("dd/MM/yyyy").parse(fromDate);
+
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(toDateDate);
+				cal.add(Calendar.DATE, -1);
+				toDateDate = cal.getTime();
+
+				toDate = new SimpleDateFormat("dd/MM/yyyy").format(toDateDate);
+				String startOfApplication = "23/01/1992";
+				outputMap.put("ListOfVisitors", lst);
+
+				rs.setViewName("../VisitorsInside.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+
+
+	public CustomResultObject showEmployeeInside(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+"/";	
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String PermanentFlag= request.getParameter("PermanentFlag")==null?"":request.getParameter("PermanentFlag");
+
+
+
+		
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		outputMap.put("app_id", appId);
+		 
+		try
+		{			
+			List<LinkedHashMap<String, Object>> requiredList=new ArrayList<>();
+			String [] colNames= {"EmployeeId","EmployeeName", "EmployeeRole", "MobileNumber"};
+			
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getEmployeesInside(con,PermanentFlag);
+			
+			if(!exportFlag.isEmpty())
+				{
+					outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"EmployeeMaster");
+				}
+			else
+				{
+					outputMap.put("ListOfEmployee", lst);	
+					rs.setViewName("../EmployeeInside.jsp");
+					rs.setReturnObject(outputMap);
+				}			
+			}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
 
 	
 

@@ -2,6 +2,8 @@
   roleId: 1
   actions: 
   - showAccessDenied
+  - showVisitorsInside
+  - showEmployeeInside
   - showLeaveRegister
   - showVendorMaster
   - showAddVendor

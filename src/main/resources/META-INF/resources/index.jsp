@@ -814,26 +814,24 @@
     <div class="row">
 	
 	
-		<div class="col-lg-3 col-6" >
+		<div class="col-lg-3 col-6" onclick="window.location='?a=showVisitorsInside'">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-              
-              
-
-
                 <h3>${InVisitorsCount}</h3>
-
                 <p>Visitors Inside</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
-              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#"  onclick="window.location='?a=showVisitorsInside'" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+
             </div>
           </div>
+
+
           <!-- ./col -->
-          <div class="col-lg-3 col-6" >
+          <div class="col-lg-3 col-6" onclick="window.location='?a=showEmployeeInside&PermanentFlag=0'">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
@@ -844,11 +842,11 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="#"  onclick="window.location='?a=showEmployeeInside&PermanentFlag=1'" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-3 col-6" onclick="window.location='?a=showEmployeeInside&PermanentFlag=0'">
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
@@ -859,7 +857,7 @@
               <div class="icon">
                 <i class="ion ion-person-add"></i>
               </div>
-              <a href="#"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a  onclick="window.location='?a=showEmployeeInside&PermanentFlag=0'"  class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           

@@ -1,5 +1,32 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.compile.nullAnalysis.mode": "automatic",    
-    "git.detectSubmodules": true
+    "git.detectSubmodules": true,
+     // Disable formatting on paste
+     "editor.formatOnPaste": false,
+
+     // Disable suggest on trigger characters
+     "editor.suggestOnTriggerCharacters": false,
+ 
+     // Disable clipboard suggestions on paste
+     "editor.suggestSelection": "first",
+ 
+     // Disable word wrap for large content
+     "editor.wordWrap": "off",
+ 
+     // Disable parameter hints (optional if they cause delays)
+     "editor.parameterHints.enabled": false,
+ 
+     // Disable quick suggestions (optional)
+     "editor.quickSuggestions": {
+         "other": false,
+         "comments": false,
+         "strings": false
+     },
+ 
+     // Disable auto-closing of brackets (optional)
+     "editor.autoClosingBrackets": "never",
+ 
+     // Disable auto-closing of quotes (optional)
+     "editor.autoClosingQuotes": "never"
 }

@@ -229,7 +229,7 @@ function resetEmployee()
 	ReloadFilters();
 }
 
-if('{param.searchString}'!='')
+if('${param.searchString}'!='')
 {
 	EmployeeName.value='${empDetails.name}';
 	EmployeeName.readOnly=true;

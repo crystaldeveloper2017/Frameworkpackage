@@ -6927,6 +6927,43 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		
 
 	}
+
+	public List<LinkedHashMap<String, Object>> getEmployeesInside(Connection con,String permanentFlag) throws SQLException, ClassNotFoundException {
+
+		ArrayList<Object> parameters = new ArrayList<>();		
+		String query="SELECT t1.user_id, t1.check_in_type, t1.checked_time,tum.name,tum.username,tum.mobile,tum2.name supervisor_name,tum.qr_code,tum.type \n" + 
+		"FROM trn_checkin_register t1\n" + 
+		"JOIN (\n" + 
+		"SELECT user_id, MAX(checked_time) AS latest_checked_time\n" + 
+		"FROM trn_checkin_register\n" + 
+		"GROUP BY user_id\n" + 
+		") t2\n" + 
+		"ON t1.user_id = t2.user_id AND t1.checked_time = t2.latest_checked_time \n" + 
+		"inner join tbl_user_mst tum on tum.user_id =t2.user_id \n" + 
+		"inner join tbl_user_mst tum2 on tum2.user_id =tum.parent_user_id\n" + 
+		"WHERE t1.check_in_type = 'I'  \n";
+
+		if(permanentFlag.equals("1"))
+		{
+			query+=" and tum.`type` ='Permanent' ";
+		}
+		else
+		{
+			query+=" and tum.`type` ='Contract' ";
+		}
+
+		query+=" order by checked_time desc ";
+
+
+		
+
+
+
+		return getListOfLinkedHashHashMap(parameters,
+		query, con);
+		
+
+	}
 	public List<LinkedHashMap<String, Object>> getVendorMaster(Connection con,String searchString)
 	throws ClassNotFoundException, SQLException {				
 
@@ -7031,6 +7068,29 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		String query="select country_id countryId,country_name countryName from cmn_country_mst";
 		return getListOfLinkedHashHashMap(parameters, query, con);		
 		
+	}
+
+	public List<LinkedHashMap<String, Object>> showIVisitorsInside(HashMap<String, Object> hm, Connection con)
+			throws ClassNotFoundException, SQLException, ParseException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("app_id"));
+		
+		return getListOfLinkedHashHashMap(parameters,
+		"select\n" + 
+		"ve.*,tum.*,\n" + 
+		"(\n" + 
+		"select group_concat(attachment_id) from tbl_attachment_mst tam where file_id =ve.visitor_id\n" + 
+		") as attachmentIds\n" + 
+		"from\n" + 
+		"visitor_entry ve\n" + 
+		"left outer join tbl_user_mst tum on tum.user_id=ve.contact_to_employee\n" + 
+		"where\n" + 
+		"ve.app_id =? and ve.activate_flag = 1\n" + 
+		"and checkout_time is null \n" + 
+		"order by\n" + 
+		"in_time desc\n",
+				con);
+
 	}
 			
       }
