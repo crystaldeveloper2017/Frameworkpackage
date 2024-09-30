@@ -6818,16 +6818,29 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 				con);
 	}
 
-	public List<LinkedHashMap<String, Object>> getAttendance(String fromDate,String toDate,Connection con)
+	public List<LinkedHashMap<String, Object>> getAttendance(String fromDate,String toDate,String empId,Connection con)
 			throws SQLException, ClassNotFoundException, ParseException {
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(getDateASYYYYMMDD(fromDate));
 		parameters.add(getDateASYYYYMMDD(toDate));
-		return getListOfLinkedHashHashMap(parameters,
-				"select *,tum.name employeeName,"
+
+		String query="select *,tum.name employeeName,"
 				+ "case when check_in_type = 'I' then 'Check In' else 'Check Out' end checkintyped from trn_checkin_register tcr,\r\n"
 				+ "tbl_user_mst tum where tum.user_id=tcr.user_id\r\n"
-				+ "and date(tcr.checked_time) between ? and ? order by tum.name,checked_time,check_in_type" ,
+				+ "and date(tcr.checked_time) between ? and ?";
+
+		
+
+
+		if(!empId.equals(""))
+		{
+			query+=" and tum.user_id=? ";
+			parameters.add(empId);
+		}
+		query+="order by tum.name,checked_time,check_in_type";
+
+		return getListOfLinkedHashHashMap(parameters,
+		query,
 				con);
 	}
 

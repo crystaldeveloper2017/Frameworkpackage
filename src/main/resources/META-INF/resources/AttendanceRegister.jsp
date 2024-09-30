@@ -11,6 +11,18 @@
 <c:set var="txtfromdate" value='${requestScope["outputObject"].get("txtfromdate")}' />
 <c:set var="txttodate" value='${requestScope["outputObject"].get("txttodate")}' />
 <c:set var="empDetails" value='${requestScope["outputObject"].get("empDetails")}' />
+<c:set var="ListOfEmployees" value='${requestScope["outputObject"].get("ListOfEmployees")}' />
+<c:set var="empDetails" value='${requestScope["outputObject"].get("empDetails")}' />
+
+
+
+
+
+<datalist id="ListOfEmployees">
+<c:forEach items="${ListOfEmployees}" var="cat">
+ <option id="${cat.user_id}">${cat.name} </option>	
+ </c:forEach>
+</datalist>
 
 
 
@@ -40,6 +52,26 @@
 				<input type="text" id="txttodate"  onchange="checkforvalidfromtodate();ReloadFilters();"    name="txttodate" readonly class="form-control date_field"  placeholder="To Date"/>
 			</div>
 		</div>
+
+		<div class="col-sm-3">
+					<div class="form-group">
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control form-control-sm"
+								id="EmployeeName" placeholder="Search For Employee Name"
+								name="EmployeeName" autocomplete="off" list='ListOfEmployees' 
+								oninput="checkforMatchEmployee()"> <span
+								class="input-group-append">
+								<button type="button" class="btn btn-danger btn-flat"
+									onclick="resetEmployee()">Reset</button>
+							</span>
+
+							
+						<input type="hidden" name="hdnselectedemployee"
+							id="hdnselectedemployee" value=""> 
+
+							</div>
+				</div>
+					</div>
 		
 		<div class="col-sm-2" align="center">
 			<div class="card-tools">
@@ -53,6 +85,9 @@
 			</div>
 		</div>
 	
+
+				
+
 	</div>
 	<br>
 	
@@ -71,7 +106,7 @@
                      	
                      
                      
-                     <th></th><th></th>
+	
                     </tr>
                   </thead>
                   <tbody>
@@ -84,7 +119,7 @@
 						<td>${item.checked_out_time}</td>
 						
 						
-						<td><a href="?a=showAttendanceRegister=${item.user_id}">
+						<%-- <td><a href="?a=showAttendanceRegister=${item.user_id}"></td> --%>
 					</tr>
 				</c:forEach>
 				
@@ -152,8 +187,53 @@
   
   function ReloadFilters()
   {	 	  
-  	  		window.location="?a=showAttendanceRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;
+  	  		window.location="?a=showAttendanceRegister&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value+"&searchString="+hdnselectedemployee.value;
 		  
   }
   
+
+ function checkforMatchEmployee()
+{
+	var searchString= document.getElementById("EmployeeName").value;
+	
+	var options1=document.getElementById("ListOfEmployees").options;
+	var employeeId=0;
+	for(var x=0;x<options1.length;x++)
+		{
+			if(searchString==options1[x].value)
+				{
+					employeeId=options1[x].id;
+					break;
+				}
+		}
+	if(employeeId!=0)
+		{
+			document.getElementById("hdnselectedemployee").value=employeeId;			
+			document.getElementById("EmployeeName").disabled=true;		
+			ReloadFilters();				
+		}
+	else
+		{
+			//searchForCustomer(searchString);
+		}
+	
+	
+}
+
+
+function resetEmployee()
+{	
+	EmployeeName.readOnly=false;
+	EmployeeName.value="";
+	hdnselectedemployee.value='';
+	ReloadFilters();
+}
+
+if('{param.searchString}'!='')
+{
+	EmployeeName.value='${empDetails.name}';
+	EmployeeName.readOnly=true;
+}
+
+
 </script>
