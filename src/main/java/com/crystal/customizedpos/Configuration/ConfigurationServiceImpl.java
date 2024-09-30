@@ -10609,6 +10609,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
 		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String searchString=request.getParameter("searchString") == null ? "" : request.getParameter("searchString");
 		
 		if (fromDate.equals("")) {
 			fromDate = lObjConfigDao.getDateFromDB(con);
@@ -10621,7 +10622,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try
 		{
 			String [] colNames= {"name","checked_in_time","checked_out_time"}; // change according to dao return
-			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getAttendance(fromDate,toDate,con);
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getAttendance(fromDate,toDate,searchString,con);
 			
 			
 			List<LinkedHashMap<String, Object>> reqList =new ArrayList<>();
@@ -10671,10 +10672,15 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			
 			
 			
-			outputMap.put("ListOfEmployees", lst);
+			outputMap.put("ListOfEmployees", lObjConfigDao.getEmployeeMaster(outputMap, con));
 			outputMap.put("reqList", reqList);
 			
 			outputMap.put("txtfromdate", fromDate);
+
+			if(!searchString.equals(""))
+			{
+				outputMap.put("empDetails", lObjConfigDao.getEmployeeDetails(Long.valueOf(searchString), con));
+			}
 
 			outputMap.put("txttodate", toDate);
 
