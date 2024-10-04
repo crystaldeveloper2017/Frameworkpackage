@@ -831,7 +831,7 @@
 
 
           <!-- ./col -->
-          <div class="col-lg-3 col-6" onclick="window.location='?a=showEmployeeInside&PermanentFlag=0'">
+          <div class="col-lg-3 col-6" onclick="window.location='?a=showEmployeeInside&PermanentFlag=1'">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
