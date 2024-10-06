@@ -129,7 +129,7 @@ public class CommonFunctions extends PdfPageEventHelper
 			for (Object o : parameters) {
 				stmnt.setObject(j++, o);
 			}
-			logger.info("\n"+stmnt);
+			logger.debug("\n"+stmnt);
 			
 			Date dt1=new Date();			
 			rs = stmnt.executeQuery();
@@ -253,7 +253,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	            	ps.setObject(i++,entry.getValue());	                
 	            }
 	        }
-	        logger.info("\n"+ps);
+	        logger.debug("\n"+ps);
 	        ps.executeUpdate();
 	        
 	        try (ResultSet generatedKeys = ps.getGeneratedKeys()) 
@@ -321,7 +321,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.setObject(j++, o);
 			}
 
-			logger.info("\n"+stmnt);
+			logger.debug("\n"+stmnt);
 			
 			Date dt1=new Date();			
 			rs = stmnt.executeQuery();
@@ -378,7 +378,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.setObject(j++, o);
 			}
 
-			logger.info("\n"+stmnt);
+			logger.debug("\n"+stmnt);
 			
 			Date dt1=new Date();			
 			rs = stmnt.executeQuery();
@@ -435,7 +435,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.setObject(j++, o);
 			}
 
-			logger.info("\n"+stmnt);
+			logger.debug("\n"+stmnt);
 			
 			Date dt1=new Date();			
 			rs = stmnt.executeQuery();
@@ -492,7 +492,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.setObject(j++, o);
 			}
 
-			logger.info("\n"+stmnt);
+			logger.debug("\n"+stmnt);
 			
 			Date dt1=new Date();			
 			rs1 = stmnt.executeQuery();
@@ -620,13 +620,12 @@ public class CommonFunctions extends PdfPageEventHelper
 	public void setApplicationConfig() {		
 		try 
 		{		
-			logger.error("Inside this method: setApplicationConfig");
-			System.out.println("Inside this method: setApplicationConfig");		
+			
 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
 
-				logger.error("Config.yaml file found");
+				logger.debug("Config.yaml file found");
 				Yaml yaml = new Yaml(); 
 				Map<String, Object> data = yaml.load(in);				
 				host=(String) data.get("host");
@@ -891,8 +890,8 @@ public class CommonFunctions extends PdfPageEventHelper
 		try
 		{
 		Class.forName("com.mysql.jdbc.Driver");
-		System.out.println("check if schema exist");
-		System.out.println(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
+		logger.debug("check if schema exist");
+		logger.debug(url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Connection connection = DriverManager.getConnection (url+":"+port+"?user="+username+"&password="+password+"&characterEncoding=utf8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,PIPES_AS_CONCAT'");
 		Statement statement = connection.createStatement();
 
@@ -1026,7 +1025,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 				preparedStatement.setObject(i++, o);
 			}
 			hm.put("preparedStatement",preparedStatement.toString());
-			logger.info("\n"+preparedStatement);
+			logger.debug("\n"+preparedStatement);
 			preparedStatement.executeUpdate();
 
 			try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) 
@@ -1080,7 +1079,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	 * 
 	 * 
 	 * 
-	 * logger.info("Destination path is"+DestinationPath);
+	 * logger.debug("Destination path is"+DestinationPath);
 	 * 
 	 * // set global session
 	 * 
@@ -1094,7 +1093,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	 * HashSet<String>(lstFromDb); setFromDb.removeAll(setFromServerFolder);
 	 * ArrayList<String> namesList = new ArrayList<>(setFromDb);
 	 * 
-	 * logger.info("Pending Files to copy"+namesList);
+	 * logger.debug("Pending Files to copy"+namesList);
 	 * 
 	 * if (actualCopy(DestinationPath, con, namesList)) { break; }
 	 * 
@@ -1106,8 +1105,8 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	public void copyAttachmentsFromDBToGivenPath(String persistentPath,Connection con) throws ClassNotFoundException, SQLException, IOException
 	{
 		String DestinationPath = persistentPath;
-		logger.error("Destination path is"+DestinationPath);
-		logger.error("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);
+		logger.debug("Destination path is"+DestinationPath);
+		logger.debug("copyAttachmentsToBuffer"+copyAttachmentsToBuffer);
 		// set global session
 		if(!copyAttachmentsToBuffer)
 			return;
@@ -1125,7 +1124,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			setFromDb.removeAll(setFromServerFolder);
 			ArrayList<String> namesList = new ArrayList<>(setFromDb);
 
-			logger.info("Pending Files to copy"+namesList);
+			logger.debug("Pending Files to copy"+namesList);
 
 			if (actualCopy(DestinationPath, con, namesList)) {
 				break;
@@ -1149,7 +1148,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		setFromSource.removeAll(setFromDestination);
 		ArrayList<String> namesList = new ArrayList<>(setFromSource);
 
-		logger.info("File to copy from "+sourcePath +"To Destination path "+ destinationPath +namesList);
+		logger.debug("File to copy from "+sourcePath +"To Destination path "+ destinationPath +namesList);
 		
 		for(String s:namesList)
 		{
@@ -1189,7 +1188,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 				while (rs.next()) {
 					m++;
 					String PathToNewFile = DestinationPath + rs.getString("file_name");
-					logger.info(PathToNewFile);
+					logger.debug(PathToNewFile);
 					File f = new File(PathToNewFile);
 					if (!f.exists()) {
 						fos = new FileOutputStream(f);
@@ -1238,7 +1237,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 				while (rs.next()) {
 					m++;
 					String PathToNewFile = DestinationPath + rs.getString("file_name");
-					logger.info(PathToNewFile);
+					logger.debug(PathToNewFile);
 					File f = new File(PathToNewFile);
 					fileName=rs.getString(1);
 					if (!f.exists()) {
@@ -1268,7 +1267,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 	public String getDateTime(Connection con) throws SQLException {
-		logger.info("will fire db query 1");
+		logger.debug("will fire db query 1");
 		return getMap(new ArrayList<>(), "select sysdate() as dt1 from dual", con).get("dt1");
 
 	}
@@ -2116,7 +2115,7 @@ public HashMap<String,String> getFirstAndLastDateOfCurrentMonth(Connection con) 
 	public void copyImagesFromDBToBufferFolder(ServletContext sc, Connection con)
 			throws ClassNotFoundException, SQLException, IOException {
 		String DestinationPath = sc.getRealPath("BufferedImagesFolder") + "/";
-		logger.info("Destination path is"+DestinationPath);
+		logger.debug("Destination path is"+DestinationPath);
 		
 		// set global session
 		if(!copyAttachmentsToBuffer)
@@ -2135,7 +2134,7 @@ public HashMap<String,String> getFirstAndLastDateOfCurrentMonth(Connection con) 
 			setFromDb.removeAll(setFromServerFolder);
 			ArrayList<String> namesList = new ArrayList<>(setFromDb);
 
-			logger.info("Pending Files to copy"+namesList);
+			logger.debug("Pending Files to copy"+namesList);
 
 			if (actualCopy(DestinationPath, con, namesList)) {
 				break;

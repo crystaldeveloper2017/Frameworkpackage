@@ -164,7 +164,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 				}
 			}
 			
-			logger.info("Class and Method Info From Database" + frmAction.toString());
+			logger.debug("Class and Method Info From Database" + frmAction.toString());
 			Class<?>[] paramString = new Class[2];
 			paramString[0] = HttpServletRequest.class;
 			paramString[1] = Connection.class;
@@ -183,7 +183,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 				List<String> roleIds =getRoleIds(Long.valueOf(userId), con);
 
 				
-				logger.info("Found a view Name so redirecting to " + rs.getViewName());
+				logger.debug("Found a view Name so redirecting to " + rs.getViewName());
 				HashMap<String, Object> hm = rs.getReturnObject();
 				hm.put("contentJspName", rs.getViewName());
 				hm.put(username_constant, request.getSession().getAttribute(username_constant));
@@ -224,8 +224,8 @@ public class ControllerServiceImpl extends CommonFunctions {
 			con.commit();
 			
 			Date EndTime = new Date();
-			logger.info("Request End Time " + EndTime);
-			logger.info("\nTime Taken For Request -- " + (EndTime.getTime() - startDatetime.getTime()));
+			logger.debug("Request End Time " + EndTime);
+			logger.debug("\nTime Taken For Request -- " + (EndTime.getTime() - startDatetime.getTime()));
 
 			freeMemory = Runtime.getRuntime().freeMemory() / MegaBytes;
 			totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
@@ -289,11 +289,11 @@ public class ControllerServiceImpl extends CommonFunctions {
 				try {
 					makeAuditTrailEntry(hmFromRequest, reqStartTime, responseJson);
 				} catch (ClassNotFoundException e) {
-					logger.info("Going to Make audittrail entry " + e);
+					logger.debug("Going to Make audittrail entry " + e);
 
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					logger.info("Going to Make audittrail entry " + e);
+					logger.debug("Going to Make audittrail entry " + e);
 				}
 			}
 		}).start();
@@ -305,7 +305,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 	public HashMap<String, Object> getMapfromRequest(HttpServletRequest request, String reqStartTime,
 			String responseJson, Connection con) throws ClassNotFoundException, SQLException {
 
-		logger.info("Going to Make audittrail entry ");
+		logger.debug("Going to Make audittrail entry ");
 		StringBuffer requestURL = request.getRequestURL();
 		if (request.getQueryString() != null) {
 			requestURL.append("?").append(request.getQueryString());
