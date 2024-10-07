@@ -86,7 +86,7 @@
 
   <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<c:set var="visitorDetails" value='${requestScope["outputObject"].get("visitorDetails")}' />
+<c:set var="prefilledvisitorDetails" value='${requestScope["outputObject"].get("prefilledvisitorDetails")}' />
 <c:set var="distinctPurposeOfVisist" value='${requestScope["outputObject"].get("distinctPurposeOfVisist")}' />
 <c:set var="employeeList" value='${requestScope["outputObject"].get("employeeList")}' />
 <c:set var="listOfEmployees" value='${requestScope["outputObject"].get("EmployeeList")}' />
@@ -231,23 +231,23 @@ function resetEmployee()
   <div class="col-sm-12">
   	<div class="form-group">
       <label for="visitorname">Visitor Name*</label>
-      <input type="text" class="form-control" id="visitorname" value="${visitorDetails.visitor_name}" name="visitorname" placeholder="Visitor Name">
-      <input type="hidden" name="hdnvisitorId" value="${visitorDetails.visitor_id}" id="hdnvisitorId">
+      <input type="text" class="form-control" id="visitorname" value="${prefilledvisitorDetails.visitor_name}" name="visitorname" placeholder="Visitor Name">
+      <input type="hidden" name="hdnvisitorId" value="${prefilledvisitorDetails.visitor_id}" id="hdnvisitorId">
     </div>
   </div>
   
   <div class="col-sm-12">
   	<div class="form-group">
       <label for=Address>Address</label>
-      <input type="text" class="form-control" id="address" value="${visitorDetails.address}" name="address" placeholder="Address">
+      <input type="text" class="form-control" id="address" value="${prefilledvisitorDetails.address}" name="address" placeholder="Address">
     </div>
   </div>
   
 	<div class="col-sm-12">
 		<div class="form-group">
 			<label for="PurposeofVisit">Purpose Of Visit*</label>
-			<input type="text" class="form-control form-control-sm" id="purpose_of_visit" placeholder="Eg. case" value="${visitorDetails.purpose_of_visit}" list="datalistPurposes"  name="purpose_of_visit">
-			<input type="hidden" name="drpVisitorId" value="${visitorDetails.visitor_id}" id="drpVisitorId">
+			<input type="text" class="form-control form-control-sm" id="purpose_of_visit" placeholder="Eg. case" value="${prefilledvisitorDetails.purpose_of_visit}" list="datalistPurposes"  name="purpose_of_visit">
+			<input type="hidden" name="drpVisitorId" value="${prefilledvisitorDetails.visitor_id}" id="drpVisitorId">
 			<datalist id="datalistPurposes">
 				<c:forEach items="${distinctPurposeOfVisist}" var="purpose">
 				<option id="${purpose.purpose_of_visit}">${purpose.purpose_of_visit}</option>			    
@@ -259,21 +259,21 @@ function resetEmployee()
    <div class="col-sm-12">
   	<div class="form-group">
       <label for="Remarks">Remarks</label>
-      <input type="text" class="form-control" id="remarks" value="${visitorDetails.remarks}" name="remarks" placeholder="Remarks">
+      <input type="text" class="form-control" id="remarks" value="${prefilledvisitorDetails.remarks}" name="remarks" placeholder="Remarks">
     </div>
   </div>
   
   <div class="col-sm-12">
   	<div class="form-group">
       <label for="MobileNo">Mobile No*</label>
-      <input type="text" class="form-control" id="MobileNo" value="${visitorDetails.mobile_no}" name="MobileNo" placeholder="Mobile No" onkeypress="digitsOnly(event)" maxlength="10" required>
+      <input type="text" class="form-control" id="MobileNo" value="${prefilledvisitorDetails.mobile_no}" name="MobileNo" placeholder="Mobile No" onkeypress="digitsOnly(event)" maxlength="10" required>
     </div>
   </div>
   
   <div class="col-sm-12">
   	<div class="form-group">
       <label for="EmailId">Email Id</label>
-      <input type="text" class="form-control" id="EmailId" value="${visitorDetails.email_id}" name="EmailId" placeholder="Email Id">
+      <input type="text" class="form-control" id="EmailId" value="${prefilledvisitorDetails.email_id}" name="EmailId" placeholder="Email Id">
     </div>
   </div>
   
@@ -284,8 +284,8 @@ function resetEmployee()
 	<label for="email">Contact To Employee </label>     
 	<div class="input-group input-group-sm">
 
-	<input type="textbox" name="ContactToEmployee" id="ContactToEmployee" class="form-control form-control-sm" list="listOfEmployee" onchange="checkforMatchEmployee()"/> 
-	<input type="hidden" name="hdnselectedemployee" id="hdnselectedemployee" value="">  <span class="input-group-append">
+	<input type="textbox" name="ContactToEmployee" id="ContactToEmployee" class="form-control form-control-sm" list="listOfEmployee" onchange="checkforMatchEmployee()" value="${prefilledvisitorDetails.name}"/> 
+	<input type="hidden" name="hdnselectedemployee" id="hdnselectedemployee" value="${prefilledvisitorDetails.user_id}">  <span class="input-group-append">
 		<button type="button" class="btn btn-danger btn-flat" onclick="resetEmployee()">Reset</button>
 		</span>
 	</div>
@@ -313,9 +313,7 @@ function resetEmployee()
   
 </div>
   
-</div>
-  
-  </div>
+
   
   
   
@@ -330,7 +328,9 @@ function resetEmployee()
   </c:if>
   
 		
-		
+		</div>
+  
+  </div>
 		
 		
 </div>
@@ -345,7 +345,7 @@ function resetEmployee()
 
 <script>
 
-<c:if test="${visitorDetails.visitor_id eq null}">
+<c:if test="${prefilledvisitorDetails.visitor_id eq null}">
 	document.getElementById("divTitle").innerHTML="Add Visitor";
 	document.title +=" Add Visitor ";
 </c:if>
@@ -501,3 +501,19 @@ callerUrl.value=(arr[0]+"//"+arr[1]+arr[2]+"/"+arr[3]+"/");
 
 
             </script>
+
+
+<script>
+  if('${param.prefilledvisitorId}'!='')
+  {
+   
+   visitorname.readOnly=true;
+   address.readOnly=true;
+   purpose_of_visit.readOnly=true;
+   remarks.readOnly=true;
+   MobileNo.readOnly=true;
+   EmailId.readOnly=true;
+   ContactToEmployee.readOnly=true;
+
+  }
+</script>

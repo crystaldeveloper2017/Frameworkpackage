@@ -20,7 +20,7 @@
 
 <datalist id="ListOfEmployees">
 <c:forEach items="${ListOfEmployees}" var="cat">
- <option id="${cat.user_id}">${cat.name} </option>	
+ <option id="${cat.user_id}">${cat.name} ~ ${cat.qr_code}</option>	
  </c:forEach>
 </datalist>
 

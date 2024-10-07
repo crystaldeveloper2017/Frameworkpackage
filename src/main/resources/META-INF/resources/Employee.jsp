@@ -179,13 +179,30 @@ function addEmployee()
                 <table id="example1"class="table table-head-fixed  table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                   <thead>
                     <tr>
-                     <th><b>Employee Id</b></th> <th><b>User Name</b></th><th><b>Employee Name</b></th><th><b>Mobile Number</b></th><th>Supervisor Name</th><th>Qr Code</th><th><b>Type</b></th><th></th><th></th>
+                     <th><b>Employee Id</b></th> 
+					 <th><b>User Name</b></th>
+					 <th><b>Employee Name</b></th>
+					 
+					 <th><b>Mobile Number</b></th>
+					 <th>Supervisor Name</th>
+					 <th>Qr Code</th>
+					 
+					 <th><b>Type</b></th>
+					 <th></th><th></th>
                     </tr>
                   </thead>
                   <tbody>
 				<c:forEach items="${message}" var="item">
 					<tr >
-						<td>${item.user_id}</td><td>${item.username}</td><td>${item.name}</td><td>${item.mobile}</td><td>${item.supervisorName}</td><td>${item.qr_code}</td><td>${item.type}</td><td><a href="?a=showAddEmployee&employeeId=${item.user_id}">Edit</a></td><td><button class="btn btn-danger" onclick="deleteEmployee(${item.user_id})">Delete</button></td>
+						<td>${item.user_id}</td>
+						<td>${item.username}</td>
+						<td>${item.name}</td>
+						<td>${item.mobile}</td>
+						<td>${item.supervisorName}</td>
+						<td>${item.qr_code}</td>
+						<td>${item.type}</td>
+						<td><a href="?a=showAddEmployee&employeeId=${item.user_id}">Edit</a></td>
+						<td><button class="btn btn-danger" onclick="deleteEmployee(${item.user_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
 				

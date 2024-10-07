@@ -147,3 +147,13 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showVendorsCheckIn"
   orderNo: 1
+- elementId: 700167
+  elementName: " Prefilled Visitor"
+  parentElementId: 700157
+  elementUrl: "?a=showPrefilledVisitors"
+  orderNo: 1
+- elementId: 700168
+  elementName: "Gate Pass"
+  parentElementId: 700165
+  elementUrl: "?a=showGatePass"
+  orderNo: 1

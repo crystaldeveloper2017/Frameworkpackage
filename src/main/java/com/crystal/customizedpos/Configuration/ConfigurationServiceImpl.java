@@ -10214,6 +10214,10 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		long visitorId = request.getParameter("visitorId") == null ? 0L
 				: Long.parseLong(request.getParameter("visitorId"));
 
+		long prefilledvisitorId = request.getParameter("prefilledvisitorId") == null ? 0L
+				: Long.parseLong(request.getParameter("prefilledvisitorId"));
+
+
 		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
 
 		try {
@@ -10221,7 +10225,10 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				outputMap.put("visitorDetails", lObjConfigDao.getvisitorDetails(visitorId, con));
 			}
 			
-			
+			if (prefilledvisitorId != 0) {
+				outputMap.put("prefilledvisitorDetails", lObjConfigDao.getprefilledvisitorDetails(prefilledvisitorId, con));
+			}
+
 			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
 
 			outputMap.put("employeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
@@ -10234,6 +10241,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 		return rs;
 	}
+
 
 	public CustomResultObject deleteVisitor(HttpServletRequest request, Connection con) {
 
@@ -11171,7 +11179,175 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		return rs;
 	}
 
-	
+	public CustomResultObject showAddPrefilledVisitor(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long visitorId = request.getParameter("visitorId") == null ? 0L
+				: Long.parseLong(request.getParameter("visitorId"));
+
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+
+		try {
+			if (visitorId != 0) {
+				outputMap.put("visitorDetails", lObjConfigDao.getvisitorDetails(visitorId, con));
+			}
+			
+			
+			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
+			outputMap.put("employeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+			outputMap.put("distinctPurposeOfVisist", lObjConfigDao.getDistinctPurposeOfVisitList(con, appId));
+			rs.setViewName("../AddPrefilledVisitor.jsp");
+			rs.setReturnObject(outputMap);
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+
+
+	public CustomResultObject addPrefilledVisitor(HttpServletRequest request, Connection con) throws FileUploadException, IOException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFactory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFactory);
+		String appId = request.getParameter("app_id");
+		outputMap.put("app_id", appId);
+		HashMap<String, Object> hm = new HashMap<>();
+		hm.put("app_id", appId);
+		String imageName = request.getParameter("photo");
+		String textfield = request.getParameter("textfield");
+		
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+		long prefilledvisitorId = hm.get("hdnprefilledvisitorId").equals("") ? 0l : Long.parseLong(hm.get("hdnprefilledvisitorId").toString());
+
+
+		try {
+
+			
+			prefilledvisitorId = lObjConfigDao.addPrefilledVisitor(con, hm);
+				
+			
+			
+			rs.setAjaxData("<script>window.location='?a=showPrefilledVisitors'</script>");
+			rs.setReturnObject(outputMap);
+			
+			
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+
+	}
+
+	public CustomResultObject showPrefilledVisitors(HttpServletRequest request, Connection con)
+			throws SQLException, ClassNotFoundException {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String storeId = request.getParameter("storeId") == null ? "" : request.getParameter("storeId");
+
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		outputMap.put("app_id", appId);
+
+		// if parameters are blank then set to defaults
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+
+		outputMap.put("txtfromdate", fromDate);
+		outputMap.put("txttodate", toDate);
+
+		try {
+			String[] colNames = { "prefilled_visitor_id", "visitor_name", "address","purpose_of_visit","mobile_no", "email_id", "contact_person","remarks" };
+
+			List<LinkedHashMap<String, Object>> lst = null;
+
+			lst = lObjConfigDao.showPrefilledVisitors(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId, "VisitorEntry");
+			} else {
+
+				Date toDateDate = new SimpleDateFormat("dd/MM/yyyy").parse(fromDate);
+
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(toDateDate);
+				cal.add(Calendar.DATE, -1);
+				toDateDate = cal.getTime();
+
+				toDate = new SimpleDateFormat("dd/MM/yyyy").format(toDateDate);
+				String startOfApplication = "23/01/1992";
+				outputMap.put("ListOfVisitors", lst);
+
+				rs.setViewName("../PrefilledVisitors.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+
+
+	public CustomResultObject deletePrefilledVisitor(HttpServletRequest request, Connection con) {
+
+		CustomResultObject rs = new CustomResultObject();
+		long visitorId = Long.parseLong(request.getParameter("visitorId"));
+		try {
+
+			rs.setAjaxData(lObjConfigDao.deletePrefilledVisitor(visitorId, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+
+	public CustomResultObject checkoutPrefilledVisitor(HttpServletRequest request, Connection con) {
+
+		CustomResultObject rs = new CustomResultObject();
+		long visitorId = Long.parseLong(request.getParameter("visitorId"));
+		try {
+
+			rs.setAjaxData(lObjConfigDao.checkoutPrefilledVisitor(visitorId, con));
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
 
 
 }

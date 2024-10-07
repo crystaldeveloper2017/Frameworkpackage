@@ -6640,7 +6640,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		
 		insertUpdateDuablDB("UPDATE visitor_entry  SET checkout_time=sysdate() WHERE visitor_id=?",
 				parameters, conWithF);
-		return "Visitor deleted Succesfully";
+		return "Visitor checkout Succesfully";
 	}
 	
 	
@@ -7092,5 +7092,77 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				con);
 
 	}
+
+	public long addPrefilledVisitor(Connection conWithF, HashMap<String, Object> hm) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("visitorname"));
+		parameters.add( hm.get("address"));
+		parameters.add( hm.get("purpose_of_visit"));		
+		parameters.add( hm.get("remarks"));	
+		parameters.add( hm.get("MobileNo"));	
+		parameters.add( hm.get("EmailId"));	
+		parameters.add( hm.get("app_id"));
+		parameters.add( hm.get("hdnselectedemployee"));
+		
+		
+		String insertQuery = "insert into trn_prefilled_visitor values (default,?,?,?,?,?,?,?,sysdate(),1,?)";
+		
+		return insertUpdateDuablDB(insertQuery, parameters, conWithF);
+
+	}
 			
+		public List<LinkedHashMap<String, Object>> showPrefilledVisitors(HashMap<String, Object> hm, Connection con)
+		throws ClassNotFoundException, SQLException, ParseException {
+	ArrayList<Object> parameters = new ArrayList<>();
+	parameters.add(hm.get("app_id"));
+	parameters.add(getDateASYYYYMMDD(hm.get("txtfromdate").toString()));
+	parameters.add(getDateASYYYYMMDD(hm.get("txttodate").toString()));
+	return getListOfLinkedHashHashMap(parameters,
+	"select\n" + 
+	"tpv.*,tum.*,\n" + 
+	"(\n" + 
+	"select group_concat(attachment_id) from tbl_attachment_mst tam where file_id =tpv.prefilled_visitor_id\n" + 
+	") as attachmentIds\n" + 
+	"from\n" + 
+	"trn_prefilled_visitor tpv\n" + 
+	"left outer join tbl_user_mst tum on tum.user_id=tpv.contact_to_employee\n" + 
+	"where\n" + 
+	"tpv.app_id =? and tpv.activate_flag = 1\n" + 
+	"and date(in_time) between ? and ?\n" + 
+	"order by\n" + 
+	"in_time desc\n",
+			con);
+
+	}
+
+	public String deletePrefilledVisitor(long visitorId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(visitorId);
+		
+		insertUpdateDuablDB("UPDATE trn_prefilled_visitor  SET activate_flag=0 WHERE prefilled_visitor_id=?",
+				parameters, conWithF);
+		return "Prefilled Visitor deleted Succesfully";
+	}
+	
+	public String checkoutPrefilledVisitor(long visitorId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(visitorId);
+		
+		insertUpdateDuablDB("UPDATE prefilled_visitor  SET checkout_time=sysdate() WHERE prefilled_visitor_id=?",
+				parameters, conWithF);
+		return "Prefilled Visitor checkout Succesfully";
+	}
+	
+	public LinkedHashMap<String, String> getprefilledvisitorDetails(long VisitorId, Connection con) throws SQLException {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(VisitorId);
+		return getMap(parameters,
+				"select * from trn_prefilled_visitor tpv , tbl_user_mst tum where tum.user_id =tpv.contact_to_employee and prefilled_visitor_id=? and  tpv.activate_flag=1", con);
+		
+
+	}
+	
+
       }

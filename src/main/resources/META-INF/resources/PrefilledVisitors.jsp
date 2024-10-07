@@ -9,7 +9,7 @@
 
 
 <script>
-function deleteVisitor(visitorId)
+function deletePrefilledVisitor(visitorId)
 {
 	
 	var answer = window.confirm("Are you sure you want to delete ?");
@@ -35,12 +35,12 @@ function deleteVisitor(visitorId)
 		}
 	  };
 	  
-	  xhttp.open("GET","?a=deleteVisitor&visitorId="+visitorId, true);    
+	  xhttp.open("GET","?a=deletePrefilledVisitor&visitorId="+visitorId, true);    
 	  xhttp.send();
 }
 
 
-function checkoutVisitor(visitorId)
+function showAddVisitor(prefilledvisitorId)
 {
 	
 	
@@ -61,8 +61,30 @@ function checkoutVisitor(visitorId)
 		}
 	  };
 	  
-	  xhttp.open("GET","?a=checkoutVisitor&visitorId="+visitorId, true);    
+	  xhttp.open("GET","?a=showAddVisitor&prefilledvisitorId="+prefilledvisitorId, true);    
 	  xhttp.send();
+}
+
+function CheckinPrefilledvisitor(prefilledvisitorId,visitorName)
+{
+	
+	
+	document.getElementById("closebutton").style.display='none';
+	   document.getElementById("loader").style.display='block';
+	$('#myModal').modal({backdrop: 'static', keyboard: false});;
+	
+	var stringToPopulate='<table class="table table-bordered tablecss" border="3">';
+	stringToPopulate+='<tr style="background-color:cornsilk;" align="center"><td colspan="2">Update Employee</td></tr>';
+	stringToPopulate+='<tr><td>Employee Name </td> <td colspan="2"><input id="txtemployeenamepopup" placeholder="Employee Name" value="'+employeeName+'" class="form-control input-sm" id="inputsm" type="text"></td></tr>';
+	stringToPopulate+="<tr align=\"center\"><td colspan=\"2\"><button class=\"btn btn-primary\" onclick=\"updatedemployee("+employeeId+")\">Update</button></td></tr>";
+	stringToPopulate+='</table>';
+	
+	document.getElementById("responseText").innerHTML=stringToPopulate;
+     document.getElementById("closebutton").style.display='block';
+	   document.getElementById("loader").style.display='none';
+	$('#myModal').modal({backdrop: 'static', keyboard: false});;
+
+	
 }
 
 
@@ -78,9 +100,9 @@ function checkoutVisitor(visitorId)
 	
 	<div class="row">
 	
-		<div class="col-sm-1" align="center">
-			<label for="txtfromdate">From Date</label>
-		</div>
+			<div class="col-sm-1" align="center">
+				<label for="txtfromdate">From Date</label>
+			</div>
 	
 		<div class="col-sm-2" align="center">
 			<div class="input-group input-group-sm" style="width: 200px;">
@@ -108,23 +130,10 @@ function checkoutVisitor(visitorId)
 			</div>
 		</div> 
 
-
-			<div class="col-sm-2" align="center">
-			<div class="input-group input-group-sm" style="width: 200px;">                    
-				<input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddPrefilledVisitor'" value="Add Prefilled Visitor" class="form-control float-right" >                      
-			</div>
-		</div>     
-                
-		 
-		<div class="col-sm-2" align="center">
-			<div class="input-group input-group-sm" style="width: 200px;">                    
-				<input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddVisitor'" value="Add New Visitor" class="form-control float-right" >                      
-			</div>
-		</div>     
-                
+    			
 	
 	
-		
+			
 	</div>
 	
               
@@ -133,15 +142,14 @@ function checkoutVisitor(visitorId)
                 <table id="example1"class="table table-head-fixed  table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                   <thead>
                     <tr>
-                     <th><b>Visitor Id</b></th>
+                     <th><b>Prefilled Visitor Id</b></th>
                      <th><b>Name</b></th>
                      <th><b>Purpose Of Visit</b></th>
                      <th><b>Mobile No</b></th>
                      <th><b>Email</b></th>
                       <th><b>Contact To Employee</b></th>
-                     <th><b>Checkin Time</b></th>
-                     <th><b>Checkout Time</b></th>
-					 <th><b>Image</b></th>
+                     
+					
 					  <th><b>Remarks</b></th>
 					 
 					 
@@ -151,41 +159,23 @@ function checkoutVisitor(visitorId)
                   <tbody>
 				<c:forEach items="${message}" var="item">
 					<tr >
-						<td>${item.visitor_id}</td>
+						<td>${item.prefilled_visitor_id}</td>
 						<td>${item.visitor_name}</td>
 						<td>${item.purpose_of_visit}</td>
 						<td>${item.mobile_no}</td>
 						<td>${item.email_id}</td>
 						<td>${item.name}</td>
-						<td>${item.checkin_time}</td>
-						<td>${item.checkout_time}</td>
 						
-						<td>
 						
-
-						<c:forTokens items="${item.attachmentIds}" delims="," var="mySplit">
-   							
-							<img onclick="getVisitorImage('${mySplit}')" src="BufferedImagesFolder/dummyImage.jpg" height="30px" width="30px">
-						</c:forTokens>
-
-
 						
-						</td>
 						<td>${item.remarks}</td>
 						
-						<td>
 						
+				<td><a href="?a=showAddVisitor&prefilledvisitorId=${item.prefilled_visitor_id}">Check In</a></td>
+		
+	
 						
-						<c:if test="${item.checkout_time eq null}">							  				
-					  				<button class="btn btn-primary" onclick="checkoutVisitor(${item.visitor_id})">Checkout</button>					  
-	  					</c:if>
-						
-						
-						
-						</td>
-						
-						
-						<td><button class="btn btn-danger" onclick="deleteVisitor(${item.visitor_id})">Delete</button></td>
+						<td><button class="btn btn-danger" onclick="deletePrefilledVisitor(${item.prefilled_visitor_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
 				
@@ -194,7 +184,7 @@ function checkoutVisitor(visitorId)
                 </table>
               </div>
               <!-- /.card-body -->
-            </div>
+           
             
             
             
@@ -219,8 +209,8 @@ function checkoutVisitor(visitorId)
     });
   });
   
-  document.getElementById("divTitle").innerHTML="Visitor Entry";
-  document.title +=" Visitor Entry ";
+  document.getElementById("divTitle").innerHTML="Prefilled Visitor ";
+  document.title +=" Prefilled Entry ";
   
   $( "#txtfromdate" ).datepicker({ dateFormat: 'dd/mm/yy' });
   $( "#txttodate" ).datepicker({ dateFormat: 'dd/mm/yy' });
@@ -261,7 +251,7 @@ function checkoutVisitor(visitorId)
   
   function ReloadFilters()
   {	  
-  	  window.location="?a=showVisitors&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;  	  
+  	  window.location="?a=showPrefilledVisitors&txtfromdate="+txtfromdate.value+"&txttodate="+txttodate.value;  	  
   }
   
   function searchprod(elementInput,evnt)
@@ -269,7 +259,7 @@ function checkoutVisitor(visitorId)
 		if(evnt.which==13)
 			{
 				// do some search stuff
-				window.location="?a=showVisitors&colNames="+document.getElementById("colNames").value+"&searchInput="+elementInput.value;
+				window.location="?a=showPrefilledVisitors&colNames="+document.getElementById("colNames").value+"&searchInput="+elementInput.value;
 			}
 			
 	}

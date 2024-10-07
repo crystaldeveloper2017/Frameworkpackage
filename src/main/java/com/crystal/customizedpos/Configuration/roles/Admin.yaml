@@ -2,6 +2,11 @@
   roleId: 1
   actions: 
   - showAccessDenied
+  - checkoutPrefilledVisitor
+  - deletePrefilledVisitor
+  - showPrefilledVisitors
+  - addPrefilledVisitor
+  - showAddPrefilledVisitor
   - showVisitorsInside
   - showEmployeeInside
   - showLeaveRegister
@@ -112,3 +117,4 @@
   - 42
   - 43
   - 44
+  - 700167
