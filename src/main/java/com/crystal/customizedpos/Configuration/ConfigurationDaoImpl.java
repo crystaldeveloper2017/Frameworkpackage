@@ -7159,10 +7159,79 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(VisitorId);
 		return getMap(parameters,
-				"select * from trn_prefilled_visitor tpv , tbl_user_mst tum where tum.user_id =tpv.contact_to_employee and prefilled_visitor_id=? and  tpv.activate_flag=1", con);
+				"select * from trn_prefilled_visitor tpv , tbl_user_mst tum where tum.user_id =tpv.contact_to_employee and prefilled_visitor_id=? and  activate_flag=1", con);
 		
 
 	}
-	
 
+	public long addGatepass(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		parameters.add(hm.get("pass_no"));
+		parameters.add( hm.get("hdnselectedemployee"));
+		parameters.add(getDateASYYYYMMDD(hm.get("txtdate").toString()));
+
+		parameters.add(hm.get("reason"));
+	
+		parameters.add(hm.get("request_raised_by"));
+		
+
+		String query="insert into trn_gate_pass values (default,?,?,?,?,null,null,?,null,sysdate(),1)";
+
+		
+		
+		return insertUpdateDuablDB(query, parameters,
+				con);
+	}
+
+	public String getPassNo(Connection con,boolean updateflag) throws Exception
+	{	
+		String seqName="Gate-Pass-"+getCurrentMonth(con)+"-"+getCurrentYear(con);
+			 long uniqueNo=getSequenceNumberWithoutAppid(con,updateflag,seqName);
+			 int uniqueNoInt=(int) uniqueNo;
+			 seqName+="-"+String.format("%03d",uniqueNoInt);
+			 return seqName;
+	}
+
+	public List<LinkedHashMap<String, Object>> getGatepass(HashMap<String, Object> hm,Connection con)
+			throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		return getListOfLinkedHashHashMap(parameters,
+				"select * from trn_gate_pass where activate_flag=1",
+				con);
+
+
+	}
+
+	public List<LinkedHashMap<String, Object>> getGatepassRegister(String fromDate,String toDate,Connection con)
+						throws SQLException, ClassNotFoundException, ParseException {
+					ArrayList<Object> parameters = new ArrayList<>();
+					parameters.add((getDateASYYYYMMDD(fromDate)));
+					parameters.add((getDateASYYYYMMDD(toDate)));
+					return getListOfLinkedHashHashMap(parameters,
+"select *,date_format (gate_pass_date , '%d/%m/%Y') gate_pass_date, tum2.name requesRaisedBy, tum3.name requestApprovedBy from tbl_user_mst tum,tbl_user_mst tum2,trn_gate_pass tgp \tleft outer join tbl_user_mst tum3 on tum3.user_id=tgp.request_approved_by where tgp.user_id = tum.user_id and tum2.user_id =tgp.request_raised_by and gate_pass_date between ? and ? and tgp.activate_flag = 1",
+							
+							con); 
+				}
+				
+				public String approveGatepass(long gate_pass_id,String requestApprovedBy, Connection conWithF) throws Exception {
+					ArrayList<Object> parameters = new ArrayList<>();
+					parameters.add(requestApprovedBy);
+
+					parameters.add(gate_pass_id);
+					insertUpdateDuablDB("UPDATE trn_gate_pass  SET request_approved_by=? WHERE gate_pass_id=?", parameters, conWithF);
+					return "Approved Succesfully";
+				}
+
+
+
+
+					public String deleteGatepass(long gate_pass_id, Connection conWithF) throws Exception {
+						ArrayList<Object> parameters = new ArrayList<>();
+						parameters.add(gate_pass_id);
+						insertUpdateDuablDB("UPDATE trn_gate_pass SET activate_flag=0 WHERE gate_pass_id=?",
+								parameters, conWithF);
+						return "Gate Pass Deleted Succesfully";
+					}
       }

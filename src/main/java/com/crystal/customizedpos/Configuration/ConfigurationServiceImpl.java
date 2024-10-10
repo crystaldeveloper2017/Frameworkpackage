@@ -11350,4 +11350,202 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 
 
+	public CustomResultObject showGenerateGatePass(HttpServletRequest request, Connection con) throws SQLException {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long gatepassId = request.getParameter("gatepassId") == null ? 0L : Long.parseLong(request.getParameter("gatepassId"));
+		outputMap.put("gatepass_id", gatepassId);
+		String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		outputMap.put("app_id", appId);
+		String todaysDate=lObjConfigDao.getDateFromDB(con);
+
+		try {
+			outputMap.put("pass_no", lObjConfigDao.getPassNo(con,false));
+			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
+			outputMap.put("lisitOfGatepass", lObjConfigDao.getGatepass(outputMap, con));
+			outputMap.put("todaysDate", todaysDate);
+
+			rs.setViewName("../GenerateGatePass.jsp");
+			rs.setReturnObject(outputMap);
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+	public CustomResultObject addGatePass(HttpServletRequest request,Connection con) throws Exception
+	{
+		CustomResultObject rs=new CustomResultObject();	
+		HashMap<String, Object> outputMap=new HashMap<>();	
+				
+		FileItemFactory itemFacroty=new DiskFileItemFactory();
+		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
+		//String webInfPath = cf.getPathForAttachments();
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
+		
+		HashMap<String,Object> hm=new HashMap<>();
+		
+		
+		
+		
+		List<FileItem> toUpload=new ArrayList<>();
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			List<FileItem> items=upload.parseRequest(request);
+			for(FileItem item:items)
+			{		
+				
+				if (item.isFormField()) 
+				{
+					hm.put(item.getFieldName(), item.getString());
+			    }
+				else
+				{
+					toUpload.add(item);
+				}
+			}			
+		}		
+		
+
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+		
+		
+		try
+		{			
+
+
+			hm.put("pass_no", lObjConfigDao.getPassNo(con,true));
+			hm.put("request_raised_by",userId );
+			
+
+									
+			
+			
+			
+				lObjConfigDao.addGatepass(con, hm);
+			
+			
+			
+		
+			rs.setReturnObject(outputMap);
+			
+			
+			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showGatepassRegister'</script>");
+			
+										
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+	public CustomResultObject showGatepassRegister(HttpServletRequest request,Connection con) throws SQLException
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+		
+		
+		try
+		{
+			String [] colNames= {"pi_no","payment_request_date","accountNo","bank_name","total_gross_amount",
+					"total_amount_requested"}; // change according to dao return
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getGatepassRegister(fromDate,toDate,con);
+			outputMap.put("lstGatepassRegister", lst);
+			outputMap.put("txtfromdate", fromDate);
+
+			outputMap.put("txttodate", toDate);
+
+			
+			if(!exportFlag.isEmpty())
+			{
+				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"GatepassRegister");
+			}
+		else
+			{
+				
+				rs.setViewName("../GatePassRegister.jsp");
+				
+			}	
+			
+
+
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		rs.setReturnObject(outputMap);
+
+		return rs;
+	}
+
+	public CustomResultObject approveGatepass(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long gate_pass_id= Long.parseLong(request.getParameter("gate_pass_id"));	
+
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String requestApprovedBy=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+				
+		String returnAjaxString;
+		try
+		{			
+						
+						
+			rs.setAjaxData(lObjConfigDao.approveGatepass(gate_pass_id,requestApprovedBy, con));
+			
+							
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+	public CustomResultObject deleteGatepass(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long gate_pass_id= Long.parseLong(request.getParameter("gate_pass_id"));		
+				
+		try
+		{			
+			
+			
+						
+			rs.setAjaxData(lObjConfigDao.deleteGatepass(gate_pass_id,con));
+			
+			
+							
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
 }

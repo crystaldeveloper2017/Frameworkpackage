@@ -152,8 +152,13 @@ elements:
   parentElementId: 700157
   elementUrl: "?a=showPrefilledVisitors"
   orderNo: 1
-- elementId: 700168
+- elementId: 700169
   elementName: "Gate Pass"
   parentElementId: 700165
-  elementUrl: "?a=showGatePass"
+  elementUrl: "?a=showGenerateGatePass"
+  orderNo: 1
+- elementId: 700170
+  elementName: "Gate Pass Register"
+  parentElementId: 34
+  elementUrl: "?a=showGatepassRegister"
   orderNo: 1

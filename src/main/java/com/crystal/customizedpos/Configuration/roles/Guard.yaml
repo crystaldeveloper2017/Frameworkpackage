@@ -19,6 +19,7 @@
   - addVendorCheckIn
   - showCheckoutForVendor
   - checkoutVendor 
+  - showPrefilledVisitors
   elements: 
   - 11
   - 21
@@ -36,3 +37,4 @@
   - 700165
   - 34
   - 44
+  - 700167

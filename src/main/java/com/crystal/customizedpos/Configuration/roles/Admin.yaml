@@ -2,6 +2,12 @@
   roleId: 1
   actions: 
   - showAccessDenied
+  - approveGatepass
+  - showGenerateGatePass
+  - addGatePass
+  - showGatepassRegister
+  - approveGatepass
+  - deleteGatepass
   - checkoutPrefilledVisitor
   - deletePrefilledVisitor
   - showPrefilledVisitors
@@ -99,7 +105,6 @@
   - 10
   - 700195
   - 700197
-  - 700165
   - 700168
   - 700157
   - 700158
@@ -118,3 +123,5 @@
   - 43
   - 44
   - 700167
+  - 700169
+  - 700170
