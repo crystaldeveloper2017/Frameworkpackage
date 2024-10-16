@@ -20,6 +20,7 @@
   - showCheckoutForVendor
   - checkoutVendor 
   - showPrefilledVisitors
+  - showScanGatePass
   elements: 
   - 11
   - 21

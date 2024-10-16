@@ -120,12 +120,14 @@ function resetEmployee()
 
 <div class="container" style="padding:20px;background-color:white">
 
+
 <form id="frm" action="?a=addGatePass" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 <input type="hidden" name="app_id" value="${userdetails.app_id}">
 <input type="hidden" name="user_id" value="${userdetails.user_id}">
 <input type="hidden" name="callerUrl" id="callerUrl" value="">
+<div class="row">
 
-<div class="col-sm-3">
+<div class="col-sm-12">
 	<div class="form-group">
   
       <label for="email">Name</label>
@@ -141,7 +143,7 @@ function resetEmployee()
 
   
   
-   <div class="col-sm-4">
+   <div class="col-sm-6">
   	<div class="form-group">
       <label for="email">Date</label>
       <input type="text" class="form-control" id="txtdate"  readonly  value="${todaysDate}"  name="txtdate">
@@ -152,7 +154,7 @@ function resetEmployee()
  
   
 
-   <div class="col-sm-4">
+   <div class="col-sm-6">
   	<div class="form-group">
       <label for="email">Reason</label>
       <input type="text" class="form-control" id="reason" value="${gatepassDetails.reason}"  placeholder=" " name="reason">
