@@ -9713,6 +9713,37 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		return rs;
 	}
 
+	public CustomResultObject checkInGatePass(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		String qr_code= (request.getParameter("qr_code"));	
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try
+		{
+			String returnMessage="";
+			LinkedHashMap<String, String> employeeDetails =lObjConfigDao.getEmployeeDetailsByQrCode(qr_code, con);	
+					
+			if(lObjConfigDao.checkIfApprovedGatePassExistForUser(employeeDetails.get("user_id").toString(),con))
+			{
+				returnMessage="No Approved Gate Pass Exists for this employee "+employeeDetails.get("name");
+			}
+			else
+			{
+				String CheckType=lObjConfigDao.getGatePassCheckType(employeeDetails.get("user_id").toString(),con);
+				
+				lObjConfigDao.checkInOutGatePass(employeeDetails.get("user_id"),CheckType, con);
+				returnMessage="Gate Pass Checked "+ CheckType+" Successfully";
+			}			
+			rs.setAjaxData(returnMessage);
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
 
 	
 	public CustomResultObject showVendorCheckIn(HttpServletRequest request,Connection connections)
@@ -11547,5 +11578,101 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+	public CustomResultObject showScanGatePass(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		
+		try
+		{	
+			
+			//LinkedHashMap<String, String> empDetails=lObjConfigDao.getEmployeeDetails(Long.valueOf(userId), connections);
+			
+			
+			//outputMap.put("empDetails", empDetails);
+			outputMap.put("checkInType", lObjConfigDao.getLastCheckInType(userId,connections));
+			//outputMap.put("lstLastCheckIns", lObjConfigDao.getListOfLastCheckIns(userId,10,connections));
+			
+			
+			rs.setViewName("../GatePassScan.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+	
+		return rs;
+	}
+
+
+	public CustomResultObject showGatePassSummary(HttpServletRequest request,Connection con) throws SQLException
+	{
+		CustomResultObject rs=new CustomResultObject();
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
+		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		String empId = request.getParameter("empId") == null ? "" : request.getParameter("empId");
+		
+		if (fromDate.equals("")) {
+			fromDate = lObjConfigDao.getDateFromDB(con);
+		}
+		if (toDate.equals("")) {
+			toDate = lObjConfigDao.getDateFromDB(con);
+		}
+		
+		
+		try
+		{
+			String [] colNames= {"pi_no","payment_request_date","accountNo","bank_name","total_gross_amount",
+					"total_amount_requested"}; // change according to dao return
+			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getGatePassSummary(fromDate,toDate,empId,con);
+			outputMap.put("lstGatepassRegister", lst);
+			if(empId!=null && !empId.equals(""))
+			{
+				outputMap.put("employeeDetails", lObjConfigDao.getEmployeeDetails(Long.valueOf(empId),con));
+				
+			}
+			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
+
+			outputMap.put("txtfromdate", fromDate);
+
+			outputMap.put("txttodate", toDate);
+
+			
+			if(!exportFlag.isEmpty())
+			{
+				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"GatepassRegister");
+			}
+		else
+			{
+				
+				rs.setViewName("../GatePassSummary.jsp");
+				
+			}	
+			
+
+
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}		
+		rs.setReturnObject(outputMap);
+
+		return rs;
+	}
+
+	
+
 
 }

@@ -1,13 +1,16 @@
 - roleName: "Admin"
   roleId: 1
   actions: 
+  - checkInGatePass
   - showAccessDenied
+  - showScanGatePass
   - approveGatepass
   - showGenerateGatePass
   - addGatePass
   - showGatepassRegister
   - approveGatepass
   - deleteGatepass
+  - showGatePassSummary
   - checkoutPrefilledVisitor
   - deletePrefilledVisitor
   - showPrefilledVisitors
@@ -125,3 +128,4 @@
   - 700167
   - 700169
   - 700170
+  - 700171

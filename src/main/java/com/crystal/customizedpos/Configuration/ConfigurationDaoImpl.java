@@ -3655,6 +3655,12 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return getMap(parameters, "select  * from tbl_user_mst where qr_code=? and activate_flag=1", con);
 	}
 
+	public LinkedHashMap<String, String> getGatePassDetailsByQrCode(String qrCode, Connection con) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(qrCode);
+		return getMap(parameters, "select  * from trn_gate_pass tgp,tbl_user_mst tum where tgp.user_id=tum.user_id and activate_flag=1 and tum.qr_code=? order by gate_pass_id desc limit 1", con);
+	}
+
 	public boolean mobileNoAlreadyExist(String mobileNo, long ClientId,String appId,String type, Connection con) throws SQLException {
 		String query = "select count(1) as cnt from mst_Client where activate_flag=1 and mobile_number=? and app_id=? and client_vendor_flag=?";
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -4739,6 +4745,28 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		insertUpdateDuablDB("insert into trn_checkin_register values (default,?,?,?,1)", parameters, conWithF);
 		return getCurrentTimeWithSeconds;
 	}
+
+	public String checkInOutGatePass(String employeeId,String checkInType,Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		String getCurrentTimeWithSeconds=getDateTimeWithSecondsYYYYMMDDHHMMSS(conWithF);
+		
+		String query="";
+
+		if(checkInType.equals("O"))
+		{
+			query+="update trn_gate_pass set out_time=sysdate() where user_id=? order by gate_pass_id desc limit 1";	
+		}
+		else
+		{
+			query+="update trn_gate_pass set in_time=sysdate() where user_id=? order by gate_pass_id desc limit 1";	
+		}
+		parameters.add(employeeId);
+		
+		insertUpdateDuablDB(query, parameters, conWithF);
+		return getCurrentTimeWithSeconds;
+	}
+
+	
 	
 	public boolean checkifduplicateentry(String employeeId,int seconds, Connection conWithF) throws Exception {
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -4756,6 +4784,22 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(employeeId);
 		
 		return !getMap(parameters, "select count(1) cnt from trn_access_block_register where employee_id=? and activate_flag=1 ", conWithF).get("cnt").equals("0");
+	}
+
+	public boolean checkIfApprovedGatePassExistForUser(String employeeId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(employeeId);
+		
+		return getMap(parameters, "select count(1) cnt from trn_gate_pass where user_id=? and activate_flag=1 and request_approved_by is not null and (in_time is null or out_time is null) order by gate_pass_id desc limit 1", conWithF).get("cnt").equals("0");
+	}
+
+	
+
+	public boolean isGatePassApproved(String employeeId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(employeeId);
+		return !getMap(parameters, "select count(1) cnt from trn_gate_pass where employee_id=? and activate_flag=1 and request_approved_by is not null and (in_time is null or out_time is null) order by gate_pass_id desc limit 1", conWithF).get("cnt").equals("0");
 	}
 
 	
@@ -4782,6 +4826,17 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 				returnString="O";
 			}
 		}
+		return returnString;
+	}
+
+	public String getGatePassCheckType(String employeeId,Connection conWithF) throws Exception {
+		String returnString="";
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(employeeId);
+		returnString=getMap(parameters,
+				"select case when out_time is null then 'O' else 'I' END check_in_type from trn_gate_pass where user_id=?  order by gate_pass_id  desc limit 1",
+				conWithF).get("check_in_type");
+		
 		return returnString;
 	}
 	
@@ -7234,4 +7289,36 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 								parameters, conWithF);
 						return "Gate Pass Deleted Succesfully";
 					}
+
+
+					// public String getLastCheckInType(String userId, Connection con) throws SQLException 
+					// {	
+					// 	ArrayList<Object> parameters = new ArrayList<>();
+					// 	parameters.add(userId);
+					// 	HashMap<String, String> hm=getMap(parameters, "select check_in_type from trn_checkin_register where user_id=? and date(checked_time)=curdate() order by checked_time desc", con);		
+					// 	return hm.isEmpty()?"O":hm.get("check_in_type");
+					// }
+
+
+					public List<LinkedHashMap<String, Object>> getGatePassSummary(String fromDate,String toDate,String empId,Connection con)
+						throws SQLException, ClassNotFoundException, ParseException {
+					ArrayList<Object> parameters = new ArrayList<>();
+					String query="select *,date_format (gate_pass_date , '%d/%m/%Y') gate_pass_date, tum2.name requesRaisedBy, tum3.name requestApprovedBy,TIMEDIFF(in_time,out_time) as Hour1 " 
+					+"from tbl_user_mst tum,tbl_user_mst tum2,trn_gate_pass tgp \tleft outer join tbl_user_mst tum3 on tum3.user_id=tgp.request_approved_by where tgp.user_id = tum.user_id and tum2.user_id =tgp.request_raised_by and gate_pass_date between ? and ? and tgp.activate_flag = 1";
+					parameters.add((getDateASYYYYMMDD(fromDate)));
+					parameters.add((getDateASYYYYMMDD(toDate)));
+
+
+					if(empId!=null && !empId.equals(""))
+					{
+						query+=" and tgp.user_id=? ";
+						parameters.add(empId);
+					}
+
+					return getListOfLinkedHashHashMap(parameters,query,con); 
+				}
+				
       }
+
+
+//  select case when in_time is null then 'O' else 'I' END check_in_type from trn_gate_pass where user_id=92  order by gate_pass_id  desc limit 1

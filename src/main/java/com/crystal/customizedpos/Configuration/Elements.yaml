@@ -162,3 +162,8 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showGatepassRegister"
   orderNo: 1
+- elementId: 700171
+  elementName: "Gate Pass Summary"
+  parentElementId: 34
+  elementUrl: "?a=showGatePassSummary"
+  orderNo: 1
