@@ -7214,7 +7214,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(VisitorId);
 		return getMap(parameters,
-				"select * from trn_prefilled_visitor tpv , tbl_user_mst tum where tum.user_id =tpv.contact_to_employee and prefilled_visitor_id=? and  activate_flag=1", con);
+				"select * from trn_prefilled_visitor tpv , tbl_user_mst tum where tum.user_id =tpv.contact_to_employee and prefilled_visitor_id=? and  tpv.activate_flag=1", con);
 		
 
 	}
