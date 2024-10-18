@@ -6923,7 +6923,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				con);
 	}
 
-	public long saveAccessBlockEntry(HashMap<String, Object> hm, Connection conWithF) throws SQLException, ParseException {
+	public long saveAccessBlockEntry(HashMap<String, Object> hm, Connection conWithF) throws Exception {
 
 		HashMap<String, Object> valuesMap = new HashMap<>();
 		valuesMap.put("access_block_id", "~default");
