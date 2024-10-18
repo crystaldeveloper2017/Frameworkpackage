@@ -7317,8 +7317,29 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 
 					return getListOfLinkedHashHashMap(parameters,query,con); 
 				}
+
+
+			public List<LinkedHashMap<String, Object>> getLast24HourNotCheckedEmployees(Connection con) throws SQLException, ClassNotFoundException, ParseException 
+			{
+				ArrayList<Object> parameters = new ArrayList<>();		
+				String query="SELECT\n" + 
+							"u.user_id,\n" + 
+							"MAX(c.checked_time) AS last_checked_time,\n" + 
+							"u.name\n" + 
+							"FROM\n" + 
+							"tbl_user_mst u\n" + 
+							"LEFT JOIN\n" + 
+							"trn_checkin_register c ON u.user_id = c.user_id\n" + 
+							"LEFT JOIN\n" + 
+							"trn_access_block_register b ON u.user_id = b.employee_id AND b.activate_flag = 1\n" + 
+							"GROUP BY\n" + 
+							"u.user_id, u.name\n" + 
+							"HAVING\n" + 
+							"MAX(c.checked_time) < NOW() - INTERVAL 1 DAY AND COUNT(b.access_block_id) = 0";
+				return getListOfLinkedHashHashMap(parameters,query,con); 
+			}
 				
       }
 
 
-//  select case when in_time is null then 'O' else 'I' END check_in_type from trn_gate_pass where user_id=92  order by gate_pass_id  desc limit 1
+
