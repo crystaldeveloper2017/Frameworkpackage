@@ -7349,6 +7349,76 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"AND COUNT(h.holiday_id) = 0";
 				return getListOfLinkedHashHashMap(parameters,query,con); 
 			}
+
+			public List<LinkedHashMap<String, Object>> getPresentSummary(String date,Connection con) throws SQLException, ClassNotFoundException, ParseException 
+			{
+				ArrayList<Object> parameters = new ArrayList<>();		
+				parameters.add(getDateASYYYYMMDD(date));
+				String query="SELECT\n" + 
+				"u.type,\n" + 
+				"COUNT(u.user_id) AS cnt\n" + 
+				"FROM\n" + 
+				"tbl_user_mst u\n" + 
+				"JOIN\n" + 
+				"trn_checkin_register c ON u.user_id = c.user_id\n" + 
+				"WHERE\n" + 
+				"DATE(c.checked_time) = ? and check_in_type='I' \n" + 
+				"GROUP BY\n" + 
+				"u.type\n";
+				return getListOfLinkedHashHashMap(parameters,query,con); 
+			}
+
+
+			public List<LinkedHashMap<String, Object>> getEmployeeOnLeaveSummary(String date,Connection con) throws SQLException, ClassNotFoundException, ParseException 
+			{
+				ArrayList<Object> parameters = new ArrayList<>();		
+				parameters.add(getDateASYYYYMMDD(date));
+				String query="SELECT\n" + 
+						"u.type,\n" + 
+						"COUNT(u.user_id) AS cnt\n" + 
+						"FROM\n" + 
+						"tbl_user_mst u\n" + 
+						"JOIN\n" + 
+						"trn_leave_register l ON u.user_id = l.employee_id\n" + 
+						"WHERE\n" + 
+						"l.activate_flag = 1\n" + 
+						"AND ? BETWEEN l.from_date AND l.to_date -- Replace with the date parameter\n" + 
+						"GROUP BY\n" + 
+						"u.type;\n";
+				return getListOfLinkedHashHashMap(parameters,query,con); 
+			}
+
+			public List<LinkedHashMap<String, Object>> getEmployeeOnLeaveWithoutIntimation(String date,Connection con) throws SQLException, ClassNotFoundException, ParseException 
+			{
+				ArrayList<Object> parameters = new ArrayList<>();		
+				parameters.add(getDateASYYYYMMDD(date));
+				parameters.add(getDateASYYYYMMDD(date));
+				String query="SELECT\n" + 
+"u.type,\n" + 
+"COUNT(u.user_id) AS cnt\n" + 
+"FROM\n" + 
+"tbl_user_mst u\n" + 
+"LEFT JOIN\n" + 
+"trn_leave_register l ON u.user_id = l.employee_id\n" + 
+"AND ? BETWEEN l.from_date AND l.to_date -- Check if the specified date is within the leave period\n" + 
+"LEFT JOIN\n" + 
+"trn_checkin_register c ON u.user_id = c.user_id\n" + 
+"AND DATE(c.checked_time) = ? -- Check if the specified date has a check-in record\n" + 
+"WHERE\n" + 
+"l.leave_id IS NULL -- No leave record found\n" + 
+"AND c.check_in_id IS NULL -- No check-in record found\n" + 
+"GROUP BY\n" + 
+"u.type;";;
+				return getListOfLinkedHashHashMap(parameters,query,con); 
+			}
+
+
+			
+
+
+
+
+
 				
       }
 

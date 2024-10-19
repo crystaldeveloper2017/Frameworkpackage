@@ -11680,45 +11680,35 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		String fromDate = request.getParameter("txtfromdate") == null ? "" : request.getParameter("txtfromdate");
-		String toDate = request.getParameter("txttodate") == null ? "" : request.getParameter("txttodate");
+		
 		String empId = request.getParameter("empId") == null ? "" : request.getParameter("empId");
 		
 		if (fromDate.equals("")) {
 			fromDate = lObjConfigDao.getDateFromDB(con);
 		}
-		if (toDate.equals("")) {
-			toDate = lObjConfigDao.getDateFromDB(con);
-		}
+		
 		
 		
 		try
 		{
 			String [] colNames= {"pi_no","payment_request_date","accountNo","bank_name","total_gross_amount",
 					"total_amount_requested"}; // change according to dao return
-			List<LinkedHashMap<String, Object>> lst=lObjConfigDao.getGatePassSummary(fromDate,toDate,empId,con);
-			outputMap.put("lstGatepassRegister", lst);
-			if(empId!=null && !empId.equals(""))
-			{
-				outputMap.put("employeeDetails", lObjConfigDao.getEmployeeDetails(Long.valueOf(empId),con));
-				
-			}
-			outputMap.put("EmployeeList", lObjConfigDao.getEmployeeMaster(outputMap,con));
 
-			outputMap.put("txtfromdate", fromDate);
-
-			outputMap.put("txttodate", toDate);
 
 			
-			if(!exportFlag.isEmpty())
-			{
-				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,"GatepassRegister");
-			}
-		else
-			{
+					outputMap.put("PresentSummary", lObjConfigDao.getPresentSummary(fromDate,con));
+					outputMap.put("LeavesSummary", lObjConfigDao.getEmployeeOnLeaveSummary(fromDate,con));
+					outputMap.put("LWISummary", lObjConfigDao.getEmployeeOnLeaveWithoutIntimation(fromDate,con));
+					outputMap.put("txtfromdate", fromDate);
+					
+					
+
+			
+			
 				
 				rs.setViewName("../EmployeeAttendanceSummary.jsp");
 				
-			}	
+				
 			
 
 

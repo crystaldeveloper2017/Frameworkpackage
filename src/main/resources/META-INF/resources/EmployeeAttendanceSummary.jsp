@@ -9,7 +9,10 @@
 <c:set var="txtfromdate" value='${requestScope["outputObject"].get("txtfromdate")}' />
 <c:set var="message" value='${requestScope["outputObject"].get("message")}' />
 <c:set var="leaveList" value='${requestScope["outputObject"].get("leaveList")}' />
-<c:set var="employeeList" value='${requestScope["outputObject"].get("employeeList")}' />
+<c:set var="PresentSummary" value='${requestScope["outputObject"].get("PresentSummary")}' />
+<c:set var="LWISummary" value='${requestScope["outputObject"].get("LWISummary")}' />
+<c:set var="LeavesSummary" value='${requestScope["outputObject"].get("LeavesSummary")}' />
+
 
 <!-- Date Selection Section (Only Once) -->
 <div class="card">
@@ -31,10 +34,10 @@
 <!-- Table 1: Employee Attendance Summary -->
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Employee Attendance Summary</h3>
+        <h3 class="card-title">Employee Present Summary</h3>
     </div>
     <div class="card-body table-responsive p-0" style="height: 300px;">
-        <table id="table1" class="table table-head-fixed table-bordered table-striped dataTable dtr-inline" role="grid">
+        <table id="table1" class="table table-head-fixed table-bordered table-striped dtr-inline" role="grid">
             <thead>
                 <tr>
                     <th><b>Type</b></th>
@@ -42,10 +45,10 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach items="${message}" var="item">
+                <c:forEach items="${PresentSummary}" var="item">
                     <tr>
                         <td>${item.type}</td>
-                        <td>${item.count}</td>
+                        <td>${item.cnt}</td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -67,10 +70,10 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach items="${message}" var="item">
+                <c:forEach items="${LeavesSummary}" var="item">
                     <tr>
                        <td>${item.type}</td>
-                        <td>${item.count}</td>
+                        <td>${item.cnt}</td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -92,10 +95,10 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach items="${message}" var="item">
+                <c:forEach items="${LWISummary}" var="item">
                     <tr>
                       <td>${item.type}</td>
-                        <td>${item.count}</td>
+                        <td>${item.cnt}</td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -104,25 +107,15 @@
 </div>
 
 <script>
-  $(function () {
-    $('#table1, #table2, #table3').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": false,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-      "pageLength": 100
-    });
-  });
-  
-  $( "#txtfromdate" ).datepicker({ dateFormat: 'dd/mm/yy' });
+   $( "#txtfromdate" ).datepicker({ dateFormat: 'dd/mm/yy' });
 
     document.getElementById("divTitle").innerHTML="Employee Attendance Summary";
 
   
   txtfromdate.value='${txtfromdate}';
+    
+  
+ 
   
   function checkforvalidfromtodate() {
       var fromDate = document.getElementById("txtfromdate").value;
@@ -132,4 +125,5 @@
   function ReloadFilters() {
       window.location = "?a=showAttendanceRegister&txtfromdate=" + txtfromdate.value;
   }
-</script>
+  </script>
+
