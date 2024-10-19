@@ -112,6 +112,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static String mySqlPath;
 	public static List<String> lstbypassedActions;
 	public static List<String> lstbypassedReports;
+	public static Map dataStatic;
+
 	
 	public static int threadSleep;
 	public static String persistentPath;
@@ -628,6 +630,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				logger.debug("Config.yaml file found");
 				Yaml yaml = new Yaml(); 
 				Map<String, Object> data = yaml.load(in);				
+				dataStatic=data;
 				host=(String) data.get("host");
 				url = "jdbc:mysql://"+host;
 				username = (String) data.get("mysqlusername");
