@@ -167,3 +167,8 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showGatePassSummary"
   orderNo: 1
+- elementId: 700172
+  elementName: "Employee Attendance Summary"
+  parentElementId: 34
+  elementUrl: "?a=showEmployeeAttendanceSummary"
+  orderNo: 1
