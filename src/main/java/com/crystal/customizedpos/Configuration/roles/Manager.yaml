@@ -1,8 +1,16 @@
 - roleName: "Manager"
   roleId: 5
-  actions: 
-  - showLeaveRegister
+  actions:
+  - checkInGatePass
+  - showAccessDenied
   - showGenerateGatePass
+  - addGatePass
+  - showGatepassRegister
+  - approveGatepass
+  - deleteGatepass
+  - showGatePassSummary
+  - showScanGatePass
+  - showLeaveRegister
   - checkoutPrefilledVisitor
   - deletePrefilledVisitor
   - showPrefilledVisitors

@@ -7323,19 +7323,30 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 			{
 				ArrayList<Object> parameters = new ArrayList<>();		
 				String query="SELECT\n" + 
-							"u.user_id,\n" + 
-							"MAX(c.checked_time) AS last_checked_time,\n" + 
-							"u.name\n" + 
-							"FROM\n" + 
-							"tbl_user_mst u\n" + 
-							"LEFT JOIN\n" + 
-							"trn_checkin_register c ON u.user_id = c.user_id\n" + 
-							"LEFT JOIN\n" + 
-							"trn_access_block_register b ON u.user_id = b.employee_id AND b.activate_flag = 1\n" + 
-							"GROUP BY\n" + 
-							"u.user_id, u.name\n" + 
-							"HAVING\n" + 
-							"MAX(c.checked_time) < NOW() - INTERVAL 1 DAY AND COUNT(b.access_block_id) = 0";
+				"u.user_id,\n" + 
+				"MAX(c.checked_time) AS last_checked_time,\n" + 
+				"u.name\n" + 
+				"FROM\n" + 
+				"tbl_user_mst u\n" + 
+				"LEFT JOIN\n" + 
+				"trn_checkin_register c ON u.user_id = c.user_id\n" + 
+				"LEFT JOIN\n" + 
+				"trn_access_block_register b ON u.user_id = b.employee_id\n" + 
+				"AND b.activate_flag = 1\n" + 
+				"LEFT JOIN\n" + 
+				"trn_leave_register l ON u.user_id = l.employee_id\n" + 
+				"AND l.activate_flag = 1\n" + 
+				"AND NOW() BETWEEN l.from_date AND l.to_date\n" + 
+				"LEFT JOIN\n" + 
+				"holiday_master h ON DATE(NOW()) = h.holiday_date\n" + 
+				"AND h.activate_flag = 1\n" + 
+				"GROUP BY\n" + 
+				"u.user_id, u.name\n" + 
+				"HAVING\n" + 
+				"MAX(c.checked_time) < NOW() - INTERVAL 1 DAY\n" + 
+				"AND COUNT(b.access_block_id) = 0\n" + 
+				"AND COUNT(l.leave_id) = 0\n" + 
+				"AND COUNT(h.holiday_id) = 0";
 				return getListOfLinkedHashHashMap(parameters,query,con); 
 			}
 				

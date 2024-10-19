@@ -1,6 +1,15 @@
 - roleName: "Guard"
   roleId: 3
   actions: 
+  - checkInGatePass
+  - showAccessDenied
+  - showScanGatePass
+  - showGenerateGatePass
+  - addGatePass
+  - showGatepassRegister
+  - approveGatepass
+  - deleteGatepass
+  - showGatePassSummary
   - checkoutVisitor
   - showVisitors
   - addVisitor

@@ -11,6 +11,8 @@
   - getRoleDetailsForthisUser
   - saveSupervisorSubmitLeave
   - showAccessDenied
+  - addGatePass
+  - showGatepassRegister
   elements:
   - 700165
   - 33

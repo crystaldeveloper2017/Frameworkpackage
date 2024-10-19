@@ -4,7 +4,6 @@
   - checkInGatePass
   - showAccessDenied
   - showScanGatePass
-  - approveGatepass
   - showGenerateGatePass
   - addGatePass
   - showGatepassRegister
