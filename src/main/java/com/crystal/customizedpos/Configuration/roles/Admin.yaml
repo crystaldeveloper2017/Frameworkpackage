@@ -2,6 +2,7 @@
   roleId: 1
   actions: 
   - checkInGatePass
+  - showEmployeeAttendanceSummary
   - showAccessDenied
   - showScanGatePass
   - showGenerateGatePass
@@ -128,3 +129,4 @@
   - 700169
   - 700170
   - 700171
+  - 700172
