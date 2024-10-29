@@ -4,7 +4,9 @@ Steps to Setup Development Environment
 -----------------------------------
 -----------------------------------
 
+```
 git clone --recurse-submodules https://github.com/crystaldeveloper2017/SKPSecurityGateV2
+```
 
 Change the Credentials from the `Config.yaml` File.
 
