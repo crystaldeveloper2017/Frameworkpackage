@@ -110,8 +110,18 @@ public class LoginServiceImpl extends CommonFunctions {
 				outputMap.put("InVisitorsCount", lobjConfigdao.getInVisitorsCount(con));
 				List<LinkedHashMap<String, Object>> listOfInEmployees=lobjConfigdao.getInEmployeesCount(con);
 				
-				String inPermanenet=listOfInEmployees.get(1).get("insideCount").toString();
-				String inContract=listOfInEmployees.get(0).get("insideCount").toString();
+				String inPermanenet="";
+				if(listOfInEmployees.size()==2)
+				{
+					inPermanenet=listOfInEmployees.get(1).get("insideCount").toString();
+				}
+
+				String inContract="";
+				if(listOfInEmployees.size()>=1)
+				{
+					inContract=listOfInEmployees.get(0).get("insideCount").toString();
+				}
+
 				
 				outputMap.put("inPermanenet", inPermanenet);
 				outputMap.put("inContract", inContract);
