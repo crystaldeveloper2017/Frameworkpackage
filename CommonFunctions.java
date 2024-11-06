@@ -35,6 +35,9 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -2263,7 +2266,15 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
 	
 
     
-	
+public  String getDayOfWeek(String date) {
+		try {
+			return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+							.getDayOfWeek()
+							.toString();
+		} catch (DateTimeParseException e) {
+			return "Invalid date format. Please use dd/MM/yyyy.";
+		}
+	}	
 	
 
 }
