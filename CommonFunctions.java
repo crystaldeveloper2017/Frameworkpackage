@@ -2265,15 +2265,7 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
         return new String(decryptedBytes);
     }
 
-	public  String getDayOfWeek(String date) {
-		try {
-			return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-							.getDayOfWeek()
-							.toString();
-		} catch (DateTimeParseException e) {
-			return "Invalid date format. Please use dd/MM/yyyy.";
-		}
-	}
+
 	
 	
 	
