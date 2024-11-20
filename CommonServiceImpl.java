@@ -189,11 +189,13 @@ public class CommonServiceImpl extends CommonFunctions {
 	{
 		CustomResultObject rs=new CustomResultObject();			
 		HashMap<String, Object> outputMap=new HashMap<>();
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
 		
 		try
 		{	
 			
-			outputMap.put("userList", lobjCommonDaoImpl.getEmployeeMaster(con));
+			outputMap.put("userList", lobjCommonDaoImpl.getEmployeeMaster(appId,con));
 			HashMap<Long, Role> listRoles= new HashMap<Long, Role>(CommonFunctions.roles);
 
 			listRoles.remove(100L);

@@ -88,10 +88,11 @@ public class CommonDaoImpl extends CommonFunctions{
 
 
 
-		public List<LinkedHashMap<String, Object>> getEmployeeMaster(Connection con) throws ClassNotFoundException, SQLException
+		public List<LinkedHashMap<String, Object>> getEmployeeMaster(String appId,Connection con) throws ClassNotFoundException, SQLException
 		{		
 			ArrayList<Object> parameters=new ArrayList<>();
-			return getListOfLinkedHashHashMap(parameters, "select * from tbl_user_mst where activate_flag=1", con);		
+			parameters.add(appId);
+			return getListOfLinkedHashHashMap(parameters, "select * from tbl_user_mst where activate_flag=1 and app_id=?", con);		
 		}
 
 
