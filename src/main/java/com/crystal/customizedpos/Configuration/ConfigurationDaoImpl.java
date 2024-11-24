@@ -6910,7 +6910,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 	throws SQLException, ClassNotFoundException {
 ArrayList<Object> parameters = new ArrayList<>();
 return getListOfLinkedHashHashMap(parameters,
-		"select * from trn_access_block_register tabr,tbl_user_mst tum where tum.user_id=tabr.employee_id and tabr.activate_flag=1  ",
+		"select * from trn_access_block_register tabr,tbl_user_mst tum where tum.user_id=tabr.employee_id and tabr.activate_flag=1 order by access_block_id desc  ",
 		con);
 }
 public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, Connection con) throws SQLException

@@ -10879,15 +10879,23 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 	public CustomResultObject deleteAccessBlockEntry(HttpServletRequest request, Connection con) {
 		CustomResultObject rs = new CustomResultObject();
-		long accessblockId = Integer.parseInt(request.getParameter("accessblockId"));
+		String accessblockIdsParam = request.getParameter("accessblockIds"); // Comma-separated IDs
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+	
+		if (accessblockIdsParam == null || accessblockIdsParam.trim().isEmpty()) {
+			rs.setHasError(true);			
+			return rs;
+		}
+	
+		String[] accessblockIds = accessblockIdsParam.split(",");
 		try {
-
-			rs.setAjaxData(lObjConfigDao.deleteAccessBlockEntry(accessblockId, userId, con));
-
+			for (String accessblockId : accessblockIds) {
+				long id = Long.parseLong(accessblockId.trim());
+				rs.setAjaxData(lObjConfigDao.deleteAccessBlockEntry(id, userId, con));
+			}
 		} catch (Exception e) {
 			writeErrorToDB(e);
-			rs.setHasError(true);
+			rs.setHasError(true);			
 		}
 		return rs;
 	}
