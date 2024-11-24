@@ -197,6 +197,10 @@ public class CommonServiceImpl extends CommonFunctions {
 			
 			outputMap.put("userList", lobjCommonDaoImpl.getEmployeeMaster(appId,con));
 			String app_type = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_type");
+			if(app_type==null)
+			{
+				app_type="Master";
+			}
 			HashMap<Long, Role> listRoles= getRoleMasterForThisAppType(app_type);
 
 			listRoles.remove(100L);
