@@ -100,8 +100,8 @@ public class CommonDaoImpl extends CommonFunctions{
 		ArrayList<Object> parameters = new ArrayList<>();
 		parameters.add(userId);
 		parameters.add(roleId);
-		parameters.add(roleName);		
-		return insertUpdateDuablDB("insert into acl_user_role_rlt values (default,?,?,1,sysdate(),null,?)", parameters,
+		
+		return insertUpdateDuablDB("insert into acl_user_role_rlt values (default,?,?,1,sysdate(),null)", parameters,
 				conWithF);
 
 	}
