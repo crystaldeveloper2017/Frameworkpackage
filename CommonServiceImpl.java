@@ -184,6 +184,64 @@ public class CommonServiceImpl extends CommonFunctions {
 		}		
 		return rs;
 	}
+
+	public CustomResultObject showUserRoleMapping(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
+		
+		try
+		{	
+			
+			outputMap.put("userList", lobjCommonDaoImpl.getEmployeeMaster(appId,con));
+			String app_type = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_type");
+			if(app_type==null)
+			{
+				app_type="Master";
+			}
+			HashMap<Long, Role> listRoles= getRoleMasterForThisAppType(app_type);
+
+			listRoles.remove(100L);
+
+			outputMap.put("roleList", listRoles);
+			rs.setViewName("UserRoleMapping.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject addRemoveRole(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long userId=Long.parseLong(request.getParameter("userId"));		
+		String[] listOfRoles= request.getParameter("listOFRoles").split(",");
+		
+		try
+		{			
+
+			lobjCommonDaoImpl.removeAllExistingRoles(userId,con);
+			for(String roleId:listOfRoles)
+			{			
+				lobjCommonDaoImpl.addUserRoleMapping(userId, Long.valueOf(roleId),roles.get(Long.valueOf(roleId)).getRoleName(), con);
+			}							
+
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}	
+		rs.setAjaxData("Roles Updated Succesfully");
+		return rs;
+	}
+	
 	
     
 }

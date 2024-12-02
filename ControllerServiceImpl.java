@@ -236,9 +236,9 @@ public class ControllerServiceImpl extends CommonFunctions {
 			//logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
 			//logger.info("maxMemory in JVM: " + maxMemory);
 			if (freeMemory <= 20) {
-				logger.info("Calling System GC");
+				logger.debug("Calling System GC");
 				System.gc();
-				logger.info("Call Completed");
+				logger.debug("Call Completed");
 			}
 
 			//logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
