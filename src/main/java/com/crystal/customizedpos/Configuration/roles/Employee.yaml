@@ -2,6 +2,7 @@
   roleId: 4
   actions: 
   - showUserAudit
+  - showShortcuts
   - showHomePage
   - validateLogin
   - Logout

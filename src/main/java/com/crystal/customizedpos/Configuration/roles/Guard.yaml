@@ -2,6 +2,7 @@
   roleId: 3
   actions: 
   - checkInGatePass
+  - showShortcuts
   - showAccessDenied
   - showScanGatePass
   - showGenerateGatePass

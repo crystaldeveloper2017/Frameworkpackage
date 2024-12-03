@@ -2,6 +2,7 @@
   roleId: 1
   actions: 
   - checkInGatePass
+  - showShortcuts
   - showEmployeeAttendanceSummary
   - showAccessDenied
   - showScanGatePass

@@ -2,6 +2,7 @@
   roleId: 2
   actions: 
   - showSupervisorSubmitLeave
+  - showShortcuts
   - showGenerateGatePass
   - showAccessBlockEntry
   - showLeaveRegister
