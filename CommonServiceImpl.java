@@ -242,7 +242,20 @@ public class CommonServiceImpl extends CommonFunctions {
 		return rs;
 	}
 	
-	
+	public CustomResultObject showShortcuts(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+		try {
+
+			rs.setViewName("shortcuts.jsp");
+			rs.setReturnObject(outputMap);
+
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		return rs;
+	}
     
 }
 	
