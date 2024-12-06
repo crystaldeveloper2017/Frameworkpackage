@@ -20,7 +20,7 @@ public class ScheduledTask extends TimerTask {
         Connection con=null;
         try 
         {
-            
+            CommonFunctions cf=new CommonFunctions();
             con = new CommonFunctions().getConnectionJDBC();
             con.setAutoCommit(false);
 
@@ -29,7 +29,7 @@ public class ScheduledTask extends TimerTask {
             {
                 HashMap<String,Object> tempHm=new HashMap<>();
                 tempHm.put("hdnselectedemployee",emp.get("user_id").toString());
-                tempHm.put("txtremarks","System Blocked Lasted Checkin : "+ emp.get("last_checked_time"));
+                tempHm.put("txtremarks","Cron Job Ran at "+cf.getDateTimeWithSeconds(con)+" And Blocked this because Lasted Checkin : "+ emp.get("last_checked_time"));
                 tempHm.put("user_id","99999");
                 lobjconfigdao.saveAccessBlockEntry(tempHm, con);
             }

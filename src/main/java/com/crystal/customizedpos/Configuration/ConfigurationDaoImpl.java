@@ -7336,7 +7336,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"LEFT JOIN\n" + 
 				"trn_leave_register l ON u.user_id = l.employee_id\n" + 
 				"AND l.activate_flag = 1\n" + 
-				"AND NOW() BETWEEN l.from_date AND l.to_date\n" + 
+				"AND date(NOW()) BETWEEN l.from_date AND l.to_date\n" + 
 				"LEFT JOIN\n" + 
 				"holiday_master h ON DATE(NOW()) = h.holiday_date\n" + 
 				"AND h.activate_flag = 1\n" + 
