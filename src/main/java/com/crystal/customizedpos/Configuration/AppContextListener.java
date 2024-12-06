@@ -21,7 +21,7 @@ public class AppContextListener implements ServletContextListener {
         long delay = calculateDelayToNextHour();
 
         // Schedule the task to start at the next whole hour and then run every hour
-        timer.scheduleAtFixedRate(new ScheduledTask(), delay, 60 * 60 * 1000); // Every 1 hour
+        timer.scheduleAtFixedRate(new ScheduledTask(), delay, 60 * 60 * 1000 * 4); // Every 4 hour
     }
 
     @Override
