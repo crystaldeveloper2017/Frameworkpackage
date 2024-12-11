@@ -14,9 +14,13 @@
     <servlet-class>com.crystal.basecontroller.BaseController</servlet-class>
   </servlet>
   <listener>
-    <listener-class>com.crystal.customizedpos.Configuration.Config</listener-class>
-            
+    <listener-class>com.crystal.customizedpos.Configuration.Config</listener-class>            
 </listener>
+
+<listener>
+    <listener-class>com.crystal.customizedpos.Configuration.ScheduledTaskAndListener</listener-class>
+</listener>
+
   
  
   

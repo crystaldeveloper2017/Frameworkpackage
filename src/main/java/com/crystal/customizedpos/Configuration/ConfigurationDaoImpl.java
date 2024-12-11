@@ -7322,32 +7322,53 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 			public List<LinkedHashMap<String, Object>> getLast24HourNotCheckedEmployees(Connection con) throws SQLException, ClassNotFoundException, ParseException 
 			{
 				ArrayList<Object> parameters = new ArrayList<>();		
-				String query="SELECT\n" + 
-				"u.user_id,\n" + 
-				"MAX(c.checked_time) AS last_checked_time,\n" + 
-				"u.name\n" + 
-				"FROM\n" + 
-				"tbl_user_mst u\n" + 
-				"LEFT JOIN\n" + 
-				"trn_checkin_register c ON u.user_id = c.user_id\n" + 
-				"LEFT JOIN\n" + 
-				"trn_access_block_register b ON u.user_id = b.employee_id\n" + 
-				"AND b.activate_flag = 1\n" + 
-				"LEFT JOIN\n" + 
-				"trn_leave_register l ON u.user_id = l.employee_id\n" + 
-				"AND l.activate_flag = 1\n" + 
-				"AND date(NOW()) BETWEEN l.from_date AND l.to_date\n" + 
-				"LEFT JOIN\n" + 
-				"holiday_master h ON DATE(NOW()) = h.holiday_date\n" + 
-				"AND h.activate_flag = 1\n" + 
-				"GROUP BY\n" + 
-				"u.user_id, u.name\n" + 
-				"HAVING\n" + 
-				"MAX(c.checked_time) < NOW() - INTERVAL 1 DAY\n" + 
-				"AND COUNT(b.access_block_id) = 0\n" + 
-				"AND COUNT(l.leave_id) = 0\n" + 
-				"AND COUNT(h.holiday_id) = 0";
-				return getListOfLinkedHashHashMap(parameters,query,con); 
+				String sqlQuery = 
+				"WITH RECURSIVE date_range AS ( " +
+				"    SELECT CURDATE() AS absent_date " +
+				"    UNION ALL " +
+				"    SELECT absent_date - INTERVAL 1 DAY " +
+				"    FROM date_range " +
+				"    WHERE absent_date > CURDATE() - INTERVAL 3 MONTH " +
+				") " +
+				"SELECT " +
+				"    u.user_id, " +
+				"    u.name, " +
+				"    MAX(d.absent_date) AS latest_absent_date, " +
+				"    u.qr_code " +
+				"FROM " +
+				"    tbl_user_mst u " +
+				"CROSS JOIN " +
+				"    date_range d " +
+				"LEFT JOIN " +
+				"    trn_checkin_register c " +
+				"    ON u.user_id = c.user_id " +
+				"    AND DATE(c.checked_time) = d.absent_date " +
+				"LEFT JOIN " +
+				"    trn_access_block_register b " +
+				"    ON u.user_id = b.employee_id " +
+				"    AND b.activate_flag = 1 " +
+				"LEFT JOIN " +
+				"    trn_leave_register l " +
+				"    ON u.user_id = l.employee_id " +
+				"    AND l.activate_flag = 1 " +
+				"    AND d.absent_date BETWEEN l.from_date AND l.to_date " +
+				"LEFT JOIN " +
+				"    holiday_master h " +
+				"    ON d.absent_date = h.holiday_date " +
+				"    AND h.activate_flag = 1 " +
+				"WHERE " +
+				"    c.check_in_id IS NULL " +
+				"    AND b.employee_id IS NULL " +
+				"    AND h.holiday_id IS NULL " +
+				"    AND l.leave_id IS NULL " +
+				"    AND u.activate_flag = 1 " +
+				"GROUP BY " +
+				"    u.user_id " +
+				"ORDER BY " +
+				"    c.checked_time DESC, u.user_id, d.absent_date DESC;";
+
+				
+				return getListOfLinkedHashHashMap(parameters,sqlQuery,con); 
 			}
 
 			public List<LinkedHashMap<String, Object>> getPresentSummary(String date,Connection con) throws SQLException, ClassNotFoundException, ParseException 
