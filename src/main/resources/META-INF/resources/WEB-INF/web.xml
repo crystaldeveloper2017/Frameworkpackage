@@ -17,9 +17,9 @@
     <listener-class>com.crystal.customizedpos.Configuration.Config</listener-class>            
 </listener>
 
-<listener>
+<!-- <listener>
     <listener-class>com.crystal.customizedpos.Configuration.ScheduledTaskAndListener</listener-class>
-</listener>
+</listener> -->
 
   
  
