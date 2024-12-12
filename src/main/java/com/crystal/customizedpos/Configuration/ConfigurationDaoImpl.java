@@ -7328,7 +7328,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"    UNION ALL " +
 				"    SELECT absent_date - INTERVAL 1 DAY " +
 				"    FROM date_range " +
-				"    WHERE absent_date > CURDATE() - INTERVAL 3 MONTH " +
+				"    WHERE absent_date > CURDATE() - INTERVAL 1 MONTH " +
 				") " +
 				"SELECT " +
 				"    u.user_id, " +
