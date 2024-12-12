@@ -7333,7 +7333,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"SELECT " +
 				"    u.user_id, " +
 				"    u.name, " +
-				"    MAX(d.absent_date) AS latest_absent_date, " +
+				"    (d.absent_date) AS latest_absent_date, " +
 				"    u.qr_code " +
 				"FROM " +
 				"    tbl_user_mst u " +
@@ -7361,9 +7361,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"    AND b.employee_id IS NULL " +
 				"    AND h.holiday_id IS NULL " +
 				"    AND l.leave_id IS NULL " +
-				"    AND u.activate_flag = 1 " +
-				"GROUP BY " +
-				"    u.user_id " +
+				"    AND u.activate_flag = 1 " +				
 				"ORDER BY " +
 				"    c.checked_time DESC, u.user_id, d.absent_date DESC;";
 

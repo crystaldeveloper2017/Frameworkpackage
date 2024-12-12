@@ -1,6 +1,7 @@
 package com.crystal.customizedpos.Configuration;
 
 import java.sql.Connection;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +38,8 @@ public class ScheduledTaskAndListener extends TimerTask implements ServletContex
                 tempHm.put("user_id", "99999");
 
                 // Save access block entry
-                long blockaccessid = lobjconfigdao.saveAccessBlockEntry(tempHm, con);
+                long blockaccessid = 0;
+                lobjconfigdao.saveAccessBlockEntry(tempHm, con);
 
                 tempHm.put("employee_id", emp.get("user_id").toString());
                 tempHm.put("supervisor_id", "99999");
@@ -71,12 +73,24 @@ public class ScheduledTaskAndListener extends TimerTask implements ServletContex
         // Create the ScheduledTask instance
         ScheduledTaskAndListener task = new ScheduledTaskAndListener();
 
-        // Define the interval (30 seconds)
-        long interval = 30 * 1000; // 30 seconds in milliseconds
+        // Calculate the delay to align with the next full hour
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
 
-        // Schedule the task to run immediately and then every 30 seconds
-        System.out.println("Scheduling task to run every 30 seconds from application start...");
-        timer.scheduleAtFixedRate(task, 0, interval);
+        // Move to the next hour
+        calendar.add(Calendar.HOUR, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Calculate the initial delay
+        long delay = calendar.getTimeInMillis() - System.currentTimeMillis();
+        long interval = 60 * 60 * 1000; // 1 hour in milliseconds
+
+        System.out.println("Scheduling task to run at: " + calendar.getTime() + " and every hour after that.");
+
+        // Schedule the task
+        timer.scheduleAtFixedRate(task, delay, interval);
     }
 
     // Application shutdown: Clean up resources
