@@ -841,7 +841,18 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	  
-	
+	public List<String> getRolesNamesForIds(List<String> roleIds,HashMap<Long, Role> rolesMap,Connection con) throws SQLException, ClassNotFoundException
+	{
+
+		List<String> finalRolesList=new ArrayList<>();
+		for(String roleId:roleIds)
+		{
+			String roleName=rolesMap.get(Long.valueOf(roleId)).getRoleName();
+			finalRolesList.add(roleName);
+		}
+			return finalRolesList;			
+		
+	}
 	private LinkedHashMap<Long, Role> getRolesById(List<Long> roles2) 
 	{
 		LinkedHashMap<Long, Role> r=new LinkedHashMap<>();
@@ -1491,13 +1502,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	
 	
-	public List<String> getRoles(Long userId,Connection con) throws SQLException, ClassNotFoundException
-	{
-		ArrayList<Object> parameters=new ArrayList<>();
-		parameters.add(userId);
-		return getListOfString(parameters, "select role_name from acl_user_role_rlt userrole where userrole.user_id=? and \r\n"
-				+ "userrole.activate_flag=1 ", con);	
-	}
+	
 	public List<String> getRoleIds(Long userId,Connection con) throws SQLException, ClassNotFoundException
 	{
 		ArrayList<Object> parameters=new ArrayList<>();
