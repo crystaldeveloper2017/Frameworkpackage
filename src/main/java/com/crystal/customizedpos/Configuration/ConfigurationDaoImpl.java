@@ -6906,13 +6906,30 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 				parameters, conWithF);
 		return "Leave Deleted Succesfully";
 	}
-	public List<LinkedHashMap<String, Object>> getAccessBlockEntry(Connection con)
-	throws SQLException, ClassNotFoundException {
-ArrayList<Object> parameters = new ArrayList<>();
-return getListOfLinkedHashHashMap(parameters,
-		"select * from trn_access_block_register tabr,tbl_user_mst tum where tum.user_id=tabr.employee_id and tabr.activate_flag=1 order by access_block_id desc  ",
-		con);
+	public List<LinkedHashMap<String, Object>> getAccessBlockEntries(HashMap<String, Object> inputMap, Connection con) 
+        throws SQLException, ClassNotFoundException {
+    ArrayList<Object> parameters = new ArrayList<>();
+    StringBuilder query = new StringBuilder(
+        "SELECT * " +
+        "FROM trn_access_block_register tabr " +
+        "INNER JOIN tbl_user_mst tum ON tum.user_id = tabr.employee_id " +
+        "WHERE tabr.activate_flag = 1 "
+    );
+
+    // Check for search input and add filtering by employee name
+    if (inputMap.get("searchInput") != null && !inputMap.get("searchInput").toString().trim().isEmpty()) {
+        query.append("AND tum.name LIKE ? ");
+        parameters.add("%" + inputMap.get("searchInput").toString().trim() + "%");
+    }
+
+    // Add ordering by access block ID
+    query.append("ORDER BY tabr.access_block_id DESC");
+
+    // Execute query and return results
+    return getListOfLinkedHashHashMap(parameters, query.toString(), con);
 }
+
+
 public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, Connection con) throws SQLException
 		 {
 		ArrayList<Object> parameters = new ArrayList<>();

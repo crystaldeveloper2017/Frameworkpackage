@@ -10769,41 +10769,42 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
-	public CustomResultObject showAccessBlockEntry(HttpServletRequest request,Connection con)
-	{
-		CustomResultObject rs=new CustomResultObject();
-		HashMap<String, Object> outputMap=new HashMap<>();
-		String exportFlag= request.getParameter("exportFlag")==null?"":request.getParameter("exportFlag");
-		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+delimiter;
-		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
-		try
-		{
-			String [] colNames= {"access_block_id","EmployeeId","EmployeeName","updated_by","remarks"}; // change according to dao return
+	public CustomResultObject showAccessBlockEntry(HttpServletRequest request, Connection con) throws Exception {
+    CustomResultObject rs = new CustomResultObject();
+    HashMap<String, Object> outputMap = new HashMap<>();
+    
+    String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+    String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+    String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+    String searchInput = request.getParameter("searchInput"); // Search input
+    String appId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+    
+    outputMap.put("searchInput", searchInput);
+    outputMap.put("app_id", appId);
 
-			List<LinkedHashMap<String, Object>> lst = null;
+    try {
+        String[] colNames = {"accessBlockId", "employeeId", "employeeName", "updatedBy", "remarks", "qrCode"};
 
+        List<LinkedHashMap<String, Object>> lst = null;
 
-			lst = lObjConfigDao.getAccessBlockEntry(con);
+        // DAO method call with search parameters
+        lst = lObjConfigDao.getAccessBlockEntries(outputMap, con);
 
-		
+        if (!exportFlag.isEmpty()) {
+            outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId, "AccessBlockEntry");
+        } else {
+            outputMap.put("ListOfAccessBlockEntry", lst);
+            rs.setViewName("../BlockAccessRegister.jsp");
+            rs.setReturnObject(outputMap);
+        }
+    } catch (Exception e) {
+        request.setAttribute("error_id", writeErrorToDB(e) + "-" + getDateTimeWithSeconds(con));
+        rs.setHasError(true);
+    }
+    
+    return rs;
+}
 
-			
-			if(!exportFlag.isEmpty())
-			
-				outputMap = getCommonFileGenerator(colNames,lst,exportFlag,DestinationPath,userId,
-				           "AccessBlockEntry");
-				outputMap.put("ListOfAccessBlockEntry", lst);
-
-				rs.setViewName("../BlockAccessRegister.jsp");
-				rs.setReturnObject(outputMap);
-		}
-			catch (Exception e)
-			{
-				writeErrorToDB(e);
-				rs.setHasError(true);
-			}		
-			return rs;
-		}	
 		
 	
 		public CustomResultObject showAddAccessBlockEntry(HttpServletRequest request,Connection con) throws SQLException

@@ -31,6 +31,18 @@
         xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhttp.send(`accessblockIds=`+selectedIds.join(","));
     }
+
+    function searchEntry(event) {
+        if (event.which == 13) {
+            actualSearch();
+        }
+    }
+
+    function actualSearch() {
+        const searchInput = document.getElementById("txtsearch").value;        
+        window.location.href = `?a=showAccessBlockEntry&searchInput=`+searchInput;
+
+    }
 </script>
 
 <c:set var="message" value='${requestScope["outputObject"].get("ListOfAccessBlockEntry")}' />
@@ -39,10 +51,13 @@
 <div class="card">
     <div class="card-header">
         <div class="card-tools">
-            <div class="input-group input-group-sm" style="width: 200px;">
-                <input type="button" class="btn btn-block btn-primary btn-sm" 
-                       onclick="window.location='?a=showAddAccessBlockEntry'" 
-                       value="Add Access Block" />
+            <div class="input-group input-group-sm" style="width: 300px;">
+                <input type="text" id="txtsearch" name="txtsearch" class="form-control float-right" placeholder="Search" onkeypress="searchEntry(event)">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-default" onclick="actualSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
