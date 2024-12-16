@@ -39,7 +39,9 @@ public class ScheduledTaskAndListener extends TimerTask implements ServletContex
 
                 // Save access block entry
                 long blockaccessid = 0;
-                lobjconfigdao.saveAccessBlockEntry(tempHm, con);
+                if (lobjconfigdao.checkIfEmployeeAlreadyBlocked(emp.get("user_id").toString(), con)) {
+                    lobjconfigdao.saveAccessBlockEntry(tempHm, con);
+                }
 
                 tempHm.put("employee_id", emp.get("user_id").toString());
                 tempHm.put("supervisor_id", "99999");

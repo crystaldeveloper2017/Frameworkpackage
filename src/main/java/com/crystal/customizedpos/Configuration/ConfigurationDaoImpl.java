@@ -7432,6 +7432,16 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 			}
 
 
+			public boolean checkIfEmployeeAlreadyBlocked(String employeeId, Connection conWithF) throws SQLException {
+				ArrayList<Object> parameters = new ArrayList<>();
+				parameters.add(employeeId);				
+				return getMap(parameters,
+						"select count(1) cnt from trn_access_block_register where employee_id=? and activate_flag=1",
+						conWithF).get("cnt").equals("0");
+		
+			}
+
+
 			
 
 
