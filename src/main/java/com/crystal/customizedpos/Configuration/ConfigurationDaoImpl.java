@@ -7341,7 +7341,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				ArrayList<Object> parameters = new ArrayList<>();		
 				String sqlQuery = 
 				"WITH RECURSIVE date_range AS ( " +
-				"    SELECT CURDATE() AS absent_date " +
+				"    SELECT CURDATE() - INTERVAL 1 DAY AS absent_date " + // Start with yesterday
 				"    UNION ALL " +
 				"    SELECT absent_date - INTERVAL 1 DAY " +
 				"    FROM date_range " +
@@ -7350,37 +7350,35 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				"SELECT " +
 				"    u.user_id, " +
 				"    u.name, " +
-				"    (d.absent_date) AS latest_absent_date, " +
+				"    d.absent_date AS latest_absent_date, " +
 				"    u.qr_code " +
 				"FROM " +
 				"    tbl_user_mst u " +
-				"CROSS JOIN " +
-				"    date_range d " +
-				"LEFT JOIN " +
-				"    trn_checkin_register c " +
-				"    ON u.user_id = c.user_id " +
+				"CROSS JOIN date_range d " +
+				"LEFT JOIN trn_checkin_register c ON " +
+				"    u.user_id = c.user_id " +
 				"    AND DATE(c.checked_time) = d.absent_date " +
-				"LEFT JOIN " +
-				"    trn_access_block_register b " +
-				"    ON u.user_id = b.employee_id " +
+				"LEFT JOIN trn_access_block_register b ON " +
+				"    u.user_id = b.employee_id " +
 				"    AND b.activate_flag = 1 " +
-				"LEFT JOIN " +
-				"    trn_leave_register l " +
-				"    ON u.user_id = l.employee_id " +
+				"LEFT JOIN trn_leave_register l ON " +
+				"    u.user_id = l.employee_id " +
 				"    AND l.activate_flag = 1 " +
 				"    AND d.absent_date BETWEEN l.from_date AND l.to_date " +
-				"LEFT JOIN " +
-				"    holiday_master h " +
-				"    ON d.absent_date = h.holiday_date " +
+				"LEFT JOIN holiday_master h ON " +
+				"    d.absent_date = h.holiday_date " +
 				"    AND h.activate_flag = 1 " +
 				"WHERE " +
 				"    c.check_in_id IS NULL " +
 				"    AND b.employee_id IS NULL " +
 				"    AND h.holiday_id IS NULL " +
 				"    AND l.leave_id IS NULL " +
-				"    AND u.activate_flag = 1 " +				
+				"    AND u.activate_flag = 1 " +
 				"ORDER BY " +
-				"    c.checked_time DESC, u.user_id, d.absent_date DESC;";
+				"    c.checked_time DESC, " +
+				"    u.user_id, " +
+				"    d.absent_date DESC;";
+
 
 				
 				return getListOfLinkedHashHashMap(parameters,sqlQuery,con); 
