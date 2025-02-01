@@ -11733,7 +11733,152 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 
 	
+	public CustomResultObject showDepartmentMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
 
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		try {
+
+			String[] colNames = { "department_id", "department_name"
+					 };
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDepartmentMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"DepartmentMaster");
+			} else {
+				outputMap.put("ListOfDepartment", lst);
+				rs.setViewName("../DepartmentMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+
+	}
+
+	public CustomResultObject showAddDepartment(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		long departmentId=request.getParameter("departmentId")==null?0L:Long.parseLong(request.getParameter("departmentId"));
+		outputMap.put("department_id", departmentId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
+		try
+		{	
+			if(departmentId!=0) {			outputMap.put("departmentDetails", lObjConfigDao.getDepartmentDetails(outputMap ,connections));} 
+			rs.setViewName("../AddDepartment.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject addDepartment(HttpServletRequest request,Connection con) throws Exception
+	{
+		CustomResultObject rs=new CustomResultObject();	
+		HashMap<String, Object> outputMap=new HashMap<>();	
+				
+		FileItemFactory itemFacroty=new DiskFileItemFactory();
+		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
+		//String webInfPath = cf.getPathForAttachments();
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
+		
+		HashMap<String,Object> hm=new HashMap<>();
+		
+		
+		
+		
+		List<FileItem> toUpload=new ArrayList<>();
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			List<FileItem> items=upload.parseRequest(request);
+			for(FileItem item:items)
+			{		
+				
+				if (item.isFormField()) 
+				{
+					hm.put(item.getFieldName(), item.getString());
+			    }
+				else
+				{
+					toUpload.add(item);
+				}
+			}			
+		}		
+		String departmentName= hm.get("txtdepartmentname").toString();
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		hm.put("txtdepartmentname", departmentName);
+		hm.put("user_id", userId);
+		
+		
+		long departmentId=hm.get("hdnDepartmentId").equals("")?0l:Long.parseLong(hm.get("hdnDepartmentId").toString()); 
+		try
+		{			
+									
+			
+			
+			if(departmentId==0)
+			{
+				departmentId=lObjConfigDao.addDepartment(con, hm);
+			}
+			else
+			{
+				lObjConfigDao.updateDepartment(departmentId, con, departmentName,userId);
+			}
+			
+			
+		
+			rs.setReturnObject(outputMap);
+			
+			
+			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showDepartmentMaster'</script>");
+			
+										
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+	public CustomResultObject deleteDepartment(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long departmentId= Integer.parseInt(request.getParameter("departmentId"));		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try
+		{	
+			
+			rs.setAjaxData(lObjConfigDao.deleteDepartment(departmentId,userId,con));
+			
+			
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
 
 
 }
