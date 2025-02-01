@@ -1,4 +1,9 @@
-#!/bin/bash
+## Setup SKPSecurityGateV2
+
+Follow these steps to set up the project:
+
+```bash
+(set -e  # Exit immediately if a command exits with a non-zero status
 
 # Variables
 REPO_URL="https://github.com/crystaldeveloper2017/SKPSecurityGateV2"
@@ -7,23 +12,17 @@ CONFIG_FILE_PATH="$PROJECT_DIR/Config.yaml"
 
 # Clone the repository with submodules
 echo "Cloning the repository..."
-git clone --recurse-submodules $REPO_URL
+git clone --recurse-submodules $REPO_URL || { echo "Failed to clone the repository. Exiting."; exit 1; }
 
-# Check if the repository was cloned successfully
-if [ -d "$PROJECT_DIR" ]; then
-    echo "Repository cloned successfully."
-else
-    echo "Failed to clone the repository. Exiting."
-    exit 1
-fi
+echo "Repository cloned successfully."
 
-# Create directories if they don't exist
+# Ensure directory structure exists
 echo "Creating directory structure..."
 mkdir -p "$(dirname "$CONFIG_FILE_PATH")"
 
 # Create the Config.yaml file with the configuration
 echo "Creating Config.yaml file..."
-cat <<EOL > $CONFIG_FILE_PATH
+cat > "$CONFIG_FILE_PATH" <<EOL
 mysqlusername: ""
 password: ""
 host: "localhost"
@@ -41,5 +40,4 @@ EOL
 
 echo "Config.yaml file created at $CONFIG_FILE_PATH."
 
-# Done
 echo "Setup complete. You can now run the project."
