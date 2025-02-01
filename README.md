@@ -1,17 +1,30 @@
-### SKPSecurityGateV2
-----------------------------------------------------------------------
-Steps to Setup Development Environment
------------------------------------
------------------------------------
+#!/bin/bash
 
-```
-git clone --recurse-submodules https://github.com/crystaldeveloper2017/SKPSecurityGateV2
-```
+# Variables
+REPO_URL="https://github.com/crystaldeveloper2017/SKPSecurityGateV2"
+PROJECT_DIR="SKPSecurityGateV2"
+CONFIG_FILE_PATH="$PROJECT_DIR/Config.yaml"
 
-Change the Credentials from the `Config.yaml` File.
+# Clone the repository with submodules
+echo "Cloning the repository..."
+git clone --recurse-submodules $REPO_URL
 
-```
-mysqlusername : ""
+# Check if the repository was cloned successfully
+if [ -d "$PROJECT_DIR" ]; then
+    echo "Repository cloned successfully."
+else
+    echo "Failed to clone the repository. Exiting."
+    exit 1
+fi
+
+# Create directories if they don't exist
+echo "Creating directory structure..."
+mkdir -p "$(dirname "$CONFIG_FILE_PATH")"
+
+# Create the Config.yaml file with the configuration
+echo "Creating Config.yaml file..."
+cat <<EOL > $CONFIG_FILE_PATH
+mysqlusername: ""
 password: ""
 host: "localhost"
 port: "3306"
@@ -24,8 +37,9 @@ copyAttachmentsToBuffer: "false"
 persistentPath: "/home/ubuntu/skpsecuritygate_attachments/"
 queryLogEnabled: "false"
 sendEmail: "false"
-```
-and run it.. Once it runs, Try to open
+EOL
 
-http://localhost:8080
+echo "Config.yaml file created at $CONFIG_FILE_PATH."
 
+# Done
+echo "Setup complete. You can now run the project."
