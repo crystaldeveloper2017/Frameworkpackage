@@ -7320,7 +7320,11 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 					public List<LinkedHashMap<String, Object>> getGatePassSummary(String fromDate,String toDate,String empId,Connection con)
 						throws SQLException, ClassNotFoundException, ParseException {
 					ArrayList<Object> parameters = new ArrayList<>();
-					String query="select *,date_format (gate_pass_date , '%d/%m/%Y') gate_pass_date, tum2.name requesRaisedBy, tum3.name requestApprovedBy,TIMEDIFF(in_time,out_time) as Hour1 " 
+					String query="select *,date_format (gate_pass_date , '%d/%m/%Y') gate_pass_date, tum2.name requesRaisedBy, tum3.name requestApprovedBy,CONCAT(\n" + //
+												"        FLOOR(TIMESTAMPDIFF(SECOND, out_time, in_time) / 3600), ' hours ',\n" + //
+												"        FLOOR((TIMESTAMPDIFF(SECOND, out_time, in_time) % 3600) / 60), ' minutes ',\n" + //
+												"        TIMESTAMPDIFF(SECOND, out_time, in_time) % 60, ' seconds'\n" + //
+												"    ) AS Hour1  "
 					+"from tbl_user_mst tum,tbl_user_mst tum2,trn_gate_pass tgp \tleft outer join tbl_user_mst tum3 on tum3.user_id=tgp.request_approved_by where tgp.user_id = tum.user_id and tum2.user_id =tgp.request_raised_by and gate_pass_date between ? and ? and tgp.activate_flag = 1";
 					parameters.add((getDateASYYYYMMDD(fromDate)));
 					parameters.add((getDateASYYYYMMDD(toDate)));
