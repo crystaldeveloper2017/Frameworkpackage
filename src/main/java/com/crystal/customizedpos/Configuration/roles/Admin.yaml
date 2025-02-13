@@ -100,6 +100,11 @@
   - showAddDepartment
   - addDepartment
   - deleteDepartment
+  - showAbbreviationMaster
+  - showAddAbbreviation
+  - addAbbreviation
+  - deleteAbbreviation
+
   elements: 
   - 39
   - 40
@@ -136,3 +141,4 @@
   - 700171
   - 700172
   - 700173
+  - 700174
