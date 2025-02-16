@@ -172,3 +172,13 @@ elements:
   parentElementId: 34
   elementUrl: "?a=showEmployeeAttendanceSummary"
   orderNo: 1
+- elementId: 700173
+  elementName: "Department Master"
+  parentElementId: 31
+  elementUrl: "?a=showDepartmentMaster"
+  orderNo: 2
+- elementId: 700174
+  elementName: "Abbreviation Master"
+  parentElementId: 31
+  elementUrl: "?a=showAbbreviationMaster"
+  orderNo: 2

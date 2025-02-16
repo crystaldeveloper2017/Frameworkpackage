@@ -7462,13 +7462,132 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 
 
 			
+				public List<LinkedHashMap<String, Object>> getDepartmentMaster(HashMap<String, Object> hm,Connection con)
+				throws ClassNotFoundException, SQLException {
+			ArrayList<Object> parameters = new ArrayList<>();
+			return getListOfLinkedHashHashMap(parameters,
+					"select * from department_master where activate_flag=1",
+					con);
 
 
+	}
 
+	public LinkedHashMap<String, String> getDepartmentDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("department_id"));
+		
+		
+		return getMap(parameters,
+				"select * from department_master where department_id=?",
+				con);
+	}
 
+	public long addDepartment(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		String query="insert into department_master values (default,?,?,sysdate(),1)";
+		parameters.add(hm.get("txtdepartmentname"));
+		parameters.add(hm.get("user_id"));
+		
+		
+		return insertUpdateDuablDB(query, parameters,
+				con);
+	}
+
+	public String updateDepartment(long departmentId, Connection con, String departmentName,String updatedBy) throws Exception {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		parameters.add(departmentName);
+		parameters.add(updatedBy);
+
+		parameters.add(departmentId);
+		
+
+		insertUpdateDuablDB("UPDATE department_master SET department_name=?,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
+				parameters, con);
+		return "Department updated Succesfully";
+
+	}
+
+	public String deleteDepartment(long departmentId,String userId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(userId);
+		parameters.add(departmentId);
+		insertUpdateDuablDB("UPDATE department_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
+				parameters, conWithF);
+		return "Department deleted Succesfully";
+	}
 
 				
+			public List<LinkedHashMap<String, Object>> getAbbreviationMaster(HashMap<String, Object> hm,Connection con)
+			throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		return getListOfLinkedHashHashMap(parameters,
+				"select * from abbreviation_master where activate_flag=1",
+				con);
+
+
       }
 
+	  public LinkedHashMap<String, String> getAbbreviationDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("abbreviation_id"));
+		
+		
+		return getMap(parameters,
+				"select * from abbreviation_master where abbreviation_id=?",
+				con);
+	}
+	public long addAbbreviation(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		String query="insert into abbreviation_master values (default,?,?,?,?,sysdate(),1)";
+		parameters.add(hm.get("txtabbreviation"));
+		parameters.add(hm.get("txtfullform"));
+		parameters.add(hm.get("txtdescription"));
+
+		parameters.add(hm.get("user_id"));
+		
+		
+		return insertUpdateDuablDB(query, parameters,
+				con);
+	}
+
+	public String updateAbbreviation(long abbreviationId, Connection con, String abbreviation,String full_form,String description,String updatedBy) throws Exception {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		parameters.add(abbreviation);
+		parameters.add(full_form);
+
+		parameters.add(description);
+
+		parameters.add(updatedBy);
+
+		parameters.add(abbreviationId);
+		
+
+		insertUpdateDuablDB("UPDATE abbreviation_master SET abbreviation=?,full_form=?,description=?,updated_by=?,updated_date=SYSDATE() WHERE abbreviation_id=?",
+				parameters, con);
+		return "Abbreviation updated Succesfully";
+
+	}
+
+	public String deleteAbbreviation(long abbreviationId,String userId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(userId);
+		parameters.add(abbreviationId);
+		insertUpdateDuablDB("UPDATE abbreviation_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE abbreviation_id=?",
+				parameters, conWithF);
+		return "Abbreviation deleted Succesfully";
+	}
 
 
+	}
