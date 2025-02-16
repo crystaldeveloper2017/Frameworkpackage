@@ -1867,7 +1867,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	public String getFreeMemory() throws IOException, InterruptedException {
 		if (!System.getProperty("os.name").contains("Windows")) {
-			String[] command = { "/bin/bash", "-c", "free -m | awk 'NR==2{print $4}'" };
+			String[] command = { "/bin/bash", "-c", "free -m | awk 'NR==2{print $7}'" };
 			
 			String str;
 			Process exec = Runtime.getRuntime().exec(command);
@@ -1883,7 +1883,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 				str = new String(buffer).trim();
 			} 
 			
-			return "Free Memory (MB): " + str;
+			return "Available Memory (MB): " + str;
 		}
 		return "Unsupported OS";
 	}
