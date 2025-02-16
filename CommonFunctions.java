@@ -1848,6 +1848,29 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		}
 		return lst;
 	}
+
+	public String getFreeMemory() throws IOException, InterruptedException {
+		if (!System.getProperty("os.name").contains("Windows")) {
+			String[] command = { "/bin/bash", "-c", "free -m | awk 'NR==2{print $4}'" };
+			
+			String str;
+			Process exec = Runtime.getRuntime().exec(command);
+			if (exec.waitFor() == 0) {
+				InputStream inputStream = exec.getInputStream();
+				byte[] buffer = new byte[inputStream.available()];
+				inputStream.read(buffer);
+				str = new String(buffer).trim();
+			} else {
+				InputStream errorStream = exec.getErrorStream();
+				byte[] buffer = new byte[errorStream.available()];
+				errorStream.read(buffer);
+				str = new String(buffer).trim();
+			} 
+			
+			return "Free Memory (MB): " + str;
+		}
+		return "Unsupported OS";
+	}
 	
 	
 	public String getActiveConnections(Connection con) throws SQLException
