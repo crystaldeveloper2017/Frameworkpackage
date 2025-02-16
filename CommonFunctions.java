@@ -35,6 +35,9 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -112,6 +115,8 @@ public class CommonFunctions extends PdfPageEventHelper
 	public static String mySqlPath;
 	public static List<String> lstbypassedActions;
 	public static List<String> lstbypassedReports;
+	public static Map dataStatic;
+
 	
 	public static int threadSleep;
 	public static String persistentPath;
@@ -597,6 +602,11 @@ public class CommonFunctions extends PdfPageEventHelper
 		Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateAsDDMMYYYY);
 		return new SimpleDateFormat("dd-MM-yyyy").format(d1);
 	}
+
+	public String getDateASDDMMYYYYFromYYYYMMDD(String dateAsYYYYMMDD) throws ParseException {
+		Date d1 = new SimpleDateFormat("yyyy-MM-dd").parse(dateAsYYYYMMDD);
+		return new SimpleDateFormat("dd/MM/yyyy").format(d1);
+	}
 	
 	public String getDateASYYYYMMDDHHMM(String dateAsDDMMYYYY) throws ParseException {
 		Date d1 = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(dateAsDDMMYYYY);
@@ -628,6 +638,7 @@ public class CommonFunctions extends PdfPageEventHelper
 				logger.debug("Config.yaml file found");
 				Yaml yaml = new Yaml(); 
 				Map<String, Object> data = yaml.load(in);				
+				dataStatic=data;
 				host=(String) data.get("host");
 				url = "jdbc:mysql://"+host;
 				username = (String) data.get("mysqlusername");
@@ -830,7 +841,18 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 	  
-	
+	public List<String> getRolesNamesForIds(List<String> roleIds,HashMap<Long, Role> rolesMap,Connection con) throws SQLException, ClassNotFoundException
+	{
+
+		List<String> finalRolesList=new ArrayList<>();
+		for(String roleId:roleIds)
+		{
+			String roleName=rolesMap.get(Long.valueOf(roleId)).getRoleName();
+			finalRolesList.add(roleName);
+		}
+			return finalRolesList;			
+		
+	}
 	private LinkedHashMap<Long, Role> getRolesById(List<Long> roles2) 
 	{
 		LinkedHashMap<Long, Role> r=new LinkedHashMap<>();
@@ -1480,13 +1502,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	
 	
-	public List<String> getRoles(Long userId,Connection con) throws SQLException, ClassNotFoundException
-	{
-		ArrayList<Object> parameters=new ArrayList<>();
-		parameters.add(userId);
-		return getListOfString(parameters, "select role_name from acl_user_role_rlt userrole where userrole.user_id=? and \r\n"
-				+ "userrole.activate_flag=1 ", con);	
-	}
+	
 	public List<String> getRoleIds(Long userId,Connection con) throws SQLException, ClassNotFoundException
 	{
 		ArrayList<Object> parameters=new ArrayList<>();
@@ -2281,12 +2297,22 @@ public void initializeApplication(Class[] scanClasses) throws ClassNotFoundExcep
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
         return new String(decryptedBytes);
     }
+
+
 	
 	
 	
 
     
-	
+public  String getDayOfWeek(String date) {
+		try {
+			return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+							.getDayOfWeek()
+							.toString();
+		} catch (DateTimeParseException e) {
+			return "Invalid date format. Please use dd/MM/yyyy.";
+		}
+	}	
 	
 
 }

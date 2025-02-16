@@ -77,5 +77,34 @@ public class CommonDaoImpl extends CommonFunctions{
 				return getListOfString(parameters, query, con);
         
     }
+
+	public long removeAllExistingRoles(long userId, Connection conWithF) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(userId);			
+		return insertUpdateDuablDB("update acl_user_role_rlt set activate_flag=0 where user_id=?", parameters,
+				conWithF);
+
+	}
+
+
+
+		public List<LinkedHashMap<String, Object>> getEmployeeMaster(String appId,Connection con) throws ClassNotFoundException, SQLException
+		{		
+			ArrayList<Object> parameters=new ArrayList<>();
+			parameters.add(appId);
+			return getListOfLinkedHashHashMap(parameters, "select * from tbl_user_mst where activate_flag=1 and app_id=?", con);		
+		}
+
+
+	public long addUserRoleMapping(long userId, Long roleId,String roleName, Connection conWithF) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(userId);
+		parameters.add(roleId);
+		
+		return insertUpdateDuablDB("insert into acl_user_role_rlt values (default,?,?,1,sysdate(),null)", parameters,
+				conWithF);
+
+	}
+
 	
 }
