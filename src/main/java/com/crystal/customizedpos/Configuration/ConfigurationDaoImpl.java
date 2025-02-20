@@ -7546,10 +7546,11 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
-		String query="insert into abbreviation_master values (default,?,?,?,?,sysdate(),1)";
+		String query="insert into abbreviation_master values (default,?,?,?,?,?,sysdate(),1)";
 		parameters.add(hm.get("txtabbreviation"));
 		parameters.add(hm.get("txtfullform"));
 		parameters.add(hm.get("txtdescription"));
+		parameters.add(hm.get("txtsequenceno"));
 
 		parameters.add(hm.get("user_id"));
 		
@@ -7558,7 +7559,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				con);
 	}
 
-	public String updateAbbreviation(long abbreviationId, Connection con, String abbreviation,String full_form,String description,String updatedBy) throws Exception {
+	public String updateAbbreviation(long abbreviationId, Connection con, String abbreviation,String full_form,String description,String sequence_no,String updatedBy) throws Exception {
 
 		ArrayList<Object> parameters = new ArrayList<>();
 		
@@ -7568,12 +7569,14 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 
 		parameters.add(description);
 
+		parameters.add(sequence_no);
+
 		parameters.add(updatedBy);
 
 		parameters.add(abbreviationId);
 		
 
-		insertUpdateDuablDB("UPDATE abbreviation_master SET abbreviation=?,full_form=?,description=?,updated_by=?,updated_date=SYSDATE() WHERE abbreviation_id=?",
+		insertUpdateDuablDB("UPDATE abbreviation_master SET abbreviation=?,full_form=?,description=?,sequence_no=?,updated_by=?,updated_date=SYSDATE() WHERE abbreviation_id=?",
 				parameters, con);
 		return "Abbreviation updated Succesfully";
 
@@ -7589,5 +7592,68 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		return "Abbreviation deleted Succesfully";
 	}
 
+			public List<LinkedHashMap<String, Object>> getLevelMaster(HashMap<String, Object> hm,Connection con)
+			throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		return getListOfLinkedHashHashMap(parameters,
+				"select * from level_master where activate_flag=1",
+				con);
 
+
+    }
+
+
+	public LinkedHashMap<String, String> getLevelDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("level_id"));
+		
+		
+		return getMap(parameters,
+				"select * from level_master where level_id=?",
+				con);
+	}
+
+	public long addLevel(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		String query="insert into level_master values (default,?,?,?,sysdate(),1)";
+		parameters.add(hm.get("txtlevelname"));
+		parameters.add(hm.get("txtlevelno"));
+
+		parameters.add(hm.get("user_id"));
+		
+		
+		return insertUpdateDuablDB(query, parameters,
+				con);
+	}
+
+	public String updateLevel(long levelId, Connection con, String level_name,String level_no,String updatedBy) throws Exception {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		parameters.add(level_name);
+		parameters.add(level_no);
+
+		parameters.add(updatedBy);
+
+		parameters.add(levelId);
+		
+
+		insertUpdateDuablDB("UPDATE level_master SET level_name=?,level_no=?,updated_by=?,updated_date=SYSDATE() WHERE level_id=?",
+				parameters, con);
+		return "Level updated Succesfully";
+
+	}
+
+	public String deleteLevel(long levelId,String userId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(userId);
+		parameters.add(levelId);
+		insertUpdateDuablDB("UPDATE level_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE level_id=?",
+				parameters, conWithF);
+		return "Level deleted Succesfully";
+	}
 	}

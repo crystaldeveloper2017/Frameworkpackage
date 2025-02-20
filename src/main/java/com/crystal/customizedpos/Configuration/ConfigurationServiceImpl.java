@@ -11889,7 +11889,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		try {
 
-			String[] colNames = { "abbreviation_id", "abbreviation","full_form","description"
+			String[] colNames = { "abbreviation_id", "abbreviation","full_form","description","sequence_no"
 					 };
 			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getAbbreviationMaster(outputMap, con);
 
@@ -11968,6 +11968,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String abbreviation= hm.get("txtabbreviation").toString();
 		String full_form= hm.get("txtfullform").toString();
 		String description= hm.get("txtdescription").toString();
+		String sequence_no= hm.get("txtsequenceno").toString();
+
 
 		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
@@ -11975,6 +11977,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		hm.put("txtfullform", full_form);
 
 		hm.put("txtdescription", description);
+
+		hm.put("txtsequenceno", sequence_no);
 
 		hm.put("user_id", userId);
 		
@@ -11991,7 +11995,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			}
 			else
 			{
-				lObjConfigDao.updateAbbreviation(abbreviationId, con, abbreviation,full_form,description,userId);
+				lObjConfigDao.updateAbbreviation(abbreviationId, con, abbreviation,full_form,description,sequence_no,userId);
 			}
 			
 			
@@ -12021,6 +12025,158 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		{	
 			
 			rs.setAjaxData(lObjConfigDao.deleteAbbreviation(abbreviationId,userId,con));
+			
+			
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject showLevelMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		try {
+
+			String[] colNames = { "level_id", "level_name","level_no"
+					 };
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getLevelMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"LevelMaster");
+			} else {
+				outputMap.put("ListOfLevels", lst);
+				rs.setViewName("../LevelMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+
+	}
+
+	public CustomResultObject showAddLevel(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		long levelId=request.getParameter("levelId")==null?0L:Long.parseLong(request.getParameter("levelId"));
+		outputMap.put("level_id", levelId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
+		try
+		{	
+			if(levelId!=0) {			outputMap.put("levelDetails", lObjConfigDao.getLevelDetails(outputMap ,connections));} 
+			rs.setViewName("../AddLevel.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject addLevel(HttpServletRequest request,Connection con) throws Exception
+	{
+		CustomResultObject rs=new CustomResultObject();	
+		HashMap<String, Object> outputMap=new HashMap<>();	
+				
+		FileItemFactory itemFacroty=new DiskFileItemFactory();
+		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
+		//String webInfPath = cf.getPathForAttachments();
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
+		
+		HashMap<String,Object> hm=new HashMap<>();
+		
+		
+		
+		
+		List<FileItem> toUpload=new ArrayList<>();
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			List<FileItem> items=upload.parseRequest(request);
+			for(FileItem item:items)
+			{		
+				
+				if (item.isFormField()) 
+				{
+					hm.put(item.getFieldName(), item.getString());
+			    }
+				else
+				{
+					toUpload.add(item);
+				}
+			}			
+		}		
+		String level_name= hm.get("txtlevelname").toString();
+		String level_no= hm.get("txtlevelno").toString();
+
+
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		hm.put("txtlevelname", level_name);
+		hm.put("txtlevelno", level_no);
+
+		hm.put("user_id", userId);
+		
+		
+		long levelId=hm.get("hdnLevelId").equals("")?0l:Long.parseLong(hm.get("hdnLevelId").toString()); 
+		try
+		{			
+									
+			
+			
+			if(levelId==0)
+			{
+				levelId=lObjConfigDao.addLevel(con, hm);
+			}
+			else
+			{
+				lObjConfigDao.updateLevel(levelId, con, level_name,level_no,userId);
+			}
+			
+			
+		
+			rs.setReturnObject(outputMap);
+			
+			
+			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showLevelMaster'</script>");
+			
+										
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+
+	public CustomResultObject deleteLevel(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long levelId= Integer.parseInt(request.getParameter("levelId"));		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try
+		{	
+			
+			rs.setAjaxData(lObjConfigDao.deleteLevel(levelId,userId,con));
 			
 			
 		}
