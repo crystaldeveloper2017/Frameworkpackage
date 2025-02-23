@@ -4,7 +4,7 @@
            
 
 
-<c:set var="abbreviationDetails" value='${requestScope["outputObject"].get("abbreviationDetails")}' />
+<c:set var="levelDetails" value='${requestScope["outputObject"].get("levelDetails")}' />
    
 
 
@@ -75,7 +75,7 @@ function deleteAttachment(id)
 
 <div class="container" style="padding:20px;background-color:white">
 
-	<form id="frm" action="?a=addAbbreviation" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+	<form id="frm" action="?a=addLevel" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 	<input type="hidden" name="app_id" value="${userdetails.app_id}">
 	<input type="hidden" name="user_id" value="${userdetails.user_id}">
 	<input type="hidden" name="callerUrl" id="callerUrl" value="">
@@ -83,35 +83,23 @@ function deleteAttachment(id)
 		<div class="row">
 		<div class="col-sm-12">
 			<div class="form-group">
-			<label for="email">Abbreviation</label>
-			<input type="text" class="form-control" id="txtabbreviation" value="${abbreviationDetails.abbreviation}"  placeholder="eg. Name" name="txtabbreviation">
-			<input type="hidden" name="hdnAbbreviationId" value="${abbreviationDetails.abbreviation_id}" id="hdnAbbreviationId">
+			<label for="email">Level Name</label>
+			<input type="text" class="form-control" id="txtlevelname" value="${levelDetails.level_name}"  placeholder="eg. Name" name="txtlevelname">
+			<input type="hidden" name="hdnLevelId" value="${levelDetails.level_id}" id="hdnLevelId">
 			</div>
 		</div>
 		
 
     <div class="col-sm-12">
   	<div class="form-group">
-      <label for="fullform">Full Form</label>
-      <input type="text" class="form-control" id="txtfullform" value="${abbreviationDetails.full_form}" name="txtfullform" placeholder="">
+      <label for="fullform">Level no</label>
+      <input type="text" class="form-control" id="txtlevelno" value="${levelDetails.level_no}" name="txtlevelno" placeholder="eg. No">
     </div>
   </div>
   
 
-    <div class="col-sm-12">
-  	<div class="form-group">
-      <label for="description">Description</label>
-      <input type="text" class="form-control" id="txtdescription" value="${abbreviationDetails.description}" name="txtdescription" placeholder="">
-    </div>
-  </div>
-
-      <div class="col-sm-12">
-  	<div class="form-group">
-      <label for="description">Sequence No</label>
-      <input type="text" class="form-control" id="txtsequenceno" value="${abbreviationDetails.sequence_no}" name="txtsequenceno" placeholder="">
-    </div>
-  </div>
   
+
   
   <c:if test="${action ne 'Update'}">
 		
@@ -133,11 +121,11 @@ function deleteAttachment(id)
 <script>
 	
 	
-	<c:if test="${abbreviationDetails.categoryId eq null}">
-		document.getElementById("divTitle").innerHTML="Add Abbreviation";
+	<c:if test="${levelDetails.levelId eq null}">
+		document.getElementById("divTitle").innerHTML="Add Level";
 	</c:if>
-	<c:if test="${abbreviationDetails.categoryId ne null}">
-		document.getElementById("divTitle").innerHTML="Update Abbreviation";
+	<c:if test="${levelDetails.levelId ne null}">
+		document.getElementById("divTitle").innerHTML="Update Level";
 	</c:if>
 	
 	

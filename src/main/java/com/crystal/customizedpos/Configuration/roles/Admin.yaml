@@ -104,7 +104,10 @@
   - showAddAbbreviation
   - addAbbreviation
   - deleteAbbreviation
-
+  - showLevelMaster
+  - showAddLevel
+  - addLevel
+  - deleteLevel
   elements: 
   - 39
   - 40
@@ -142,3 +145,4 @@
   - 700172
   - 700173
   - 700174
+  - 700175

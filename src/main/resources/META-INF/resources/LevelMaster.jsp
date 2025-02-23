@@ -2,7 +2,7 @@
 
 <script>
 
-function deleteAbbreviation(abbreviationId)
+function deleteLevel(levelId)
 {
 	
 	var answer = window.confirm("Are you sure you want to delete ?");
@@ -30,7 +30,7 @@ function deleteAbbreviation(abbreviationId)
 		  
 		}
 	  };
-	  xhttp.open("GET","?a=deleteAbbreviation&abbreviationId="+abbreviationId, true);    
+	  xhttp.open("GET","?a=deleteLevel&levelId="+levelId, true);    
 	  xhttp.send();
 }
 
@@ -64,7 +64,7 @@ function addShift()
 
 
 
-<c:set var="ListOfAbbreviation" value='${requestScope["outputObject"].get("ListOfAbbreviation")}' />
+<c:set var="ListOfLevels" value='${requestScope["outputObject"].get("ListOfLevels")}' />
 
 
 
@@ -84,7 +84,7 @@ function addShift()
                 
                 <div class="card-tools">
                   <div class="input-group input-group-sm" style="width: 200px;">                    
-                    <input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddAbbreviation'" value="Add Abbreviation" class="form-control float-right" >                      
+                    <input type="button"  class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddLevel'" value="Add Level" class="form-control float-right" >                      
                   </div>
                 </div>
                 
@@ -116,27 +116,23 @@ function addShift()
                 <table id="example1"class="table table-head-fixed  table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
                   <thead>
                     <tr>
-                     <th><b>Abbreviation Id</b></th>
-                     <th><b>Abbreviation </b></th>
-                      <th><b>Full Form </b></th>
-                       <th><b>Description </b></th>
-                        <th><b>Sequence No </b></th>
+                     <th><b>Level Id</b></th>
+                     <th><b>Level Name </b></th>
+                      <th><b>Level No </b></th>
                      
                      
                      <th></th><th></th>
                     </tr>
                   </thead>
                   <tbody>
-				<c:forEach items="${ListOfAbbreviation}" var="item">
+				<c:forEach items="${ListOfLevels}" var="item">
 					<tr >
-						<td>${item.abbreviation_id}</td>
-						<td>${item.abbreviation}</td>
-            <td>${item.full_form}</td>
-            <td>${item.description}</td>
-             <td>${item.sequence_no}</td>
+						<td>${item.level_id}</td>
+						<td>${item.level_name}</td>
+            <td>${item.level_no}</td>
 						
-						<td><a href="?a=showAddAbbreviation&abbreviationId=${item.abbreviation_id}">Edit</a></td>
-            <td><button class="btn btn-danger" onclick="deleteAbbreviation(${item.abbreviation_id})">Delete</button></td>
+						<td><a href="?a=showAddLevel&levelId=${item.level_id}">Edit</a></td>
+            <td><button class="btn btn-danger" onclick="deleteLevel(${item.level_id})">Delete</button></td>
 					</tr>
 				</c:forEach>
 				
@@ -170,7 +166,7 @@ function addShift()
 
 
 
-  document.getElementById("divTitle").innerHTML="Abbreviation Master";
-  document.title +=" Abbreviation Master ";
+  document.getElementById("divTitle").innerHTML="Level Master";
+  document.title +=" Level Master ";
   
 </script>

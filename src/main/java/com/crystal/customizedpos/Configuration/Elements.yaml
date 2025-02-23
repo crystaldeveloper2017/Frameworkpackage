@@ -182,3 +182,8 @@ elements:
   parentElementId: 31
   elementUrl: "?a=showAbbreviationMaster"
   orderNo: 2
+- elementId: 700175
+  elementName: "Level Master"
+  parentElementId: 31
+  elementUrl: "?a=showLevelMaster"
+  orderNo: 2
