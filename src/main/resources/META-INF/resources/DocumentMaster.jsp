@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script>
-function deleteAbbreviation(abbreviationId) {
+function deleteDocument(documentId) {
     var answer = window.confirm("Are you sure you want to delete ?");
     if (!answer) {
         return;
@@ -13,7 +13,7 @@ function deleteAbbreviation(abbreviationId) {
             window.location.reload();
         }
     };
-    xhttp.open("GET", "?a=deleteAbbreviation&abbreviationId=" + abbreviationId, true);
+    xhttp.open("GET", "?a=deleteDocument&document_id=" + documentId, true);
     xhttp.send();
 }
 
@@ -70,7 +70,7 @@ function changeStatus(documentId, newStatus) {
                             <c:if test="${item.current_status eq 'APPROVED'}">
                                 <button class="btn btn-primary" onclick="changeStatus(${item.document_id}, 'PUBLISHED')">Publish</button>
                             </c:if>
-                            <button class="btn btn-danger" onclick="deleteAbbreviation(${item.abbreviation_id})">Delete</button>
+                            <button class="btn btn-danger" onclick="deleteDocument(${item.document_id})">Delete</button>
                         </td>
                     </tr>
                 </c:forEach>

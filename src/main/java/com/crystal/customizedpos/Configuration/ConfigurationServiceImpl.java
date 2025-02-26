@@ -12019,12 +12019,12 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	public CustomResultObject deleteAbbreviation(HttpServletRequest request,Connection con)
 	{
 		CustomResultObject rs=new CustomResultObject();
-		long abbreviationId= Integer.parseInt(request.getParameter("abbreviationId"));		
+		long document_id= Integer.parseInt(request.getParameter("document_id"));		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		try
 		{	
 			
-			rs.setAjaxData(lObjConfigDao.deleteAbbreviation(abbreviationId,userId,con));
+			rs.setAjaxData(lObjConfigDao.deleteDocument(document_id,userId,con));
 			
 			
 		}
@@ -12320,5 +12320,34 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}
 		return rs;
 	}
+
+	public CustomResultObject updateDocumentStatus(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+	
+		try {
+			String documentId = request.getParameter("documentId");
+			String newStatus = request.getParameter("newStatus");
+			String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+	
+			HashMap<String, Object> inputMap = new HashMap<>();
+			inputMap.put("document_id", documentId);
+			inputMap.put("new_status", newStatus);
+			inputMap.put("user_id", userId);
+	
+			String message = lObjConfigDao.updateDocumentStatus(con, inputMap);
+			outputMap.put("message", message);
+	
+			rs.setReturnObject(outputMap);
+			rs.setAjaxData(message);  
+	
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+	
+		return rs;
+	}
+	
 
 }

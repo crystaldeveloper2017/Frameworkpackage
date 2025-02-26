@@ -111,6 +111,8 @@
   - showDocumentMaster
   - showAddDocument
   - addDocument
+  - updateDocumentStatus
+  - deleteAbbreviation
   elements: 
   - 39
   - 40

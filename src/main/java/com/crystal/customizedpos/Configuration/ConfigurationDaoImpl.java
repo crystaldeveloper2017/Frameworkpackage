@@ -7711,5 +7711,31 @@ public LinkedHashMap<String, String> getDocumentDetails(HashMap<String, Object> 
 			con);
 }
 
+public String updateDocumentStatus(Connection con, HashMap<String, Object> hm) throws Exception {
+    ArrayList<Object> parameters = new ArrayList<>();
+    parameters.add(hm.get("new_status"));
+    parameters.add(hm.get("user_id"));
+    parameters.add(hm.get("document_id"));
+
+    insertUpdateDuablDB(
+        "UPDATE mst_document SET current_status=?, updated_by=?, updated_date=NOW() WHERE document_id=?", 
+        parameters, 
+        con
+    );
+
+    return "Document status updated successfully.";
+}
+public String deleteDocument(long documentId,String userId, Connection conWithF) throws Exception {
+	ArrayList<Object> parameters = new ArrayList<>();
+	
+	parameters.add(userId);
+	parameters.add(documentId);
+	insertUpdateDuablDB("UPDATE mst_document  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_id=?",
+			parameters, conWithF);
+	return "Document deleted Succesfully";
+}
+
+
+
 
 	}

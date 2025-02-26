@@ -188,7 +188,7 @@ elements:
   elementUrl: "?a=showLevelMaster"
   orderNo: 2
 - elementId: 700176
-  elementName: "Document Management System"
+  elementName: "DMS"
   parentElementId: 31
   elementUrl: "?a=showDocumentMaster"
   orderNo: 2
