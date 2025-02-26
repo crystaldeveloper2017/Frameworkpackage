@@ -12244,79 +12244,81 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		return rs;
 	}
 
-	public CustomResultObject addDocument(HttpServletRequest request,Connection con) throws Exception
-	{
-		CustomResultObject rs=new CustomResultObject();	
-		HashMap<String, Object> outputMap=new HashMap<>();	
-				
-		FileItemFactory itemFacroty=new DiskFileItemFactory();
-		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
-		//String webInfPath = cf.getPathForAttachments();
-		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
-		
-		HashMap<String,Object> hm=new HashMap<>();
-		
-		
-		
-		
-		List<FileItem> toUpload=new ArrayList<>();
-		if(ServletFileUpload.isMultipartContent(request))
-		{
-			List<FileItem> items=upload.parseRequest(request);
-			for(FileItem item:items)
-			{		
-				
-				if (item.isFormField()) 
-				{
+	public CustomResultObject addDocument(HttpServletRequest request, Connection con) throws Exception {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFacroty = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFacroty);
+		// String webInfPath = cf.getPathForAttachments();
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + File.separator;
+
+		HashMap<String, Object> hm = new HashMap<>();
+
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
 					hm.put(item.getFieldName(), item.getString());
-			    }
-				else
-				{
+				} else {
 					toUpload.add(item);
 				}
-			}			
-		}		
-		String document_name= hm.get("txtdocumentname").toString();
-		String document_description= hm.get("txtdocumentname").toString();
+			}
+		}
 
+		String txtdocumentname = hm.get("txtdocumentname").toString();
+		String txtdescription = hm.get("txtdescription").toString();
+		String txtdocumentcode = hm.get("txtdocumentcode").toString();
+
+
+		
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		hm.put("app_id", appId);
 		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
-		hm.put("txtdocumentname", document_name);
-		hm.put("txtdescription", document_name);
-
-
 		hm.put("user_id", userId);
 		
+
+	
+
+		hm.put("txtdocumentname", txtdocumentname);
+		hm.put("txtdescription", txtdescription);
+		hm.put("txtdocumentcode", txtdocumentcode);
 		
-		long departmentId=hm.get("hdnDepartmentId").equals("")?0l:Long.parseLong(hm.get("hdnDepartmentId").toString()); 
-		try
-		{			
-									
-			
-			
-			if(departmentId==0)
-			{
-				departmentId=lObjConfigDao.addDepartment(con, hm);
-			}
-			else
-			{
-				lObjConfigDao.updateDepartment(departmentId, con, departmentName,userId);
-			}
-			
-			
 		
+
+		long hdnDocumentId = hm.get("hdnDocumentId").equals("") ? 0l : Long.parseLong(hm.get("hdnDocumentId").toString());
+		try {
+
+			if (hdnDocumentId == 0) {
+				hdnDocumentId = lObjConfigDao.addDocument(con, hm);
+			} else {
+				hm.put("hdnDocumentId",hdnDocumentId);
+				lObjConfigDao.updateDocument(con, hm);
+			}
+
+			if (!toUpload.isEmpty() && toUpload.get(0).getSize() > 0) {
+
+				toUpload.get(0).write(new File(DestinationPath + toUpload.get(0).getName()));
+				long attachmentId = cf.uploadFileToDBDual(DestinationPath + toUpload.get(0).getName(), con, "Document",
+				hdnDocumentId);
+				Files.copy(Paths.get(DestinationPath + toUpload.get(0).getName()),
+						Paths.get(DestinationPath + attachmentId + toUpload.get(0).getName()),
+						StandardCopyOption.REPLACE_EXISTING);
+
+			}
+
 			rs.setReturnObject(outputMap);
-			
-			
-			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showDepartmentMaster'</script>");
-			
-										
+
+			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showDocumentMaster'</script>");
+
+		} catch (Exception e) {
+			request.setAttribute("error_id", writeErrorToDB(e) + "-" + getDateTimeWithSeconds(con));
+			rs.setHasError(true);
 		}
-		catch (Exception e)
-		{
-			writeErrorToDB(e);
-				rs.setHasError(true);
-		}		
 		return rs;
 	}
+
 }

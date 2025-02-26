@@ -1211,6 +1211,22 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return "Category updated Succesfully";
 
 	}
+
+	
+	public String updateDocument(Connection con, HashMap<String, Object> hm) throws Exception {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("txtdocumentname"));
+		parameters.add(hm.get("txtdocumentcode"));
+		parameters.add(hm.get("txtdescription"));
+
+		parameters.add(hm.get("user_id"));
+
+		insertUpdateDuablDB("UPDATE mst_document  SET document_name=?,document_code=?,document_description=?,current_status='DRAFT',approved_by=null,updated_by=?,updated_date=sysdate() WHERE document_id=?",
+				parameters, con);
+		return "Document updated Succesfully";
+
+	}
 	
 	public String updateWareHouse(long categoryId, Connection con, String categoryName) throws Exception {
 
@@ -1231,6 +1247,21 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		return insertUpdateDuablDB("insert into mst_category values (default,?,1,sysdate(),null,null,?)", parameters,
 				con);
 	}
+
+	public long addDocument(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("txtdocumentname"));
+		parameters.add(hm.get("txtdocumentcode"));
+		parameters.add(hm.get("txtdescription"));
+		
+
+		parameters.add(hm.get("user_id"));
+		
+		
+		return insertUpdateDuablDB("insert into mst_document values (default,?,?,?,'DRAFT',?,null,sysdate(),null,null,1)", parameters,
+				con);
+	}
+	
 	
 	public long addWareHouse(Connection con, HashMap<String, Object> hm) throws Exception {
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -7664,7 +7695,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	throws ClassNotFoundException, SQLException {
 ArrayList<Object> parameters = new ArrayList<>();
 return getListOfLinkedHashHashMap(parameters,
-		"select * from mst_document where activate_flag=1 ",
+		"select md.*,tam.file_name actualPath from mst_document md left outer join tbl_attachment_mst tam on tam.file_id=md.document_id where md.activate_flag=1 ",
 		con);
 
 

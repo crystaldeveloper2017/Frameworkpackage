@@ -63,21 +63,21 @@ function  submittechnical()
                     <input type="text" class="form-control" id="txtdescription" value="${documentDetails.document_description}" name="txtdescription" placeholder="">
                 </div>
             </div>
+
+             <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="description">Document Code</label>
+                    <input type="text" class="form-control" id="txtdocumentcode" value="${documentDetails.document_description}" name="txtdocumentcode" placeholder="">
+                </div>
+            </div>
             
             <div class="col-sm-12">
                 <table class="table table-bordered tablecss" border="3">
-                    <th colspan="7">
-                        <h3 align="left">Upload Document Attachement</h3>
-                    </th>
-                    <tr align="center" style="background-color:cornsilk;">
+                    <tr align="center" >
                         <td>Upload Document</td>
                         <td><input type="file" id="TechnicalDocument" name="TechnicalDocument" multiple/></td>
                     </tr>
-                    <tr align="center">
-                        <td colspan="2">
-                            <input class="btn btn-success" type="button" value="Upload" onclick="submittechnical()">
-                        </td>
-                    </tr>
+                    
                 </table>
 
                 <!-- Save/Cancel buttons are wrapped in this div and are initially hidden -->
