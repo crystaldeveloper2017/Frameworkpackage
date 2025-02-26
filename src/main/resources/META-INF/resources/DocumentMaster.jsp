@@ -33,7 +33,7 @@ function changeStatus(documentId, newStatus) {
 }
 </script>
 
-<c:set var="ListOfDocument" value='${requestScope["outputObject"].get("ListOfDocument")}'>
+<c:set var="ListOfDocument" value='${requestScope["outputObject"].get("ListOfDocument")}' />
 
 <div class="card">
     <div class="card-header">
