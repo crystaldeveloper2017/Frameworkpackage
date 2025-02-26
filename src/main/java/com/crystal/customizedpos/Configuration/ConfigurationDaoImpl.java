@@ -7527,11 +7527,14 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 			throws ClassNotFoundException, SQLException {
 		ArrayList<Object> parameters = new ArrayList<>();
 		return getListOfLinkedHashHashMap(parameters,
-				"select * from abbreviation_master where activate_flag=1",
+				"select * from abbreviation_master where activate_flag=1 order by sequence_no",
 				con);
 
 
       }
+
+
+
 
 	  public LinkedHashMap<String, String> getAbbreviationDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -7656,4 +7659,26 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				parameters, conWithF);
 		return "Level deleted Succesfully";
 	}
+
+	public List<LinkedHashMap<String, Object>> getDocumentMaster(HashMap<String, Object> hm,Connection con)
+	throws ClassNotFoundException, SQLException {
+ArrayList<Object> parameters = new ArrayList<>();
+return getListOfLinkedHashHashMap(parameters,
+		"select * from mst_document where activate_flag=1 ",
+		con);
+
+
+}
+
+public LinkedHashMap<String, String> getDocumentDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
+	ArrayList<Object> parameters = new ArrayList<>();
+	parameters.add(hm.get("abbreviation_id"));
+	
+	
+	return getMap(parameters,
+			"select * from abbreviation_master where abbreviation_id=?",
+			con);
+}
+
+
 	}

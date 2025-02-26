@@ -108,6 +108,9 @@
   - showAddLevel
   - addLevel
   - deleteLevel
+  - showDocumentMaster
+  - showAddDocument
+  - addDocument
   elements: 
   - 39
   - 40
@@ -146,3 +149,4 @@
   - 700173
   - 700174
   - 700175
+  - 700176

@@ -12187,4 +12187,136 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+
+	public CustomResultObject showDocumentMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		try {
+
+			String[] colNames = { "document_id", "document_name","description","document_attachement"
+					 };
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"DocumentMaster");
+			} else {
+				outputMap.put("ListOfDocument", lst);
+				rs.setViewName("../DocumentMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+
+	}
+
+
+	public CustomResultObject showAddDocument(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		long abbreviationId=request.getParameter("abbreviationId")==null?0L:Long.parseLong(request.getParameter("abbreviationId"));
+		outputMap.put("abbreviation_id", abbreviationId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
+		try
+		{	
+			if(abbreviationId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
+			rs.setViewName("../AddDocument.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject addDocument(HttpServletRequest request,Connection con) throws Exception
+	{
+		CustomResultObject rs=new CustomResultObject();	
+		HashMap<String, Object> outputMap=new HashMap<>();	
+				
+		FileItemFactory itemFacroty=new DiskFileItemFactory();
+		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
+		//String webInfPath = cf.getPathForAttachments();
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
+		
+		HashMap<String,Object> hm=new HashMap<>();
+		
+		
+		
+		
+		List<FileItem> toUpload=new ArrayList<>();
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			List<FileItem> items=upload.parseRequest(request);
+			for(FileItem item:items)
+			{		
+				
+				if (item.isFormField()) 
+				{
+					hm.put(item.getFieldName(), item.getString());
+			    }
+				else
+				{
+					toUpload.add(item);
+				}
+			}			
+		}		
+		String document_name= hm.get("txtdocumentname").toString();
+		String document_description= hm.get("txtdocumentname").toString();
+
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		hm.put("txtdocumentname", document_name);
+		hm.put("txtdescription", document_name);
+
+
+		hm.put("user_id", userId);
+		
+		
+		long departmentId=hm.get("hdnDepartmentId").equals("")?0l:Long.parseLong(hm.get("hdnDepartmentId").toString()); 
+		try
+		{			
+									
+			
+			
+			if(departmentId==0)
+			{
+				departmentId=lObjConfigDao.addDepartment(con, hm);
+			}
+			else
+			{
+				lObjConfigDao.updateDepartment(departmentId, con, departmentName,userId);
+			}
+			
+			
+		
+			rs.setReturnObject(outputMap);
+			
+			
+			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showDepartmentMaster'</script>");
+			
+										
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
 }
