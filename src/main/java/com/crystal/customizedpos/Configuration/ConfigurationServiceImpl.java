@@ -12187,4 +12187,151 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+	public CustomResultObject showDocumentGroupMaster(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		try {
+
+			String[] colNames = { "document_group_id", "group_name"
+					 };
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentGroupMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"DocumentGroupMaster");
+			} else {
+				outputMap.put("ListOfDocumentGroup", lst);
+				rs.setViewName("../DocumentGroupMaster.jsp");
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+
+	}
+
+	public CustomResultObject showAddDocumentGroup(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs=new CustomResultObject();			
+		HashMap<String, Object> outputMap=new HashMap<>();
+		
+		long documentgroupId=request.getParameter("documentgroupId")==null?0L:Long.parseLong(request.getParameter("documentgroupId"));
+		outputMap.put("document_group_id", documentgroupId);
+		
+		try
+		{	
+			if(documentgroupId!=0) {			outputMap.put("documentgroupDetails", lObjConfigDao.getDocumentGroupDetails(outputMap ,connections));} 
+			rs.setViewName("../AddDocumentGroup.jsp");	
+			rs.setReturnObject(outputMap);		
+		}
+		catch (Exception e)
+		{
+				writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject addDocumentGroup(HttpServletRequest request,Connection con) throws Exception
+	{
+		CustomResultObject rs=new CustomResultObject();	
+		HashMap<String, Object> outputMap=new HashMap<>();	
+				
+		FileItemFactory itemFacroty=new DiskFileItemFactory();
+		ServletFileUpload upload=new ServletFileUpload(itemFacroty);		
+		//String webInfPath = cf.getPathForAttachments();
+		String DestinationPath=request.getServletContext().getRealPath("BufferedImagesFolder")+File.separator;
+		
+		HashMap<String,Object> hm=new HashMap<>();
+		
+		
+		
+		
+		List<FileItem> toUpload=new ArrayList<>();
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			List<FileItem> items=upload.parseRequest(request);
+			for(FileItem item:items)
+			{		
+				
+				if (item.isFormField()) 
+				{
+					hm.put(item.getFieldName(), item.getString());
+			    }
+				else
+				{
+					toUpload.add(item);
+				}
+			}			
+		}		
+		String groupName= hm.get("txtgroupname").toString();
+		
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		hm.put("txtgroupname", groupName);
+		hm.put("user_id", userId);
+		
+		
+		long documentgroupId=hm.get("hdnDocumentGroupId").equals("")?0l:Long.parseLong(hm.get("hdnDocumentGroupId").toString()); 
+		try
+		{			
+									
+			
+			
+			if(documentgroupId==0)
+			{
+				documentgroupId=lObjConfigDao.addDocumentGroup(con, hm);
+			}
+			else
+			{
+				lObjConfigDao.updateDocumentGroup(documentgroupId, con, groupName,userId);
+			}
+			
+			
+		
+			rs.setReturnObject(outputMap);
+			
+			
+			rs.setAjaxData("<script>window.location='"+hm.get("callerUrl")+"?a=showDocumentGroupMaster'</script>");
+			
+										
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+
+	public CustomResultObject deleteDocumentGroup(HttpServletRequest request,Connection con)
+	{
+		CustomResultObject rs=new CustomResultObject();
+		long documentgroupId= Integer.parseInt(request.getParameter("documentgroupId"));		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		try
+		{	
+			
+			rs.setAjaxData(lObjConfigDao.deleteDocumentGroup(documentgroupId,userId,con));
+			
+			
+		}
+		catch (Exception e)
+		{
+			writeErrorToDB(e);
+				rs.setHasError(true);
+		}		
+		return rs;
+	}
+	
+
 }
