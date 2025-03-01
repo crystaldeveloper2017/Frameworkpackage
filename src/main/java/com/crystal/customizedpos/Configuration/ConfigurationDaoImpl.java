@@ -7656,4 +7656,67 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				parameters, conWithF);
 		return "Level deleted Succesfully";
 	}
+
+
+		public List<LinkedHashMap<String, Object>> getDocumentGroupMaster(HashMap<String, Object> hm,Connection con)
+		throws ClassNotFoundException, SQLException {
+	ArrayList<Object> parameters = new ArrayList<>();
+	return getListOfLinkedHashHashMap(parameters,
+			"select * from document_group_master where activate_flag=1",
+			con);
+
+
+	}
+
+	public LinkedHashMap<String, String> getDocumentGroupDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		parameters.add(hm.get("document_group_id"));
+		
+		
+		return getMap(parameters,
+				"select * from document_group_master where document_group_id=?",
+				con);
+	}
+
+	public long addDocumentGroup(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		String query="insert into document_group_master values (default,?,?,sysdate(),1)";
+		parameters.add(hm.get("txtgroupname"));
+		parameters.add(hm.get("user_id"));
+		
+		
+		return insertUpdateDuablDB(query, parameters,
+				con);
+	}
+
+	public String updateDocumentGroup(long documentgroupId, Connection con, String groupName,String updatedBy) throws Exception {
+
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		
+		parameters.add(groupName);
+		parameters.add(updatedBy);
+
+		parameters.add(documentgroupId);
+		
+
+		insertUpdateDuablDB("UPDATE document_group_master SET group_name=?,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+				parameters, con);
+		return "Document Group updated Succesfully";
+
+	}
+
+
+	public String deleteDocumentGroup(long documentgroupId,String userId, Connection conWithF) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+		
+		parameters.add(userId);
+		parameters.add(documentgroupId);
+		insertUpdateDuablDB("UPDATE document_group_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+				parameters, conWithF);
+		return "Document Group deleted Succesfully";
+	}
+
 	}
