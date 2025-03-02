@@ -1250,15 +1250,22 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 
 	public long addDocument(Connection con, HashMap<String, Object> hm) throws Exception {
 		ArrayList<Object> parameters = new ArrayList<>();
+
+		parameters.add(hm.get("drpdocumentgroup"));
+		parameters.add(hm.get("drpdepartmentname"));
 		parameters.add(hm.get("txtdocumentname"));
 		parameters.add(hm.get("txtdocumentcode"));
 		parameters.add(hm.get("txtdescription"));
+
+		
+
+		
 		
 
 		parameters.add(hm.get("user_id"));
 		
 		
-		return insertUpdateDuablDB("insert into mst_document values (default,?,?,?,'DRAFT',?,null,sysdate(),null,null,1)", parameters,
+		return insertUpdateDuablDB("insert into mst_document values (default,?,?,?,?,?,'DRAFT',?,null,sysdate(),null,null,1)", parameters,
 				con);
 	}
 	
@@ -7696,7 +7703,11 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	throws ClassNotFoundException, SQLException {
 ArrayList<Object> parameters = new ArrayList<>();
 return getListOfLinkedHashHashMap(parameters,
-		"select md.*,tam.file_name actualPath from mst_document md left outer join tbl_attachment_mst tam on tam.file_id=md.document_id where md.activate_flag=1 ",
+		"select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document md "+
+		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
+		"left outer join department_master dm on dm.department_id=md.document_department_id "+
+		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
+		" where md.activate_flag=1 ",
 		con);
 
 

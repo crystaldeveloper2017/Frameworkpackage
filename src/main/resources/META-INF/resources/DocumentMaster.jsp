@@ -45,7 +45,9 @@ function changeStatus(documentId, newStatus) {
         <table id="example1" class="table table-head-fixed table-bordered table-striped dataTable dtr-inline">
             <thead>
                 <tr>
-                    <th>Document Id</th>
+                    
+                    <th>Group</th>
+                    <th>Department</th>
                     <th>Document Name</th>
                     <th>Document Code</th>
                     <th>Document Description</th>
@@ -57,7 +59,9 @@ function changeStatus(documentId, newStatus) {
             <tbody>
                 <c:forEach items="${ListOfDocument}" var="item">
                     <tr>
-                        <td>${item.document_id}</td>
+                    <td>${item.
+                    }</td>
+                    <td>${item.department_name}</td>                        
                         <td>${item.document_name}</td>
                         <td>${item.document_code}</td>
                         <td>${item.document_description}</td>

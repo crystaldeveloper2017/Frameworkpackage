@@ -12312,6 +12312,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String txtdocumentname = hm.get("txtdocumentname").toString();
 		String txtdescription = hm.get("txtdescription").toString();
 		String txtdocumentcode = hm.get("txtdocumentcode").toString();
+		String drpdocumentgroup = hm.get("drpdocumentgroup").toString();
+		String drpdepartmentname = hm.get("drpdepartmentname").toString();
 
 
 		
@@ -12327,6 +12329,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		hm.put("txtdocumentname", txtdocumentname);
 		hm.put("txtdescription", txtdescription);
 		hm.put("txtdocumentcode", txtdocumentcode);
+		hm.put("drpdocumentgroup", drpdocumentgroup);
+		hm.put("drpdepartmentname", drpdepartmentname);
 		
 		
 
