@@ -12016,7 +12016,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	}
 
 
-	public CustomResultObject deleteAbbreviation(HttpServletRequest request,Connection con)
+	public CustomResultObject deleteDocument(HttpServletRequest request,Connection con)
 	{
 		CustomResultObject rs=new CustomResultObject();
 		long document_id= Integer.parseInt(request.getParameter("document_id"));		
@@ -12190,7 +12190,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 
 
-	public CustomResultObject showDocumentMaster(HttpServletRequest request, Connection con) {
+	
 
 	public CustomResultObject showDocumentGroupMaster(HttpServletRequest request, Connection con) {
 
@@ -12204,19 +12204,12 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try {
 
 
-			String[] colNames = { "document_id", "document_name","description","document_attachement"
-					 };
-			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con);
+			String[] colNames = { "document_group_id", "group_name"};
+			
 
-			if (!exportFlag.isEmpty()) {
-				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
-						"DocumentMaster");
-			} else {
-				outputMap.put("ListOfDocument", lst);
-				rs.setViewName("../DocumentMaster.jsp");
+			
 
-			String[] colNames = { "document_group_id", "group_name"
-					 };
+			
 			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentGroupMaster(outputMap, con);
 
 			if (!exportFlag.isEmpty()) {
@@ -12237,9 +12230,33 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 	}
 
-
-
 	public CustomResultObject showAddDocument(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long abbreviationId=request.getParameter("abbreviationId")==null?0L:Long.parseLong(request.getParameter("abbreviationId"));
+		outputMap.put("abbreviation_id", abbreviationId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");			
+			try
+			{
+				
+				outputMap.put("lstDocumentGroup", lObjConfigDao.getDocumentGroupMaster(outputMap, connections));
+				outputMap.put("lstDepartmentMaster", lObjConfigDao.getDepartmentMaster(outputMap, connections));
+				
+				if(abbreviationId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
+				rs.setViewName("../AddDocument.jsp");	
+				rs.setReturnObject(outputMap);
+	}
+	catch(Exception e)
+	{
+		writeErrorToDB(e);
+				rs.setHasError(true);
+	}
+	return rs;
+}
+
+	
 
 	public CustomResultObject showAddDocumentGroup(HttpServletRequest request,Connection connections)
 
@@ -12248,15 +12265,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		HashMap<String, Object> outputMap=new HashMap<>();
 		
 
-		long abbreviationId=request.getParameter("abbreviationId")==null?0L:Long.parseLong(request.getParameter("abbreviationId"));
-		outputMap.put("abbreviation_id", abbreviationId);
-		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
 		
-		try
-		{	
-			if(abbreviationId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
-			rs.setViewName("../AddDocument.jsp");	
-
 		long documentgroupId=request.getParameter("documentgroupId")==null?0L:Long.parseLong(request.getParameter("documentgroupId"));
 		outputMap.put("document_group_id", documentgroupId);
 		
@@ -12377,8 +12386,9 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			writeErrorToDB(e);
 			rs.setHasError(true);
 		}
+		return rs;
 	
-
+	}
 	public CustomResultObject addDocumentGroup(HttpServletRequest request,Connection con) throws Exception
 	{
 		CustomResultObject rs=new CustomResultObject();	
@@ -12471,6 +12481,44 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		return rs;
 	}
-	
+
+	public CustomResultObject showDocumentMaster(HttpServletRequest request, Connection con) {
+
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+
+		try {
+
+
+			String[] colNames = { "document_group_id", "group_name"};
+			
+
+			
+
+			
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"DocumentGroupMaster");
+			} else {
+				outputMap.put("ListOfDocument", lst);
+				rs.setViewName("../DocumentMaster.jsp");
+
+				rs.setReturnObject(outputMap);
+			}
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+		rs.setReturnObject(outputMap);
+		return rs;
+
+	}
+		
 
 }

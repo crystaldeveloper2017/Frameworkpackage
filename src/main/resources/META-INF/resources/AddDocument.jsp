@@ -1,5 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="documentDetails" value='${requestScope["outputObject"].get("documentDetails")}' />
+<c:set var="lstDocumentGroup" value='${requestScope["outputObject"].get("lstDocumentGroup")}' />
+<c:set var="lstDepartmentMaster" value='${requestScope["outputObject"].get("lstDepartmentMaster")}' />
+
 
 </head>
 <script>
@@ -49,6 +52,33 @@ function  submittechnical()
         <input type="hidden" name="callerUrl" id="callerUrl" value="">
 
         <div class="row">
+
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="email">Document Group</label>
+
+                    <select class="form-control" name="drpdocumentgroup" id="drpdocumentgroup">
+                        <c:forEach items="${lstDocumentGroup}" var="docgroup">
+                                    <option value="${docgroup.document_group_id}">${docgroup.group_name}</option>			    
+                        </c:forEach>
+	                </select>        
+
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="email">Department Name</label>
+
+                    <select class="form-control" name="drpdepartmentname" id="drpdepartmentname">
+                        <c:forEach items="${lstDepartmentMaster}" var="dept">
+                                    <option value="${dept.department_id}">${dept.department_name}</option>			    
+                        </c:forEach>
+	                </select>        
+
+                </div>
+            </div>
+
             <div class="col-sm-12">
                 <div class="form-group">
                     <label for="email">Document Name</label>
