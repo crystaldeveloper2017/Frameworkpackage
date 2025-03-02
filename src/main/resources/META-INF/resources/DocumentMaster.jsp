@@ -59,8 +59,7 @@ function changeStatus(documentId, newStatus) {
             <tbody>
                 <c:forEach items="${ListOfDocument}" var="item">
                     <tr>
-                    <td>${item.
-                    }</td>
+                    <td>${item.group_name}</td>
                     <td>${item.department_name}</td>                        
                         <td>${item.document_name}</td>
                         <td>${item.document_code}</td>
