@@ -113,6 +113,10 @@
   - addDocument
   - updateDocumentStatus
   - deleteAbbreviation
+  - showDocumentGroupMaster
+  - showAddDocumentGroup
+  - addDocumentGroup
+  - deleteDocumentGroup
   elements: 
   - 39
   - 40
