@@ -188,6 +188,11 @@ elements:
   elementUrl: "?a=showLevelMaster"
   orderNo: 2
 - elementId: 700176
+  elementName: "DMS"
+  parentElementId: 31
+  elementUrl: "?a=showDocumentMaster"
+  orderNo: 2
+- elementId: 700177
   elementName: "Document Group Master"
   parentElementId: 31
   elementUrl: "?a=showDocumentGroupMaster"

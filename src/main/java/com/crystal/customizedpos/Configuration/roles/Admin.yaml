@@ -108,6 +108,11 @@
   - showAddLevel
   - addLevel
   - deleteLevel
+  - showDocumentMaster
+  - showAddDocument
+  - addDocument
+  - updateDocumentStatus
+  - deleteAbbreviation
   - showDocumentGroupMaster
   - showAddDocumentGroup
   - addDocumentGroup

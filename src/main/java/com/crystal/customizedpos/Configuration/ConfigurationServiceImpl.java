@@ -12019,12 +12019,12 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 	public CustomResultObject deleteAbbreviation(HttpServletRequest request,Connection con)
 	{
 		CustomResultObject rs=new CustomResultObject();
-		long abbreviationId= Integer.parseInt(request.getParameter("abbreviationId"));		
+		long document_id= Integer.parseInt(request.getParameter("document_id"));		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		try
 		{	
 			
-			rs.setAjaxData(lObjConfigDao.deleteAbbreviation(abbreviationId,userId,con));
+			rs.setAjaxData(lObjConfigDao.deleteDocument(document_id,userId,con));
 			
 			
 		}
@@ -12188,7 +12188,12 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		return rs;
 	}
 
+
+
+	public CustomResultObject showDocumentMaster(HttpServletRequest request, Connection con) {
+
 	public CustomResultObject showDocumentGroupMaster(HttpServletRequest request, Connection con) {
+
 		CustomResultObject rs = new CustomResultObject();
 		HashMap<String, Object> outputMap = new HashMap<>();
 
@@ -12197,6 +12202,18 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 
 		try {
+
+
+			String[] colNames = { "document_id", "document_name","description","document_attachement"
+					 };
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con);
+
+			if (!exportFlag.isEmpty()) {
+				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+						"DocumentMaster");
+			} else {
+				outputMap.put("ListOfDocument", lst);
+				rs.setViewName("../DocumentMaster.jsp");
 
 			String[] colNames = { "document_group_id", "group_name"
 					 };
@@ -12208,6 +12225,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			} else {
 				outputMap.put("ListOfDocumentGroup", lst);
 				rs.setViewName("../DocumentGroupMaster.jsp");
+
 				rs.setReturnObject(outputMap);
 			}
 		} catch (Exception e) {
@@ -12219,11 +12237,26 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 	}
 
+
+
+	public CustomResultObject showAddDocument(HttpServletRequest request,Connection connections)
+
 	public CustomResultObject showAddDocumentGroup(HttpServletRequest request,Connection connections)
+
 	{
 		CustomResultObject rs=new CustomResultObject();			
 		HashMap<String, Object> outputMap=new HashMap<>();
 		
+
+		long abbreviationId=request.getParameter("abbreviationId")==null?0L:Long.parseLong(request.getParameter("abbreviationId"));
+		outputMap.put("abbreviation_id", abbreviationId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		
+		try
+		{	
+			if(abbreviationId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
+			rs.setViewName("../AddDocument.jsp");	
+
 		long documentgroupId=request.getParameter("documentgroupId")==null?0L:Long.parseLong(request.getParameter("documentgroupId"));
 		outputMap.put("document_group_id", documentgroupId);
 		
@@ -12231,6 +12264,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		{	
 			if(documentgroupId!=0) {			outputMap.put("documentgroupDetails", lObjConfigDao.getDocumentGroupDetails(outputMap ,connections));} 
 			rs.setViewName("../AddDocumentGroup.jsp");	
+
 			rs.setReturnObject(outputMap);		
 		}
 		catch (Exception e)
@@ -12240,6 +12274,110 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		}		
 		return rs;
 	}
+
+
+	public CustomResultObject addDocument(HttpServletRequest request, Connection con) throws Exception {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		FileItemFactory itemFacroty = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(itemFacroty);
+		// String webInfPath = cf.getPathForAttachments();
+		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + File.separator;
+
+		HashMap<String, Object> hm = new HashMap<>();
+
+		List<FileItem> toUpload = new ArrayList<>();
+		if (ServletFileUpload.isMultipartContent(request)) {
+			List<FileItem> items = upload.parseRequest(request);
+			for (FileItem item : items) {
+
+				if (item.isFormField()) {
+					hm.put(item.getFieldName(), item.getString());
+				} else {
+					toUpload.add(item);
+				}
+			}
+		}
+
+		String txtdocumentname = hm.get("txtdocumentname").toString();
+		String txtdescription = hm.get("txtdescription").toString();
+		String txtdocumentcode = hm.get("txtdocumentcode").toString();
+
+
+		
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");
+		hm.put("app_id", appId);
+		
+		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		hm.put("user_id", userId);
+		
+
+	
+
+		hm.put("txtdocumentname", txtdocumentname);
+		hm.put("txtdescription", txtdescription);
+		hm.put("txtdocumentcode", txtdocumentcode);
+		
+		
+
+		long hdnDocumentId = hm.get("hdnDocumentId").equals("") ? 0l : Long.parseLong(hm.get("hdnDocumentId").toString());
+		try {
+
+			if (hdnDocumentId == 0) {
+				hdnDocumentId = lObjConfigDao.addDocument(con, hm);
+			} else {
+				hm.put("hdnDocumentId",hdnDocumentId);
+				lObjConfigDao.updateDocument(con, hm);
+			}
+
+			if (!toUpload.isEmpty() && toUpload.get(0).getSize() > 0) {
+
+				toUpload.get(0).write(new File(DestinationPath + toUpload.get(0).getName()));
+				long attachmentId = cf.uploadFileToDBDual(DestinationPath + toUpload.get(0).getName(), con, "Document",
+				hdnDocumentId);
+				Files.copy(Paths.get(DestinationPath + toUpload.get(0).getName()),
+						Paths.get(DestinationPath + attachmentId + toUpload.get(0).getName()),
+						StandardCopyOption.REPLACE_EXISTING);
+
+			}
+
+			rs.setReturnObject(outputMap);
+
+			rs.setAjaxData("<script>window.location='" + hm.get("callerUrl") + "?a=showDocumentMaster'</script>");
+
+		} catch (Exception e) {
+			request.setAttribute("error_id", writeErrorToDB(e) + "-" + getDateTimeWithSeconds(con));
+			rs.setHasError(true);
+		}
+		return rs;
+	}
+
+	public CustomResultObject updateDocumentStatus(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+	
+		try {
+			String documentId = request.getParameter("documentId");
+			String newStatus = request.getParameter("newStatus");
+			String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+	
+			HashMap<String, Object> inputMap = new HashMap<>();
+			inputMap.put("document_id", documentId);
+			inputMap.put("new_status", newStatus);
+			inputMap.put("user_id", userId);
+	
+			String message = lObjConfigDao.updateDocumentStatus(con, inputMap);
+			outputMap.put("message", message);
+	
+			rs.setReturnObject(outputMap);
+			rs.setAjaxData(message);  
+	
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+	
 
 	public CustomResultObject addDocumentGroup(HttpServletRequest request,Connection con) throws Exception
 	{
@@ -12330,6 +12468,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			writeErrorToDB(e);
 				rs.setHasError(true);
 		}		
+
 		return rs;
 	}
 	
