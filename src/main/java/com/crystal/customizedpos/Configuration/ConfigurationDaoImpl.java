@@ -7702,12 +7702,25 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	public List<LinkedHashMap<String, Object>> getDocumentMaster(HashMap<String, Object> hm,Connection con)
 	throws ClassNotFoundException, SQLException {
 ArrayList<Object> parameters = new ArrayList<>();
-return getListOfLinkedHashHashMap(parameters,
-		"select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document md "+
+String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document md "+
 		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
 		"left outer join department_master dm on dm.department_id=md.document_department_id "+
 		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
-		" where md.activate_flag=1 ",
+		" where md.activate_flag=1 ";
+	
+		if(hm.get("document_group_id")!=null && !hm.get("document_group_id").equals("-1") && !hm.get("document_group_id").equals(""))
+		{
+			query+=" and dgm.document_group_id=?";
+			parameters.add(hm.get("document_group_id"));
+		}
+
+		if(hm.get("department_id")!=null && !hm.get("department_id").equals("-1") && !hm.get("department_id").equals(""))
+		{
+			query+=" and dm.department_id=?";
+			parameters.add(hm.get("department_id"));
+		}
+return getListOfLinkedHashHashMap(parameters,
+query,
 		con);
 
 
@@ -7811,6 +7824,19 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 				parameters, conWithF);
 		return "Document Group deleted Succesfully";
 	}
+
+	public List<LinkedHashMap<String, Object>> getDocumentGroupMasterNew(HashMap<String, Object> hm, Connection con)
+        throws ClassNotFoundException, SQLException {
+    ArrayList<Object> parameters = new ArrayList<>();
+    String query = "SELECT * FROM document_group_master WHERE activate_flag = 1";
+
+    if (hm.get("document_group_id") != null && !hm.get("document_group_id").toString().isEmpty()) {
+        query += " AND document_group_id = ?";
+        parameters.add(hm.get("document_group_id"));
+    }
+
+    return getListOfLinkedHashHashMap(parameters, query, con);
+}
 
 
 	}

@@ -31,9 +31,24 @@ function changeStatus(documentId, newStatus) {
     xhttp.open("GET", "?a=updateDocumentStatus&documentId=" + documentId + "&newStatus=" + newStatus, true);
     xhttp.send();
 }
+
+function reloadFilters()
+  {
+	window.location="?a=showDocumentMaster&document_group_id="+drpdocumentgroup.value+"&department_id="+drpdepartmentname.value;
+  }
+  
+
+
 </script>
 
 <c:set var="ListOfDocument" value='${requestScope["outputObject"].get("ListOfDocument")}' />
+
+<c:set var="lstDocumentGroup" value='${requestScope["outputObject"].get("lstDocumentGroup")}' />
+
+
+<c:set var="lstDepartmentMaster" value='${requestScope["outputObject"].get("lstDepartmentMaster")}' />
+
+
 
 <div class="card">
     <div class="card-header">
@@ -41,6 +56,38 @@ function changeStatus(documentId, newStatus) {
             <input type="button" class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddDocument'" value="Add Document">
         </div>
     </div>
+
+                  <div class="card-tools">
+  <div class="input-group input-group-sm">
+				  <div class="input-group input-group-sm" style="width: 230px;">
+  			
+  					<select id="drpdocumentgroup" name="drpdocumentgroup" class="form-control float-right" onchange='reloadFilters()' style="margin-right: 20px;" >
+  						
+  						<option value='-1'>--Group--</option>
+  						
+  						<c:forEach items="${lstDocumentGroup}" var="cat">
+							<option value='${cat.document_group_id}'> ${cat.group_name}</option>
+						</c:forEach>  							
+  					</select>
+
+
+    
+
+					<select id="drpdepartmentname" name="drpdepartmentname" class="form-control float-right" onchange='reloadFilters()'  >
+  						
+  						<option value='-1'>--Department Name--</option>
+  						
+  						<c:forEach items="${lstDepartmentMaster}" var="cat">
+							<option value='${cat.department_id}'> ${cat.department_name}</option>
+						</c:forEach>  							
+  					</select>
+				</div>
+			</div>
+		</div>
+
+               
+           
+
     <div class="card-body table-responsive p-0" style="height: 800px;">
         <table id="example1" class="table table-head-fixed table-bordered table-striped dataTable dtr-inline">
             <thead>
@@ -97,5 +144,7 @@ $(function () {
 });
 
 document.getElementById("divTitle").innerHTML = "Document Management System";
-document.title += " Document Master ";
+document.title += " Document Management System ";
+
+  
 </script>

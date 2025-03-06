@@ -12494,12 +12494,18 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
 		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String documentgroupId = request.getParameter("document_group_id");
+		String departmentId = request.getParameter("department_id");
+
 
 		try {
 
 
 			String[] colNames = { "document_group_id", "group_name"};
+
 			
+          outputMap.put("document_group_id", documentgroupId);
+		  outputMap.put("department_id", departmentId);
 
 			
 
@@ -12509,8 +12515,13 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			if (!exportFlag.isEmpty()) {
 				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
 						"DocumentGroupMaster");
+			
+				
 			} else {
 				outputMap.put("ListOfDocument", lst);
+				outputMap.put("lstDocumentGroup", lObjConfigDao.getDocumentGroupMaster(outputMap, con));
+
+				outputMap.put("lstDepartmentMaster", lObjConfigDao.getDepartmentMaster(outputMap, con));
 				rs.setViewName("../DocumentMaster.jsp");
 
 				rs.setReturnObject(outputMap);
