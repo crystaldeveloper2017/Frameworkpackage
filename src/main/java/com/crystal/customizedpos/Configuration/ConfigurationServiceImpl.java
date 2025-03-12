@@ -12494,6 +12494,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
 		String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
 		String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+		String searchString=request.getParameter("searchString");
+
 		String documentgroupId = request.getParameter("document_group_id");
 		String departmentId = request.getParameter("department_id");
 
@@ -12510,7 +12512,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			
 
 			
-			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con);
+			List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentMaster(outputMap, con,searchString);
 
 			if (!exportFlag.isEmpty()) {
 				outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,

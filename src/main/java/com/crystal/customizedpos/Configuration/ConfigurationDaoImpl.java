@@ -7699,7 +7699,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	}
 
 
-	public List<LinkedHashMap<String, Object>> getDocumentMaster(HashMap<String, Object> hm,Connection con)
+	public List<LinkedHashMap<String, Object>> getDocumentMaster(HashMap<String, Object> hm,Connection con,String searchString)
 	throws ClassNotFoundException, SQLException {
 ArrayList<Object> parameters = new ArrayList<>();
 String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document md "+
@@ -7719,6 +7719,12 @@ String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document 
 			query+=" and dm.department_id=?";
 			parameters.add(hm.get("department_id"));
 		}
+		if (searchString != null && !searchString.isEmpty()) {
+			query += " AND (md.document_name LIKE ? OR md.document_code LIKE ?)";
+			parameters.add("%" + searchString + "%");
+			parameters.add("%" + searchString + "%");
+		}
+		
 return getListOfLinkedHashHashMap(parameters,
 query,
 		con);
