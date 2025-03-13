@@ -118,6 +118,7 @@
   - addDocumentGroup
   - deleteDocumentGroup
   - deleteDocument
+  - showDocumentHistory
   elements: 
   - 39
   - 40

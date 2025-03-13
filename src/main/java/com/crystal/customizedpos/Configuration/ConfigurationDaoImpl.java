@@ -1221,6 +1221,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("txtdescription"));
 
 		parameters.add(hm.get("user_id"));
+		parameters.add(hm.get("hdnDocumentId"));
 
 		insertUpdateDuablDB("UPDATE mst_document  SET document_name=?,document_code=?,document_description=?,current_status='DRAFT',approved_by=null,updated_by=?,updated_date=sysdate() WHERE document_id=?",
 				parameters, con);
@@ -1255,17 +1256,35 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("drpdepartmentname"));
 		parameters.add(hm.get("txtdocumentname"));
 		parameters.add(hm.get("txtdocumentcode"));
-		parameters.add(hm.get("txtdescription"));
+		parameters.add(hm.get("txtdescription"));		
 
-		
-
-		
-		
-
-		parameters.add(hm.get("user_id"));
+		parameters.add(hm.get("user_id"));		
 		
 		
 		return insertUpdateDuablDB("insert into mst_document values (default,?,?,?,?,?,'DRAFT',?,null,sysdate(),null,null,1)", parameters,
+				con);
+	}
+
+	public long addDocumentHistory(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+
+		parameters.add(hm.get("hdnDocumentId"));
+		parameters.add(hm.get("drpdocumentgroup"));
+		parameters.add(hm.get("drpdepartmentname"));
+		parameters.add(hm.get("txtdocumentname"));
+		parameters.add(hm.get("txtdocumentcode"));
+		parameters.add(hm.get("txtdescription"));		
+
+
+		parameters.add(hm.get("document_status"));		
+
+
+
+		parameters.add(hm.get("user_id"));		
+		parameters.add(hm.get("txtchangesdescription"));				
+		
+		
+		return insertUpdateDuablDB("insert into hst_mst_document values (?,?,?,?,?,?,?,?,null,sysdate(),null,null,1,?)", parameters,
 				con);
 	}
 	
@@ -7732,13 +7751,38 @@ query,
 
 }
 
+public List<LinkedHashMap<String, Object>> getDocumentHistory(HashMap<String, Object> hm,Connection con)
+	throws ClassNotFoundException, SQLException {
+ArrayList<Object> parameters = new ArrayList<>();
+String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from hst_mst_document md "+
+		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
+		"left outer join department_master dm on dm.department_id=md.document_department_id "+
+		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
+		" where md.activate_flag=1 ";
+	
+		if(hm.get("document_id")!=null && !hm.get("document_id").equals("-1") && !hm.get("document_id").equals(""))
+		{
+			query+=" and md.document_id=?";
+			parameters.add(hm.get("document_id"));
+		}
+
+		query+=" order by md.created_date desc ";
+
+		
+return getListOfLinkedHashHashMap(parameters,
+query,
+		con);
+
+
+}
+
 public LinkedHashMap<String, String> getDocumentDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
 	ArrayList<Object> parameters = new ArrayList<>();
-	parameters.add(hm.get("abbreviation_id"));
+	parameters.add(hm.get("documentId"));
 	
 	
 	return getMap(parameters,
-			"select * from abbreviation_master where abbreviation_id=?",
+			"select md.*,tam.file_name,tam.attachment_id from mst_document md left outer join tbl_attachment_mst tam on tam.file_id=md.document_id where document_id=?",
 			con);
 }
 
