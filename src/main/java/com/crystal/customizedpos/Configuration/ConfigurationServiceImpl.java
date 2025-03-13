@@ -10866,7 +10866,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		hm.put("user_id", userId);
 
 		lObjConfigDao.saveAccessBlockEntry(hm, con);
-		
+	
 		try {
 
 			rs.setReturnObject(outputMap);
