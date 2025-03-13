@@ -37,6 +37,24 @@ function reloadFilters()
 	window.location="?a=showDocumentMaster&document_group_id="+drpdocumentgroup.value+"&department_id="+drpdepartmentname.value;
   }
   
+   function searchprod(evnt)
+	{
+		if(evnt.which==13)
+			{
+				// do some search stuff
+				actualSearch();					
+			}
+			
+	}
+  
+  function actualSearch()
+	{
+		
+				
+				window.location="?a=showDocumentMaster&searchString="+txtsearch.value;
+			
+			
+	}
 
 
 </script>
@@ -49,13 +67,29 @@ function reloadFilters()
 <c:set var="lstDepartmentMaster" value='${requestScope["outputObject"].get("lstDepartmentMaster")}' />
 
 
-
 <div class="card">
+
     <div class="card-header">
         <div class="card-tools">
             <input type="button" class="btn btn-block btn-primary btn-sm" onclick="window.location='?a=showAddDocument'" value="Add Document">
         </div>
     </div>
+
+
+<div class="row">
+
+
+<div class="col-sm-3" align="center">
+	<div class="input-group input-group-sm" style="width: 200px;">
+                    <input type="text" name="txtsearch" id="txtsearch" class="form-control float-right" placeholder="Search" onkeypress="searchprod(event)">                    
+
+                    <div class="input-group-append">
+                      <button type="button" class="btn btn-default" onclick='actualSearch()'><i class="fas fa-search"></i></button>
+                    </div>
+                  </div>
+</div>
+
+
 
                   <div class="card-tools">
   <div class="input-group input-group-sm">
@@ -86,21 +120,21 @@ function reloadFilters()
 		</div>
 
                
-           
+  	</div>         
 
     <div class="card-body table-responsive p-0" style="height: 800px;">
-        <table id="example1" class="table table-head-fixed table-bordered table-striped dataTable dtr-inline">
+        <table id="example1" class="table table-head-fixed table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
             <thead>
                 <tr>
                     
-                    <th>Group</th>
-                    <th>Department</th>
-                    <th>Document Name</th>
-                    <th>Document Code</th>
-                    <th>Document Description</th>
-                    <th>Current Status</th>
-                    <th>Attachment(s)</th>
-                    <th>Actions</th>
+                    <th><b>Group</b></th>
+                    <th><b>Department</b></th>
+                    <th><b>Document Name</b></th>
+                    <th><b>Document Code</b></th>
+                    <th><b>Document Description</b></th>
+                    <th><b>Current Status</b></th>
+                    <th><b>Attachment(s)</b></th>
+                    <th><b>Actions</b></th>
                 </tr>
             </thead>
             <tbody>
@@ -145,6 +179,8 @@ $(function () {
 
 document.getElementById("divTitle").innerHTML = "Document Management System";
 document.title += " Document Management System ";
+
+  txtsearch.value='${param.searchString}';
 
   
 </script>
