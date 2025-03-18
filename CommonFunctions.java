@@ -74,7 +74,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.yaml.snakeyaml.Yaml;
 
-import com.crystal.customizedpos.Configuration.ExecuteSqlFile;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -631,7 +631,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		try 
 		{		
 			
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Config.yaml");
+			InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("Config.yaml");
 			if(in!=null)
 			{
 
@@ -705,7 +705,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	
 	public void setElementsMaster()
 	{
-		InputStream in = ExecuteSqlFile.class.getResourceAsStream("Elements.yaml");
+		InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("Elements.yaml");
 		Yaml yaml = new Yaml(); Map<String, Object> data = yaml.load(in);
 		List<HashMap<String, String>> lstElements= (List<HashMap<String, String>>)data.get("elements");
 		
@@ -725,12 +725,12 @@ public class CommonFunctions extends PdfPageEventHelper
 	{
     try 
     {
-        File rolesFolder = new File(ExecuteSqlFile.class.getResource("roles/").toURI());
+        File rolesFolder = new File(com.crystal.customizedpos.Configuration.Config.class.getResource("roles/").toURI());
         File[] roleFiles = rolesFolder.listFiles();
         if (roleFiles != null) {
             for (File roleFile : roleFiles) {
                 if (roleFile.isFile()) {
-                    InputStream in = ExecuteSqlFile.class.getResourceAsStream("roles/" + roleFile.getName());
+                    InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("roles/" + roleFile.getName());
                     Yaml yaml = new Yaml();
                     List<Map<String, Object>> rolesList = yaml.load(in);
                     Map<String, Object> role1 = rolesList.get(0);
@@ -775,7 +775,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("Application.yaml");
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);
 			String[] bypassedActions=((String) data.get("bypassedActions")).split(",");
@@ -796,7 +796,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		try 
 		{
 			
- 			InputStream in = ExecuteSqlFile.class.getResourceAsStream("DashboardLinkMapping.yaml");
+ 			InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("DashboardLinkMapping.yaml");
  			if(in==null)
  			{return;}
 			Yaml yaml = new Yaml(); 
@@ -820,7 +820,7 @@ public class CommonFunctions extends PdfPageEventHelper
 	{		
 		try 
 		{
-			InputStream in = ExecuteSqlFile.class.getResourceAsStream("Application.yaml");
+			InputStream in = com.crystal.customizedpos.Configuration.Config.class.getResourceAsStream("Application.yaml");
 			Yaml yaml = new Yaml(); 
 			Map<String, Object> data = yaml.load(in);				
 				List<LinkedHashMap<String,Object>> lst= (List<LinkedHashMap<String,Object>>)data.get("appTypes");
@@ -1864,29 +1864,6 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		}
 		return lst;
 	}
-
-	public String getFreeMemory() throws IOException, InterruptedException {
-		if (!System.getProperty("os.name").contains("Windows")) {
-			String[] command = { "/bin/bash", "-c", "free -m | awk 'NR==2{print $7}'" };
-			
-			String str;
-			Process exec = Runtime.getRuntime().exec(command);
-			if (exec.waitFor() == 0) {
-				InputStream inputStream = exec.getInputStream();
-				byte[] buffer = new byte[inputStream.available()];
-				inputStream.read(buffer);
-				str = new String(buffer).trim();
-			} else {
-				InputStream errorStream = exec.getErrorStream();
-				byte[] buffer = new byte[errorStream.available()];
-				errorStream.read(buffer);
-				str = new String(buffer).trim();
-			} 
-			
-			return "Available Memory (MB): " + str;
-		}
-		return "Unsupported OS";
-	}
 	
 	
 	public String getActiveConnections(Connection con) throws SQLException
@@ -2122,9 +2099,7 @@ public HashMap<String,String> getFirstAndLastDateOfCurrentMonth(Connection con) 
 			if(!checkIfSchemaExist())
 		{			
 			// code to create a new schema
-			createNewSchema();
-
-			ExecuteSqlFile.main(null);
+			createNewSchema();			
 		}
 		
 		setByPassedActions();
