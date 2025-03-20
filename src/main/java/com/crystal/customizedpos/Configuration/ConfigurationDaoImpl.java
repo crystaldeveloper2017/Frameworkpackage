@@ -7097,11 +7097,22 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	throws ClassNotFoundException, SQLException {				
 
 		ArrayList<Object> parameters = new ArrayList<>();
-		String query="select * from mst_vendor where activate_flag=1 ";
 		
+			String query="select * from mst_vendor where activate_flag=1";
+		
+		
+		
+		if (searchString != null && !searchString.trim().isEmpty()) {
+				parameters.add("%" + searchString + "%");
+				parameters.add("%" + searchString + "%");
+				query += " AND (vendor_name LIKE ? OR contact_no1 LIKE ?)";
+			}
 		return getListOfLinkedHashHashMap(parameters,query,con);
 
 		}
+
+
+
 
 
 		public LinkedHashMap<String, String> getVendorDetails(long vendorId, Connection con) throws SQLException {
