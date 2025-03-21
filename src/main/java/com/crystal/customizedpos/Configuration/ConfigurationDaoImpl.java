@@ -7829,7 +7829,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		throws ClassNotFoundException, SQLException {
 	ArrayList<Object> parameters = new ArrayList<>();
 	return getListOfLinkedHashHashMap(parameters,
-			"select * from document_group_master where activate_flag=1",
+			"select * from  mst_doc_group where activate_flag=1",
 			con);
 
 
@@ -7841,7 +7841,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		
 		
 		return getMap(parameters,
-				"select * from document_group_master where document_group_id=?",
+				"select * from  mst_doc_group where document_group_id=?",
 				con);
 	}
 
@@ -7849,8 +7849,9 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
-		String query="insert into document_group_master values (default,?,?,sysdate(),1)";
+		String query="insert into  mst_doc_group values (default,?,?,?,sysdate(),1)";
 		parameters.add(hm.get("txtgroupname"));
+		parameters.add(hm.get("txtgroupshortname"));
 		parameters.add(hm.get("user_id"));
 		
 		
@@ -7858,18 +7859,19 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 				con);
 	}
 
-	public String updateDocumentGroup(long documentgroupId, Connection con, String groupName,String updatedBy) throws Exception {
+	public String updateDocumentGroup(long documentgroupId, Connection con, String groupName,String groupshortName,String updatedBy) throws Exception {
 
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
 		parameters.add(groupName);
+		parameters.add(groupshortName);
 		parameters.add(updatedBy);
 
 		parameters.add(documentgroupId);
 		
 
-		insertUpdateDuablDB("UPDATE document_group_master SET group_name=?,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+		insertUpdateDuablDB("UPDATE  mst_doc_group SET group_name=?,group_short_name=?,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
 				parameters, con);
 		return "Document Group updated Succesfully";
 
@@ -7881,7 +7883,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		
 		parameters.add(userId);
 		parameters.add(documentgroupId);
-		insertUpdateDuablDB("UPDATE document_group_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+		insertUpdateDuablDB("UPDATE  mst_doc_group  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
 				parameters, conWithF);
 		return "Document Group deleted Succesfully";
 	}
@@ -7889,7 +7891,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 	public List<LinkedHashMap<String, Object>> getDocumentGroupMasterNew(HashMap<String, Object> hm, Connection con)
         throws ClassNotFoundException, SQLException {
     ArrayList<Object> parameters = new ArrayList<>();
-    String query = "SELECT * FROM document_group_master WHERE activate_flag = 1";
+    String query = "SELECT * FROM  mst_doc_group WHERE activate_flag = 1";
 
     if (hm.get("document_group_id") != null && !hm.get("document_group_id").toString().isEmpty()) {
         query += " AND document_group_id = ?";

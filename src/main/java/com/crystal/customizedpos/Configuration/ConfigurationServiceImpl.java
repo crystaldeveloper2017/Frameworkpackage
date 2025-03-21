@@ -12204,7 +12204,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try {
 
 
-			String[] colNames = { "document_group_id", "group_name"};
+			String[] colNames = { "document_group_id", "group_name","group_short_name"};
 			
 
 			
@@ -12464,11 +12464,15 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				}
 			}			
 		}		
+		
 		String groupName= hm.get("txtgroupname").toString();
+		String groupshortName= hm.get("txtgroupshortname").toString();
+
 		
 		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		hm.put("txtgroupname", groupName);
+		hm.put("txtgroupshortname", groupshortName);
 		hm.put("user_id", userId);
 		
 		
@@ -12484,7 +12488,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			}
 			else
 			{
-				lObjConfigDao.updateDocumentGroup(documentgroupId, con, groupName,userId);
+				lObjConfigDao.updateDocumentGroup(documentgroupId, con, groupName, groupshortName,userId);
 			}
 			
 			
