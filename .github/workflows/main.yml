@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - SKPSecurityGate
+      - skpsecuritygate_staging
 
 jobs:
   deploy:
