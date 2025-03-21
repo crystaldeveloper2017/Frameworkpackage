@@ -10866,7 +10866,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		hm.put("user_id", userId);
 
 		lObjConfigDao.saveAccessBlockEntry(hm, con);
-		
+	
 		try {
 
 			rs.setReturnObject(outputMap);
@@ -12204,7 +12204,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		try {
 
 
-			String[] colNames = { "document_group_id", "group_name"};
+			String[] colNames = { "document_group_id", "group_name","group_short_name"};
 			
 
 			
@@ -12235,8 +12235,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		CustomResultObject rs = new CustomResultObject();
 		HashMap<String, Object> outputMap = new HashMap<>();
 
-		long abbreviationId=request.getParameter("abbreviationId")==null?0L:Long.parseLong(request.getParameter("abbreviationId"));
-		outputMap.put("abbreviation_id", abbreviationId);
+		long documentId=request.getParameter("documentId")==null?0L:Long.parseLong(request.getParameter("documentId"));
+		outputMap.put("documentId", documentId);
 		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");			
 			try
 			{
@@ -12244,7 +12244,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				outputMap.put("lstDocumentGroup", lObjConfigDao.getDocumentGroupMaster(outputMap, connections));
 				outputMap.put("lstDepartmentMaster", lObjConfigDao.getDepartmentMaster(outputMap, connections));
 				
-				if(abbreviationId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
+				if(documentId!=0) {			outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));} 
 				rs.setViewName("../AddDocument.jsp");	
 				rs.setReturnObject(outputMap);
 	}
@@ -12314,6 +12314,8 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		String txtdocumentcode = hm.get("txtdocumentcode").toString();
 		String drpdocumentgroup = hm.get("drpdocumentgroup").toString();
 		String drpdepartmentname = hm.get("drpdepartmentname").toString();
+		String txtchangesdescription = hm.get("txtchangesdescription").toString();
+		
 
 
 		
@@ -12331,23 +12333,42 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 		hm.put("txtdocumentcode", txtdocumentcode);
 		hm.put("drpdocumentgroup", drpdocumentgroup);
 		hm.put("drpdepartmentname", drpdepartmentname);
+		hm.put("txtchangesdescription", txtchangesdescription);
+		hm.put("document_status", "DRAFT");
+		
+
+		
 		
 		
 
 		long hdnDocumentId = hm.get("hdnDocumentId").equals("") ? 0l : Long.parseLong(hm.get("hdnDocumentId").toString());
+		LinkedHashMap<String,String> documentDetails=null;
 		try {
+
+			hm.put("hdnDocumentId",hdnDocumentId);
+				hm.put("documentId",hdnDocumentId);
 
 			if (hdnDocumentId == 0) {
 				hdnDocumentId = lObjConfigDao.addDocument(con, hm);
-			} else {
+				hm.put("documentId",hdnDocumentId);
 				hm.put("hdnDocumentId",hdnDocumentId);
-				lObjConfigDao.updateDocument(con, hm);
+			} else {
+				
+				lObjConfigDao.updateDocument(con, hm);				
+				documentDetails=lObjConfigDao.getDocumentDetails(hm, con);
 			}
+			lObjConfigDao.addDocumentHistory(con, hm);
 
 			if (!toUpload.isEmpty() && toUpload.get(0).getSize() > 0) {
 
+				long attachmentId=0;
+				if(documentDetails!=null && documentDetails.get("attachment_id")!=null){
+					attachmentId=Long.valueOf(documentDetails.get("attachment_id").toString());
+					lObjConfigDao.deleteAttachment(attachmentId, con);
+				}
+
 				toUpload.get(0).write(new File(DestinationPath + toUpload.get(0).getName()));
-				long attachmentId = cf.uploadFileToDBDual(DestinationPath + toUpload.get(0).getName(), con, "Document",
+				attachmentId = cf.uploadFileToDBDual(DestinationPath + toUpload.get(0).getName(), con, "Document",
 				hdnDocumentId);
 				Files.copy(Paths.get(DestinationPath + toUpload.get(0).getName()),
 						Paths.get(DestinationPath + attachmentId + toUpload.get(0).getName()),
@@ -12376,16 +12397,34 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 	
 			HashMap<String, Object> inputMap = new HashMap<>();
-			inputMap.put("document_id", documentId);
+			inputMap.put("documentId", documentId);
 			inputMap.put("new_status", newStatus);
+			inputMap.put("document_status", newStatus);
 			inputMap.put("user_id", userId);
 	
 			String message = lObjConfigDao.updateDocumentStatus(con, inputMap);
+			LinkedHashMap<String,String>  docDetails=lObjConfigDao.getDocumentDetails(inputMap, con);
+
+
+			docDetails.put("hdnDocumentId",documentId);			
+
+			docDetails.put("drpdocumentgroup",docDetails.get("document_group_id"));	
+			docDetails.put("drpdepartmentname",docDetails.get("document_department_id"));	
+			docDetails.put("txtdocumentname",docDetails.get("document_name"));	
+			docDetails.put("txtdocumentcode",docDetails.get("document_code"));	
+			docDetails.put("txtdescription",docDetails.get("document_description"));	
+			docDetails.put("txtchangesdescription","STATUS CHANGED");
+			docDetails.put("document_status",newStatus);
+			docDetails.put("user_id",userId);
+			
+
+
+			lObjConfigDao.addDocumentHistory(con, new HashMap<>(docDetails));
+
 			outputMap.put("message", message);
 	
 			rs.setReturnObject(outputMap);
-			rs.setAjaxData(message);  
-	
+			rs.setAjaxData(message);  	
 		} catch (Exception e) {
 			writeErrorToDB(e);
 			rs.setHasError(true);
@@ -12425,11 +12464,15 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 				}
 			}			
 		}		
+		
 		String groupName= hm.get("txtgroupname").toString();
+		String groupshortName= hm.get("txtgroupshortname").toString();
+
 		
 		
 		String userId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
 		hm.put("txtgroupname", groupName);
+		hm.put("txtgroupshortname", groupshortName);
 		hm.put("user_id", userId);
 		
 		
@@ -12445,7 +12488,7 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 			}
 			else
 			{
-				lObjConfigDao.updateDocumentGroup(documentgroupId, con, groupName,userId);
+				lObjConfigDao.updateDocumentGroup(documentgroupId, con, groupName, groupshortName,userId);
 			}
 			
 			
@@ -12485,6 +12528,84 @@ public class ConfigurationServiceImpl  extends CommonFunctions
 
 		return rs;
 	}
+
+
+	
+	public CustomResultObject showEditDocument(HttpServletRequest request,Connection connections)
+	{
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<>();
+
+		long documentId=request.getParameter("documentId")==null?0L:Long.parseLong(request.getParameter("documentId"));
+		outputMap.put("documentId", documentId);
+		String appId=((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id");			
+			try
+			{
+				
+				
+				
+				outputMap.put("documentDetails", lObjConfigDao.getDocumentDetails(outputMap ,connections));
+				rs.setViewName("../EditDocument.jsp");	
+				rs.setReturnObject(outputMap);
+	}
+	catch(Exception e)
+	{
+		writeErrorToDB(e);
+				rs.setHasError(true);
+	}
+	return rs;
+}
+
+
+
+public CustomResultObject showDocumentHistory(HttpServletRequest request, Connection con) {
+
+	CustomResultObject rs = new CustomResultObject();
+	HashMap<String, Object> outputMap = new HashMap<>();
+
+	String exportFlag = request.getParameter("exportFlag") == null ? "" : request.getParameter("exportFlag");
+	String DestinationPath = request.getServletContext().getRealPath("BufferedImagesFolder") + delimiter;
+	String userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");
+	
+
+	
+	String documentId = request.getParameter("documentId");
+
+
+	try {
+
+
+		String[] colNames = { "document_group_id", "group_name"};
+
+		
+	  outputMap.put("document_id", documentId);
+
+		
+
+		
+		List<LinkedHashMap<String, Object>> lst = lObjConfigDao.getDocumentHistory(outputMap, con);
+
+		if (!exportFlag.isEmpty()) {
+			outputMap = getCommonFileGenerator(colNames, lst, exportFlag, DestinationPath, userId,
+					"DocumentGroupMaster");
+		
+			
+		} else {
+			outputMap.put("lstDocumentHistory", lst);
+			
+			rs.setViewName("../DocumentHistory.jsp");
+
+			rs.setReturnObject(outputMap);
+		}
+	} catch (Exception e) {
+		writeErrorToDB(e);
+		rs.setHasError(true);
+	}
+	rs.setReturnObject(outputMap);
+	return rs;
+
+}
+	
 
 	public CustomResultObject showDocumentMaster(HttpServletRequest request, Connection con) {
 

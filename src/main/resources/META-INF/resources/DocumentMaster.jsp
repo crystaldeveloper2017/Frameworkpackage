@@ -147,13 +147,19 @@ function reloadFilters()
                         <td>${item.document_description}</td>
                         <td>${item.current_status}</td>
                         <td><a href="BufferedImagesFolder/${item.actualPath}">${item.actualPath}</a></td>
+
+                        
+
                         <td>
+                        <button class="btn btn-primary" onclick="window.location='?a=showAddDocument&documentId=${item.document_id}'">Edit</button>
                             <c:if test="${item.current_status eq 'DRAFT'}">
                                 <button class="btn btn-success" onclick="changeStatus(${item.document_id}, 'APPROVED')">Approve</button>
                             </c:if>
                             <c:if test="${item.current_status eq 'APPROVED'}">
                                 <button class="btn btn-primary" onclick="changeStatus(${item.document_id}, 'PUBLISHED')">Publish</button>
                             </c:if>
+                            
+                            <button class="btn btn-primary" onclick="window.location='?a=showDocumentHistory&documentId=${item.document_id}'">Show History</button>
                             <button class="btn btn-danger" onclick="deleteDocument(${item.document_id})">Delete</button>
                         </td>
                     </tr>

@@ -88,6 +88,14 @@ function deleteAttachment(id)
 			<input type="hidden" name="hdnDocumentGroupId" value="${documentgroupDetails.document_group_id}" id="hdnDocumentGroupId">
 			</div>
 		</div>
+		<div class="row">
+		<div class="col-sm-12">
+			<div class="form-group">
+			<label for="email">Group Short Name</label>
+			<input type="text" class="form-control" id="txtgroupshortname" value="${documentgroupDetails.group_short_name}"  placeholder="eg. Name" name="txtgroupshortname">
+			<input type="hidden" name="hdnDocumentGroupId" value="${documentgroupDetails.document_group_id}" id="hdnDocumentGroupId">
+			</div>
+		</div>
 		
 
   

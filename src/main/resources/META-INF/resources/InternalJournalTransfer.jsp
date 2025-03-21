@@ -4,13 +4,6 @@
            
 
 
-<c:set var="itemList" value='${requestScope["outputObject"].get("itemList")}' />
-<c:set var="addStockList" value='${requestScope["outputObject"].get("addStockList")}' />
-<c:set var="todaysDate" value='${requestScope["outputObject"].get("todaysDate")}' />
-<c:set var="listfirmData" value='${requestScope["outputObject"].get("listfirmData")}' />
-
-
-
 
 
 

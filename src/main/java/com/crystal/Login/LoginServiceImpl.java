@@ -81,27 +81,34 @@ public class LoginServiceImpl extends CommonFunctions {
 		try {
 			
 			
+			
+				
+				rs.setViewName("../Menu.jsp");
+			
+		} catch (Exception e) {
+			writeErrorToDB(e);
+			rs.setHasError(true);
+		}
+
+		rs.setReturnObject(outputMap);
+		return rs;
+	}
+
+	public CustomResultObject showGSDashboard(HttpServletRequest request, Connection con) {
+		CustomResultObject rs = new CustomResultObject();
+		HashMap<String, Object> outputMap = new HashMap<String, Object>();
+		try {
+			
 			Long app_id=Long.valueOf(((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("app_id"));
 			outputMap.put("app_id", app_id);
-			if (request.getSession().getAttribute("username") != null) {
-				String fromDate = request.getParameter("fromDate");
-				String toDate = request.getParameter("toDate");
-
-				if (fromDate == null || fromDate.equals("") || toDate == null || toDate.equals("")) {
-					fromDate = getDateFromDB(con);
-					toDate = fromDate;
-				}
-
-				outputMap.put("fromDate", fromDate);
-				outputMap.put("toDate", toDate);
+			
 				
 
 				outputMap.put("type", "P");
 				outputMap.put("firmId", "-1");
 				outputMap.put("app_id", app_id);
 				
-				outputMap.put("txtfromdate", fromDate);
-				outputMap.put("txttodate", toDate);
+				
 				outputMap.put("bankId", "-1");
 				
 				
@@ -128,10 +135,10 @@ public class LoginServiceImpl extends CommonFunctions {
 				
 
 				outputMap.put("todaysDate", getDateFromDB(con));
+			
+				
 				rs.setViewName("../index.jsp");
-			} else {
-				rs.setViewName("login.jsp");
-			}
+			
 		} catch (Exception e) {
 			writeErrorToDB(e);
 			rs.setHasError(true);

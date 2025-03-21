@@ -86,6 +86,13 @@ function  submittechnical()
                     <input type="hidden" name="hdnDocumentId" value="${documentDetails.document_id}" id="hdnDocumentId">
                 </div>
             </div>
+
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="description">Document Code</label>
+                    <input type="text" class="form-control" id="txtdocumentcode" value="${documentDetails.document_code}" name="txtdocumentcode" placeholder="">
+                </div>
+            </div>
             
             <div class="col-sm-12">
                 <div class="form-group">
@@ -94,12 +101,14 @@ function  submittechnical()
                 </div>
             </div>
 
-             <div class="col-sm-12">
+             <div class="col-sm-12" id="lblchangedescription">
                 <div class="form-group">
-                    <label for="description">Document Code</label>
-                    <input type="text" class="form-control" id="txtdocumentcode" value="${documentDetails.document_description}" name="txtdocumentcode" placeholder="">
+                    <label for="description">Document Changes Description (Explain what has changed from previous version)</label>
+                    <input type="text" class="form-control" id="txtchangesdescription" name="txtchangesdescription" value="${documentDetails.document_changes_description}" name="txtdescription" placeholder="">
                 </div>
             </div>
+
+             
             
             <div class="col-sm-12">
                 <table class="table table-bordered tablecss" border="3">
@@ -126,11 +135,14 @@ function  submittechnical()
     </form>
 
     <script>
-        <c:if test="${abbreviationDetails.categoryId eq null}">
-            document.getElementById("divTitle").innerHTML = "Add Document";
+        <c:if test="${documentDetails.document_id eq null}">
+            document.getElementById("divTitle").innerHTML = "Add Document";            
+            lblchangedescription.style="display:none";
         </c:if>
-        <c:if test="${abbreviationDetails.categoryId ne null}">
+        <c:if test="${documentDetails.document_id ne null}">
             document.getElementById("divTitle").innerHTML = "Update Document";
+            drpdocumentgroup.value='${documentDetails.document_group_id}';
+            drpdepartmentname.value='${documentDetails.document_department_id}';
         </c:if>
     </script>
 </div>

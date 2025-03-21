@@ -118,6 +118,8 @@
   - addDocumentGroup
   - deleteDocumentGroup
   - deleteDocument
+  - showDocumentHistory
+  - showGSDashboard
   elements: 
   - 39
   - 40

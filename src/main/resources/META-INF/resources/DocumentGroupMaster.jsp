@@ -118,6 +118,7 @@ function addShift()
                     <tr>
                      <th><b>Document Group Id</b></th>
                      <th><b>Group Name</b></th>
+                     <th><b>Group Short Name</b></th>
                      
                      
                      <th></th><th></th>
@@ -128,6 +129,8 @@ function addShift()
 					<tr >
 						<td>${item.document_group_id}</td>
 						<td>${item.group_name}</td>
+            <td>${item.group_short_name}</td>
+
 						
 						<td><a href="?a=showAddDocumentGroup&documentgroupId=${item.document_group_id}">Edit</a></td>
             <td><button class="btn btn-danger" onclick="deleteDocumentGroup(${item.document_group_id})">Delete</button></td>

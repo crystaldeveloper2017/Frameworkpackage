@@ -1221,6 +1221,7 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("txtdescription"));
 
 		parameters.add(hm.get("user_id"));
+		parameters.add(hm.get("hdnDocumentId"));
 
 		insertUpdateDuablDB("UPDATE mst_document  SET document_name=?,document_code=?,document_description=?,current_status='DRAFT',approved_by=null,updated_by=?,updated_date=sysdate() WHERE document_id=?",
 				parameters, con);
@@ -1255,17 +1256,35 @@ public class ConfigurationDaoImpl extends CommonFunctions {
 		parameters.add(hm.get("drpdepartmentname"));
 		parameters.add(hm.get("txtdocumentname"));
 		parameters.add(hm.get("txtdocumentcode"));
-		parameters.add(hm.get("txtdescription"));
+		parameters.add(hm.get("txtdescription"));		
 
-		
-
-		
-		
-
-		parameters.add(hm.get("user_id"));
+		parameters.add(hm.get("user_id"));		
 		
 		
 		return insertUpdateDuablDB("insert into mst_document values (default,?,?,?,?,?,'DRAFT',?,null,sysdate(),null,null,1)", parameters,
+				con);
+	}
+
+	public long addDocumentHistory(Connection con, HashMap<String, Object> hm) throws Exception {
+		ArrayList<Object> parameters = new ArrayList<>();
+
+		parameters.add(hm.get("hdnDocumentId"));
+		parameters.add(hm.get("drpdocumentgroup"));
+		parameters.add(hm.get("drpdepartmentname"));
+		parameters.add(hm.get("txtdocumentname"));
+		parameters.add(hm.get("txtdocumentcode"));
+		parameters.add(hm.get("txtdescription"));		
+
+
+		parameters.add(hm.get("document_status"));		
+
+
+
+		parameters.add(hm.get("user_id"));		
+		parameters.add(hm.get("txtchangesdescription"));				
+		
+		
+		return insertUpdateDuablDB("insert into hst_mst_document values (?,?,?,?,?,?,?,?,null,sysdate(),null,null,1,?)", parameters,
 				con);
 	}
 	
@@ -7078,11 +7097,22 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 	throws ClassNotFoundException, SQLException {				
 
 		ArrayList<Object> parameters = new ArrayList<>();
-		String query="select * from mst_vendor where activate_flag=1 ";
 		
+			String query="select * from mst_vendor where activate_flag=1";
+		
+		
+		
+		if (searchString != null && !searchString.trim().isEmpty()) {
+				parameters.add("%" + searchString + "%");
+				parameters.add("%" + searchString + "%");
+				query += " AND (vendor_name LIKE ? OR contact_no1 LIKE ?)";
+			}
 		return getListOfLinkedHashHashMap(parameters,query,con);
 
 		}
+
+
+
 
 
 		public LinkedHashMap<String, String> getVendorDetails(long vendorId, Connection con) throws SQLException {
@@ -7732,13 +7762,38 @@ query,
 
 }
 
+public List<LinkedHashMap<String, Object>> getDocumentHistory(HashMap<String, Object> hm,Connection con)
+	throws ClassNotFoundException, SQLException {
+ArrayList<Object> parameters = new ArrayList<>();
+String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from hst_mst_document md "+
+		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
+		"left outer join department_master dm on dm.department_id=md.document_department_id "+
+		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
+		" where md.activate_flag=1 ";
+	
+		if(hm.get("document_id")!=null && !hm.get("document_id").equals("-1") && !hm.get("document_id").equals(""))
+		{
+			query+=" and md.document_id=?";
+			parameters.add(hm.get("document_id"));
+		}
+
+		query+=" order by md.created_date desc ";
+
+		
+return getListOfLinkedHashHashMap(parameters,
+query,
+		con);
+
+
+}
+
 public LinkedHashMap<String, String> getDocumentDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
 	ArrayList<Object> parameters = new ArrayList<>();
-	parameters.add(hm.get("abbreviation_id"));
+	parameters.add(hm.get("documentId"));
 	
 	
 	return getMap(parameters,
-			"select * from abbreviation_master where abbreviation_id=?",
+			"select md.*,tam.file_name,tam.attachment_id from mst_document md left outer join tbl_attachment_mst tam on tam.file_id=md.document_id where document_id=?",
 			con);
 }
 
@@ -7774,7 +7829,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		throws ClassNotFoundException, SQLException {
 	ArrayList<Object> parameters = new ArrayList<>();
 	return getListOfLinkedHashHashMap(parameters,
-			"select * from document_group_master where activate_flag=1",
+			"select * from  mst_doc_group where activate_flag=1",
 			con);
 
 
@@ -7786,7 +7841,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		
 		
 		return getMap(parameters,
-				"select * from document_group_master where document_group_id=?",
+				"select * from  mst_doc_group where document_group_id=?",
 				con);
 	}
 
@@ -7794,8 +7849,9 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
-		String query="insert into document_group_master values (default,?,?,sysdate(),1)";
+		String query="insert into  mst_doc_group values (default,?,?,?,sysdate(),1)";
 		parameters.add(hm.get("txtgroupname"));
+		parameters.add(hm.get("txtgroupshortname"));
 		parameters.add(hm.get("user_id"));
 		
 		
@@ -7803,18 +7859,19 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 				con);
 	}
 
-	public String updateDocumentGroup(long documentgroupId, Connection con, String groupName,String updatedBy) throws Exception {
+	public String updateDocumentGroup(long documentgroupId, Connection con, String groupName,String groupshortName,String updatedBy) throws Exception {
 
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
 		parameters.add(groupName);
+		parameters.add(groupshortName);
 		parameters.add(updatedBy);
 
 		parameters.add(documentgroupId);
 		
 
-		insertUpdateDuablDB("UPDATE document_group_master SET group_name=?,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+		insertUpdateDuablDB("UPDATE  mst_doc_group SET group_name=?,group_short_name=?,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
 				parameters, con);
 		return "Document Group updated Succesfully";
 
@@ -7826,7 +7883,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 		
 		parameters.add(userId);
 		parameters.add(documentgroupId);
-		insertUpdateDuablDB("UPDATE document_group_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
+		insertUpdateDuablDB("UPDATE  mst_doc_group  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE document_group_id=?",
 				parameters, conWithF);
 		return "Document Group deleted Succesfully";
 	}
@@ -7834,7 +7891,7 @@ public String deleteDocument(long documentId,String userId, Connection conWithF)
 	public List<LinkedHashMap<String, Object>> getDocumentGroupMasterNew(HashMap<String, Object> hm, Connection con)
         throws ClassNotFoundException, SQLException {
     ArrayList<Object> parameters = new ArrayList<>();
-    String query = "SELECT * FROM document_group_master WHERE activate_flag = 1";
+    String query = "SELECT * FROM  mst_doc_group WHERE activate_flag = 1";
 
     if (hm.get("document_group_id") != null && !hm.get("document_group_id").toString().isEmpty()) {
         query += " AND document_group_id = ?";
