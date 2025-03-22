@@ -34,7 +34,7 @@ function changeStatus(documentId, newStatus) {
 
 function reloadFilters()
   {
-	window.location="?a=showDocumentMaster&document_group_id="+drpdocumentgroup.value+"&department_id="+drpdepartmentname.value;
+	window.location="?a=showDocumentMaster&document_group_id="+drpdocumentgroup.value+"&department_id="+drpdepartmentname.value+"&current_status="+drpCurrentStatus.value;
   }
   
    function searchprod(evnt)
@@ -65,6 +65,8 @@ function reloadFilters()
 
 
 <c:set var="lstDepartmentMaster" value='${requestScope["outputObject"].get("lstDepartmentMaster")}' />
+
+<c:set var="lstCurrentStatusDocumentMaster" value='${requestScope["outputObject"].get("lstCurrentStatusDocumentMaster")}' />
 
 
 <div class="card">
@@ -113,6 +115,16 @@ function reloadFilters()
   						
   						<c:forEach items="${lstDepartmentMaster}" var="cat">
 							<option value='${cat.department_id}'> ${cat.department_name}</option>
+						</c:forEach>  							
+  					</select>
+
+
+                    <select id="drpCurrentStatus" name="drpCurrentStatus" class="form-control float-left" onchange='reloadFilters()'  >
+  						
+  						<option value='-1'>--Current Status--</option>
+  						
+  						<c:forEach items="${lstCurrentStatusDocumentMaster}" var="cat">
+							<option value='${cat.status}'> ${cat.status}</option>
 						</c:forEach>  							
   					</select>
 				</div>

@@ -7534,11 +7534,21 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 				throws ClassNotFoundException, SQLException {
 			ArrayList<Object> parameters = new ArrayList<>();
 			return getListOfLinkedHashHashMap(parameters,
-					"select * from department_master where activate_flag=1",
+					"select * from mst_dept where activate_flag=1",
 					con);
 
 
 	}
+
+	public List<LinkedHashMap<String, Object>> getCurrentStatusFromDocumentMaster(HashMap<String, Object> hm,Connection con)
+	throws ClassNotFoundException, SQLException {
+		ArrayList<Object> parameters = new ArrayList<>();
+		return getListOfLinkedHashHashMap(parameters,
+		"select distinct(current_status) status from mst_document",
+		con);
+
+
+}
 
 	public LinkedHashMap<String, String> getDepartmentDetails(HashMap<String, Object> hm, Connection con) throws SQLException {
 		ArrayList<Object> parameters = new ArrayList<>();
@@ -7546,7 +7556,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		
 		
 		return getMap(parameters,
-				"select * from department_master where department_id=?",
+				"select * from mst_dept where department_id=?",
 				con);
 	}
 
@@ -7554,7 +7564,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		ArrayList<Object> parameters = new ArrayList<>();
 		
 		
-		String query="insert into department_master values (default,?,?,sysdate(),1)";
+		String query="insert into mst_dept values (default,?,?,sysdate(),1)";
 		parameters.add(hm.get("txtdepartmentname"));
 		parameters.add(hm.get("user_id"));
 		
@@ -7574,7 +7584,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		parameters.add(departmentId);
 		
 
-		insertUpdateDuablDB("UPDATE department_master SET department_name=?,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
+		insertUpdateDuablDB("UPDATE mst_dept SET department_name=?,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
 				parameters, con);
 		return "Department updated Succesfully";
 
@@ -7585,7 +7595,7 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 		
 		parameters.add(userId);
 		parameters.add(departmentId);
-		insertUpdateDuablDB("UPDATE department_master  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
+		insertUpdateDuablDB("UPDATE mst_dept  SET activate_flag=0,updated_by=?,updated_date=SYSDATE() WHERE department_id=?",
 				parameters, conWithF);
 		return "Department deleted Succesfully";
 	}
@@ -7734,8 +7744,8 @@ public LinkedHashMap<String, String> getAccessblockDetails(long accessblockId, C
 ArrayList<Object> parameters = new ArrayList<>();
 String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document md "+
 		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
-		"left outer join department_master dm on dm.department_id=md.document_department_id "+
-		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
+		"left outer join mst_dept dm on dm.department_id=md.document_department_id "+
+		"left outer join mst_doc_group dgm on dgm.document_group_id=md.document_group_id"+
 		" where md.activate_flag=1 ";
 	
 		if(hm.get("document_group_id")!=null && !hm.get("document_group_id").equals("-1") && !hm.get("document_group_id").equals(""))
@@ -7749,6 +7759,13 @@ String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from mst_document 
 			query+=" and dm.department_id=?";
 			parameters.add(hm.get("department_id"));
 		}
+
+		if(hm.get("current_status")!=null && !hm.get("current_status").equals("-1") && !hm.get("current_status").equals(""))
+		{
+			query+=" and md.current_status=?";
+			parameters.add(hm.get("current_status"));
+		}
+
 		if (searchString != null && !searchString.isEmpty()) {
 			query += " AND (md.document_name LIKE ? OR md.document_code LIKE ?)";
 			parameters.add("%" + searchString + "%");
@@ -7767,8 +7784,8 @@ public List<LinkedHashMap<String, Object>> getDocumentHistory(HashMap<String, Ob
 ArrayList<Object> parameters = new ArrayList<>();
 String query="select md.*,tam.file_name actualPath,dm.*,dgm.* from hst_mst_document md "+
 		"left outer join tbl_attachment_mst tam on tam.file_id=md.document_id "+
-		"left outer join department_master dm on dm.department_id=md.document_department_id "+
-		"left outer join document_group_master dgm on dgm.document_group_id=md.document_group_id"+
+		"left outer join mst_dept dm on dm.department_id=md.document_department_id "+
+		"left outer join mst_doc_group dgm on dgm.document_group_id=md.document_group_id"+
 		" where md.activate_flag=1 ";
 	
 		if(hm.get("document_id")!=null && !hm.get("document_id").equals("-1") && !hm.get("document_id").equals(""))

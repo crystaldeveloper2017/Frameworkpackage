@@ -12619,17 +12619,18 @@ public CustomResultObject showDocumentHistory(HttpServletRequest request, Connec
 
 		String documentgroupId = request.getParameter("document_group_id");
 		String departmentId = request.getParameter("department_id");
+		String currentStatus = request.getParameter("current_status");
 
 
 		try {
 
 
-			String[] colNames = { "document_group_id", "group_name"};
+			String[] colNames = { "document_group_id", "department_id", "current_status"};
 
 			
           outputMap.put("document_group_id", documentgroupId);
 		  outputMap.put("department_id", departmentId);
-
+		  outputMap.put("current_status", currentStatus);		
 			
 
 			
@@ -12645,6 +12646,8 @@ public CustomResultObject showDocumentHistory(HttpServletRequest request, Connec
 				outputMap.put("lstDocumentGroup", lObjConfigDao.getDocumentGroupMaster(outputMap, con));
 
 				outputMap.put("lstDepartmentMaster", lObjConfigDao.getDepartmentMaster(outputMap, con));
+				outputMap.put("lstCurrentStatusDocumentMaster", lObjConfigDao.getCurrentStatusFromDocumentMaster(outputMap, con));
+
 				rs.setViewName("../DocumentMaster.jsp");
 
 				rs.setReturnObject(outputMap);
