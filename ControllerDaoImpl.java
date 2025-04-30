@@ -20,7 +20,7 @@ public class ControllerDaoImpl  extends CommonFunctions
 		parameters.add(itemDetails.get("browserInfo"));
 		parameters.add(itemDetails.get("responseJson"));		
 		String insertQuery= "insert into frm_audit_trail" + " VALUES " + "(default,?,?,?,?,?,?,sysdate(),?)";
-		insertUpdate(insertQuery, parameters, con);
+		insertUpdateWithLogging(insertQuery, parameters, con,"OFF");
 	}
 	
 	

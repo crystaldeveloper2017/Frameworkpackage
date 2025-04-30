@@ -123,7 +123,7 @@ public class CommonFunctions extends PdfPageEventHelper
     
 	
 	
-	public LinkedHashMap<String, String> getMap(ArrayList<Object> parameters, String query, Connection con)
+	public LinkedHashMap<String, String> getMapWithLoggingLevel(ArrayList<Object> parameters, String query, Connection con,String logLevel)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmnt = null;
@@ -134,8 +134,27 @@ public class CommonFunctions extends PdfPageEventHelper
 			for (Object o : parameters) {
 				stmnt.setObject(j++, o);
 			}
-			logger.debug("\n"+stmnt);
+
 			
+
+			switch (logLevel.toUpperCase()) {
+				case "DEBUG":
+					logger.debug("\n"+stmnt);
+					break;
+				case "INFO":
+					logger.info("\n"+stmnt);
+					break;
+				case "WARN":
+					logger.warn("\n"+stmnt);
+					break;
+				case "ERROR":
+					logger.error("\n"+stmnt);
+					break;
+				default:
+					break;
+			}
+
+
 			Date dt1=new Date();			
 			rs = stmnt.executeQuery();
 			Date dt2=new Date();
@@ -170,6 +189,14 @@ public class CommonFunctions extends PdfPageEventHelper
 			if (stmnt != null)
 				stmnt.close();
 		}
+
+	}
+
+
+	public LinkedHashMap<String, String> getMap(ArrayList<Object> parameters, String query, Connection con)
+			throws SQLException {
+
+				return getMapWithLoggingLevel( parameters, query, con,"DEBUG");
 
 	}
 	
@@ -484,7 +511,7 @@ public class CommonFunctions extends PdfPageEventHelper
 		}
 	}
 
-	public List<String> getListOfString(List<Object> parameters, String query, Connection con)
+	public List<String> getListOfStringWithLogging(List<Object> parameters, String query, Connection con,String logLevel)
 			throws ClassNotFoundException, SQLException {
 		ResultSet rs1 = null;
 		PreparedStatement stmnt = null;
@@ -497,8 +524,25 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.setObject(j++, o);
 			}
 
-			logger.debug("\n"+stmnt);
 			
+			switch (logLevel.toUpperCase()) {
+				case "DEBUG":
+					logger.debug("\n"+stmnt);
+					break;
+				case "INFO":
+					logger.info("\n"+stmnt);
+					break;
+				case "WARN":
+					logger.warn("\n"+stmnt);
+					break;
+				case "ERROR":
+					logger.error("\n"+stmnt);
+					break;
+				default:
+					break;
+			}
+
+
 			Date dt1=new Date();			
 			rs1 = stmnt.executeQuery();
 			Date dt2=new Date();
@@ -527,6 +571,14 @@ public class CommonFunctions extends PdfPageEventHelper
 				stmnt.close();
 		}
 	}
+
+	public List<String> getListOfString(List<Object> parameters, String query, Connection con)
+			throws ClassNotFoundException, SQLException {
+
+				return getListOfStringWithLogging(parameters, query, con, "DEBUG");
+
+	}
+
 
 	public String convertToIndianCurrency(String num) {
 		BigDecimal bd = new BigDecimal(num);
@@ -1034,8 +1086,15 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 
-	
+
+
 	public HashMap<String, Object> insertUpdate(String sql, ArrayList<Object> parameters, Connection conWithF) throws SQLException 
+	{
+		return insertUpdateWithLogging(sql,  parameters, conWithF,"DEBUG"); 
+	}
+
+	
+	public HashMap<String, Object> insertUpdateWithLogging(String sql, ArrayList<Object> parameters, Connection conWithF,String logLevel) throws SQLException 
 	{
 		long reqVAlue = 0;
 		PreparedStatement preparedStatement = null;
@@ -1049,7 +1108,28 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 				preparedStatement.setObject(i++, o);
 			}
 			hm.put("preparedStatement",preparedStatement.toString());
-			logger.debug("\n"+preparedStatement);
+
+
+			
+
+			switch (logLevel.toUpperCase()) {
+				case "DEBUG":
+					logger.debug("\n"+preparedStatement);
+					break;
+				case "INFO":
+					logger.info("\n"+preparedStatement);
+					break;
+				case "WARN":
+					logger.warn("\n"+preparedStatement);
+					break;
+				case "ERROR":
+					logger.error("\n"+preparedStatement);
+					break;
+				default:
+					break;
+			}
+
+
 			preparedStatement.executeUpdate();
 
 			try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) 
@@ -1096,33 +1176,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	
 	
 
-	/*
-	 * public void copyImagesFromDBToBufferFolder(String DestinationPath, Connection
-	 * con) throws ClassNotFoundException, SQLException, IOException {
-	 * 
-	 * 
-	 * 
-	 * 
-	 * logger.debug("Destination path is"+DestinationPath);
-	 * 
-	 * // set global session
-	 * 
-	 * 
-	 * while (true) { File f1 = new File(DestinationPath); List<String>
-	 * listFromServerFolder = Arrays.asList(f1.list()); ArrayList<Object> parameters
-	 * = new ArrayList<>(); List<String> lstFromDb = getListOfString(parameters,
-	 * "select concat(attachment_id,file_name) as file_name from tbl_attachment_mst where activate_flag=1"
-	 * , con); HashSet<String> setFromServerFolder = new
-	 * HashSet<String>(listFromServerFolder); HashSet<String> setFromDb = new
-	 * HashSet<String>(lstFromDb); setFromDb.removeAll(setFromServerFolder);
-	 * ArrayList<String> namesList = new ArrayList<>(setFromDb);
-	 * 
-	 * logger.debug("Pending Files to copy"+namesList);
-	 * 
-	 * if (actualCopy(DestinationPath, con, namesList)) { break; }
-	 * 
-	 * } }
-	 */
+	
 	
 	
 	
@@ -1291,8 +1345,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	}
 
 	public String getDateTime(Connection con) throws SQLException {
-		logger.debug("will fire db query 1");
-		return getMap(new ArrayList<>(), "select sysdate() as dt1 from dual", con).get("dt1");
+		return getMapWithLoggingLevel(new ArrayList<>(), "select sysdate() as dt1 from dual", con,"OFF").get("dt1");
 
 	}
 
@@ -1313,6 +1366,10 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 
 	public String getDateFromDB(Connection con) throws SQLException {
 		return getMap(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
+				.toString();
+	}
+	public String getDateFromDBWithLogging(Connection con,String logLevel) throws SQLException {
+		return getMapWithLoggingLevel(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y') as dt1 from dual", con,logLevel).get("dt1")
 				.toString();
 	}
 	
@@ -1473,7 +1530,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		
 		String query = "select role_id from acl_user_role_rlt rlt where user_id=? and activate_flag=1 ";
 		HashSet<String> distinctActions=new HashSet<>();
-		for(String roleName:getListOfString(parameters, query, con))
+		for(String roleName:getListOfStringWithLogging(parameters, query, con,"OFF"))
 		{
 			String[] roleNameActions=roles.get(Long.valueOf(roleName)).getActions();
 			 List<String> lst=Arrays.asList(roleNameActions);
@@ -1509,8 +1566,8 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 	{
 		ArrayList<Object> parameters=new ArrayList<>();
 		parameters.add(userId);
-		return getListOfString(parameters, "select userrole.role_id from acl_user_role_rlt userrole where userrole.user_id=? and \r\n"
-				+ "userrole.activate_flag=1 ", con);	
+		return getListOfStringWithLogging(parameters, "select userrole.role_id from acl_user_role_rlt userrole where userrole.user_id=? and \r\n"
+				+ "userrole.activate_flag=1 ", con,"OFF");	
 	}
 	
 

@@ -31,36 +31,17 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 	public void serveRequest(HttpServletRequest request, HttpServletResponse response)
 			 {
-
-		response.addHeader("Access-Control-Allow-Origin", "*");
+	response.addHeader("Access-Control-Allow-Origin", "*");
 		Connection con = null;
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		HashMap<String, Object> mapFromRequest = null;
 		String reqStartTime = null;
 		try {
 			Date startDatetime = new Date();
-			
-			long freeMemory = Runtime.getRuntime().freeMemory() / MegaBytes;
-			long totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
-			long maxMemory = Runtime.getRuntime().maxMemory() / MegaBytes;
-			
-			for(String s:getMemoryStats())
-			{
-				logger.debug(s);
-			}
-
-			//logger.debug("JVM freeMemory: " + freeMemory);
-			//logger.debug("JVM totalMemory also equals to initial heap size of JVM : " + totalMemory);
-			//logger.debug("JVM maxMemory also equals to maximum heap size of JVM: " + maxMemory);
-
-			//logger.debug("Request Start Time " + startDatetime);
-			String ApplicationName = ((HttpServletRequest) request).getContextPath().replace("/", "");
-			//logger.debug("Inside Serve Request" + ApplicationName);
 			String action = request.getParameter("a") == null ? request.getParameter("actionName")
 					: request.getParameter("a");
 			action = action == null ? "showHomePage" : action;
-
-			logger.debug("Action Flag receieved is :- " + action);
+			String logMessage="Action Flag receieved is " + action;
 			con = getConnectionJDBC();
 			con.setAutoCommit(false);
 
@@ -72,22 +53,22 @@ public class ControllerServiceImpl extends CommonFunctions {
 			//System.out.println(actions);			
 			boolean isBypassed =  lstbypassedActions.contains(action);
 			
-			
-			logger.debug("is ByPassed :-" + isBypassed);
+			logMessage+=" and action "+"is ByPassed value :-" + isBypassed;
 			if ((action == null || action.equals("")) && request.getSession().getAttribute(username_constant) != null) {
-				logger.info("Redirecting Back to homepage");
+				
+				logMessage+=" Will Redirect Back to Homepage";
 				response.sendRedirect("?a=showHomePage"); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 				response.setDateHeader("Expires", 0);
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
-				
+				logger.debug(logMessage);
 				return;
 			}
 			request.getSession().setAttribute("projectName",CommonFunctions.projectName);
 			// send to login if session is null and the action is also not bypassed
 			if (!isBypassed && request.getSession().getAttribute(username_constant) == null) {
-				logger.debug("Session Found as Null and the action is also not bypassed");
+				logMessage+="Session Found as Null and the action is also not bypassed";
 				
 				response.sendRedirect("frameworkjsps/Login.jsp"); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
@@ -108,7 +89,6 @@ public class ControllerServiceImpl extends CommonFunctions {
 			{
 				userId = ((HashMap<String, String>) request.getSession().getAttribute("userdetails")).get("user_id");			
 				 allowedActionsForThisRole= getActionsForthisUserDecoupled(Long.valueOf(userId), con,CommonFunctions.roles);			
-				 allowedReportsForThisRole= getReportsForthisUserDecoupled(Long.valueOf(userId), con,CommonFunctions.roles);			
 				 
 			}
 			//logger.info("List of Allowed Actions for this role" + allowedActionsForThisRole);
@@ -120,10 +100,11 @@ public class ControllerServiceImpl extends CommonFunctions {
 			}
 
 			if (action != null && !allowedActionsForThisRole.contains(action) ) {
-				logger.debug("Redirecting to Unauthorized Page as Action is "+action );				
+				logMessage+="Redirecting to Unauthorized Page as Action is "+action ;				
 				RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/unAuthorized.jsp");
 				dispatcher.forward(request, response);
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);				
+				logger.debug(logMessage);
 				return;
 			}
 
@@ -144,16 +125,15 @@ public class ControllerServiceImpl extends CommonFunctions {
 			// added so that threads donot over lap with each other
 			if(request.getSession().getAttribute("userdetails")!=null)
 			{
-				logger.debug("session is not null");
+				logMessage+="session is not null";
 				HashMap<String, String> hm= (HashMap<String, String>) request.getSession().getAttribute("userdetails");
-				logger.debug("getting userdetails"+hm);
+				logMessage+="getting userdetails"+hm;
 				Integer threads_overlap=0;
 				if(hm.get("threads_overlap")!=null)
 				{
 					threads_overlap=Integer.parseInt(hm.get("threads_overlap").toString());
 				}
 				
-				logger.debug("getting threads_overlap"+threads_overlap);				
 				if(CommonFunctions.threadSleep>threads_overlap)
 				{
 					Thread.sleep(CommonFunctions.threadSleep * 1000);
@@ -164,7 +144,6 @@ public class ControllerServiceImpl extends CommonFunctions {
 				}
 			}
 			
-			logger.debug("Class and Method Info From Database" + frmAction.toString());
 			Class<?>[] paramString = new Class[2];
 			paramString[0] = HttpServletRequest.class;
 			paramString[1] = Connection.class;
@@ -183,7 +162,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 				List<String> roleIds =getRoleIds(Long.valueOf(userId), con);
 
 				
-				logger.debug("Found a view Name so redirecting to " + rs.getViewName());
+				logMessage+="Found a view Name so redirecting to " + rs.getViewName();
 				HashMap<String, Object> hm = rs.getReturnObject();
 				hm.put("contentJspName", rs.getViewName());
 				hm.put(username_constant, request.getSession().getAttribute(username_constant));
@@ -192,7 +171,6 @@ public class ControllerServiceImpl extends CommonFunctions {
 				
 				
 				request.setAttribute("outputObject", hm);
-
 				if (isBypassed) {
 					RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/model.jsp");
 					dispatcher.forward(request, response);
@@ -213,9 +191,9 @@ public class ControllerServiceImpl extends CommonFunctions {
 
 			} else // its a file
 			{
-				logger.info("Its not ajax nor a view name, Unless its a file download something is wrong");
+				logMessage+="Its not ajax nor a view name, Unless its a file download something is wrong";
 				String filepath = rs.getReturnObject().get(filename_constant).toString();
-				logger.info("Found a File So returning " + "BufferedImagesFolder/" + filepath);
+				logMessage+="Found a File So returning " + "BufferedImagesFolder/" + filepath;
 				response.sendRedirect("BufferedImagesFolder/" + filepath);
 			}
 
@@ -224,27 +202,12 @@ public class ControllerServiceImpl extends CommonFunctions {
 			con.commit();
 			
 			Date EndTime = new Date();
-			logger.debug("Request End Time " + EndTime);
-			logger.debug("\nTime Taken For Request -- " + (EndTime.getTime() - startDatetime.getTime()));
+			logMessage+="Request End Time " + EndTime;
+			logMessage+="\nTime Taken For Request -- " + (EndTime.getTime() - startDatetime.getTime());
 
-			freeMemory = Runtime.getRuntime().freeMemory() / MegaBytes;
-			totalMemory = Runtime.getRuntime().totalMemory() / MegaBytes;
-			maxMemory = Runtime.getRuntime().maxMemory() / MegaBytes;
+			
 
-			//logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
-			//logger.info("freeMemory in JVM: " + freeMemory);
-			//logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
-			//logger.info("maxMemory in JVM: " + maxMemory);
-			if (freeMemory <= 20) {
-				logger.debug("Calling System GC");
-				System.gc();
-				logger.debug("Call Completed");
-			}
-
-			//logger.info("Used Memory in JVM: " + (maxMemory - freeMemory));
-			//logger.info("freeMemory in JVM: " + freeMemory);
-			//logger.info("totalMemory in JVM shows current size of java heap : " + totalMemory);
-			//logger.info("maxMemory in JVM: " + maxMemory);
+			logger.debug(logMessage);
 
 		} catch (Exception e) {
 			
@@ -289,11 +252,9 @@ public class ControllerServiceImpl extends CommonFunctions {
 				try {
 					makeAuditTrailEntry(hmFromRequest, reqStartTime, responseJson);
 				} catch (ClassNotFoundException e) {
-					logger.debug("Going to Make audittrail entry " + e);
 
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					logger.debug("Going to Make audittrail entry " + e);
 				}
 			}
 		}).start();
@@ -305,7 +266,6 @@ public class ControllerServiceImpl extends CommonFunctions {
 	public HashMap<String, Object> getMapfromRequest(HttpServletRequest request, String reqStartTime,
 			String responseJson, Connection con) throws ClassNotFoundException, SQLException {
 
-		logger.debug("Going to Make audittrail entry ");
 		StringBuffer requestURL = request.getRequestURL();
 		if (request.getQueryString() != null) {
 			requestURL.append("?").append(request.getQueryString());
