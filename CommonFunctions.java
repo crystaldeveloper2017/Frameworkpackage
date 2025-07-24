@@ -1703,7 +1703,10 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 			outputMap.put(filename_constant, userId + documentName + ".pdf");
 		} else if (exportFlag.equals("T")) {
 			generateFileFromList(DestinationPath + userId + documentName + ".txt", requiredList, colNames);
-			outputMap.put(filename_constant, userId + documentName + ".txt");
+			outputMap.put(filename_constant, userId + documentName + ".txt");		
+		} else if (exportFlag.equals("C")) {
+			generateFileFromList(DestinationPath + userId + documentName + ".csv", requiredList, colNames);
+			outputMap.put(filename_constant, userId + documentName + ".csv");
 
 		}
 
