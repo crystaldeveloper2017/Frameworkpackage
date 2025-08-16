@@ -41,6 +41,10 @@ public class ControllerServiceImpl extends CommonFunctions {
 			String action = request.getParameter("a") == null ? request.getParameter("actionName")
 					: request.getParameter("a");
 			action = action == null ? "showHomePage" : action;
+			if(action.contains("?"))
+			{
+				action = action.split("\\?")[0];
+			}
 			String logMessage="Action Flag receieved is " + action;
 			con = getConnectionJDBC();
 			con.setAutoCommit(false);
@@ -69,8 +73,17 @@ public class ControllerServiceImpl extends CommonFunctions {
 			// send to login if session is null and the action is also not bypassed
 			if (!isBypassed && request.getSession().getAttribute(username_constant) == null) {
 				logMessage+="Session Found as Null and the action is also not bypassed";
-				
-				response.sendRedirect("frameworkjsps/Login.jsp"); // No logged-in user found, so redirect to login page.
+				String app_code="";
+				if(request.getSession().getAttribute("logoutappshortcode")!=null)
+				{
+					app_code=(String) request.getSession().getAttribute("logoutappshortcode");
+				}
+				else
+				{
+					app_code=request.getParameter("app_short_code");
+				}
+
+				response.sendRedirect("frameworkjsps/Login.jsp?app_code="+app_code); // No logged-in user found, so redirect to login page.
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 				mapFromRequest = getMapfromRequest(request, reqStartTime, webPortal, con);
