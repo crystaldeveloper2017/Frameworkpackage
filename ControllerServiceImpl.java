@@ -80,7 +80,7 @@ public class ControllerServiceImpl extends CommonFunctions {
 				}
 				else
 				{
-					app_code=request.getParameter("app_short_code");
+					app_code=request.getParameter("app_code");
 				}
 
 				response.sendRedirect("frameworkjsps/Login.jsp?app_code="+app_code); // No logged-in user found, so redirect to login page.
