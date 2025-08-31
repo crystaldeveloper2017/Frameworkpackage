@@ -1368,6 +1368,7 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		return getMap(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y') as dt1 from dual", con).get("dt1")
 				.toString();
 	}
+
 	public String getDateFromDBWithLogging(Connection con,String logLevel) throws SQLException {
 		return getMapWithLoggingLevel(new ArrayList<>(), "select date_format(sysdate(),'%d/%m/%Y') as dt1 from dual", con,logLevel).get("dt1")
 				.toString();
@@ -2350,6 +2351,28 @@ public  String getDayOfWeek(String date) {
 			return "Invalid date format. Please use dd/MM/yyyy.";
 		}
 	}	
+
+
+	public String getFirstDayOfFinancialYear(Connection con) throws SQLException {
+    String sql = "SELECT DATE_FORMAT(CASE " +
+                 "WHEN MONTH(SYSDATE()) >= 4 " +
+                 "THEN MAKEDATE(YEAR(SYSDATE()), 91) " +  // 91st day = 1st April
+                 "ELSE MAKEDATE(YEAR(SYSDATE()) - 1, 91) " +
+                 "END, '%d/%m/%Y') AS fy_start " +
+                 "FROM dual";
+
+    return getMap(new ArrayList<>(), sql, con).get("fy_start").toString();
+}
+public String getLastDayOfFinancialYear(Connection con) throws SQLException {
+    String sql = "SELECT DATE_FORMAT(CASE " +
+                 "WHEN MONTH(SYSDATE()) >= 4 " +
+                 "THEN MAKEDATE(YEAR(SYSDATE()) + 1, 90) - INTERVAL 1 DAY " +  // 31st March next year
+                 "ELSE MAKEDATE(YEAR(SYSDATE()), 90) - INTERVAL 1 DAY " +
+                 "END, '%d/%m/%Y') AS fy_end " +
+                 "FROM dual";
+
+    return getMap(new ArrayList<>(), sql, con).get("fy_end").toString();
+}
 	
 
 }
