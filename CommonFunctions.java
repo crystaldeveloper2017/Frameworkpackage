@@ -2352,6 +2352,7 @@ public  String getDayOfWeek(String date) {
 		}
 	}	
 
+<<<<<<< Updated upstream
 
 	public String getFirstDayOfFinancialYear(Connection con) throws SQLException {
     String sql = "SELECT DATE_FORMAT(CASE " +
@@ -2372,6 +2373,17 @@ public String getLastDayOfFinancialYear(Connection con) throws SQLException {
                  "FROM dual";
 
     return getMap(new ArrayList<>(), sql, con).get("fy_end").toString();
+=======
+	public String getDateMinusYears(Connection con, int years) throws SQLException {
+    ArrayList<Object> params = new ArrayList<>();
+    params.add(years);
+
+    return getMap(
+            params,
+            "select date_format(DATE_SUB(current_date, INTERVAL ? YEAR), '%d/%m/%Y') as dt1 from dual",
+            con
+    ).get("dt1").toString();
+>>>>>>> Stashed changes
 }
 	
 
