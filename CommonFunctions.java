@@ -2352,28 +2352,6 @@ public  String getDayOfWeek(String date) {
 		}
 	}	
 
-<<<<<<< Updated upstream
-
-	public String getFirstDayOfFinancialYear(Connection con) throws SQLException {
-    String sql = "SELECT DATE_FORMAT(CASE " +
-                 "WHEN MONTH(SYSDATE()) >= 4 " +
-                 "THEN MAKEDATE(YEAR(SYSDATE()), 91) " +  // 91st day = 1st April
-                 "ELSE MAKEDATE(YEAR(SYSDATE()) - 1, 91) " +
-                 "END, '%d/%m/%Y') AS fy_start " +
-                 "FROM dual";
-
-    return getMap(new ArrayList<>(), sql, con).get("fy_start").toString();
-}
-public String getLastDayOfFinancialYear(Connection con) throws SQLException {
-    String sql = "SELECT DATE_FORMAT(CASE " +
-                 "WHEN MONTH(SYSDATE()) >= 4 " +
-                 "THEN MAKEDATE(YEAR(SYSDATE()) + 1, 90) - INTERVAL 1 DAY " +  // 31st March next year
-                 "ELSE MAKEDATE(YEAR(SYSDATE()), 90) - INTERVAL 1 DAY " +
-                 "END, '%d/%m/%Y') AS fy_end " +
-                 "FROM dual";
-
-    return getMap(new ArrayList<>(), sql, con).get("fy_end").toString();
-=======
 	public String getDateMinusYears(Connection con, int years) throws SQLException {
     ArrayList<Object> params = new ArrayList<>();
     params.add(years);
@@ -2383,7 +2361,6 @@ public String getLastDayOfFinancialYear(Connection con) throws SQLException {
             "select date_format(DATE_SUB(current_date, INTERVAL ? YEAR), '%d/%m/%Y') as dt1 from dual",
             con
     ).get("dt1").toString();
->>>>>>> Stashed changes
 }
 	
 
