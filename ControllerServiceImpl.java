@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
-
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 
@@ -189,6 +190,10 @@ public class ControllerServiceImpl extends CommonFunctions {
 					dispatcher.forward(request, response);
 				} else {
 					RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/model.jsp");
+					HttpSession session = request.getSession();
+Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
+sessionCookie.setMaxAge(60*60*24); // 1 day
+response.addCookie(sessionCookie);
 					dispatcher.forward(request, response);
 				}
 
