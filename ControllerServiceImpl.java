@@ -188,7 +188,17 @@ public class ControllerServiceImpl extends CommonFunctions {
 				if (isBypassed) {
 					RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/model.jsp");
 					dispatcher.forward(request, response);
-				} else {
+				} else if(rs.disablemodaljsp)
+				{
+					RequestDispatcher dispatcher = request.getRequestDispatcher(rs.getViewName());
+					HttpSession session = request.getSession();
+Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
+sessionCookie.setMaxAge(60*60*24); // 1 day
+response.addCookie(sessionCookie);
+					dispatcher.forward(request, response);
+				}
+				else
+				{
 					RequestDispatcher dispatcher = request.getRequestDispatcher("frameworkjsps/model.jsp");
 					HttpSession session = request.getSession();
 Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
@@ -196,6 +206,7 @@ sessionCookie.setMaxAge(60*60*24); // 1 day
 response.addCookie(sessionCookie);
 					dispatcher.forward(request, response);
 				}
+
 
 			} else if (rs.getAjaxData() != null) // its ajax data
 			{

@@ -11,6 +11,8 @@ public class CustomResultObject
 	String messageBeforeNavigation;
 	HashMap<String, Object> returnObject; 
 	boolean hasError;
+	public boolean disablemodaljsp;
+	
 	
 
 	
