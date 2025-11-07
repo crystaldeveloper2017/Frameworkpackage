@@ -2350,6 +2350,40 @@ public  String getDayOfWeek(String date) {
             con
     ).get("dt1").toString();
 }
+
+public String getFirstDayOfFinancialYear(Connection con) throws SQLException {
+    ArrayList<Object> params = new ArrayList<>();
+
+    String sql = 
+        "SELECT DATE_FORMAT( " +
+        "   CASE " +
+        "       WHEN MONTH(CURDATE()) < 4 " +
+        "       THEN MAKEDATE(YEAR(CURDATE()) - 1, 91)  " +  // 91st day = 1st April
+        "       ELSE MAKEDATE(YEAR(CURDATE()), 91) " +
+        "   END, '%d/%m/%Y') AS first_day_fy " +
+        "FROM dual";
+
+    return getMap(params, sql, con).get("first_day_fy").toString();
+}
+
+public String getLastDayOfFinancialYear(Connection con) throws SQLException {
+    ArrayList<Object> params = new ArrayList<>();
+
+    String sql =
+        "SELECT DATE_FORMAT( " +
+        "   CASE " +
+        "       WHEN MONTH(CURDATE()) < 4 " +
+        "       THEN MAKEDATE(YEAR(CURDATE()), 90)  " + // 31-Mar of current year
+        "       ELSE MAKEDATE(YEAR(CURDATE()) + 1, 90) " + // 31-Mar of next year
+        "   END, '%d/%m/%Y') AS last_day_fy " +
+        "FROM dual";
+
+    return getMap(params, sql, con).get("last_day_fy").toString();
+}
+
+
+
+
 	
 
 }
