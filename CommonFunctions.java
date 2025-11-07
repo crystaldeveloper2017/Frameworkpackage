@@ -1236,64 +1236,52 @@ public void checkIfMysqlIsRunning() throws SQLException, InterruptedException{
 		}
 	}
 
-	public boolean actualCopy(String DestinationPath, Connection con, List<String> setOfPendingFiles)
-			throws SQLException, IOException {
-		PreparedStatement ps = null;
-		FileOutputStream fos = null;
-		boolean returnValue=false;
-		try {
-			String reqString = "";
-			int m = 1;
-			if (setOfPendingFiles.size() == 0) {
-				return true;
-			}
+	public boolean actualCopy(String destinationPath, Connection con, List<String> attachmentIds)
+        throws SQLException, IOException {
 
-			StringBuilder builder = new StringBuilder();
+    if (attachmentIds == null || attachmentIds.isEmpty()) {
+        return true;
+    }
 
-			for (int i = 0; i < setOfPendingFiles.size(); i++) {
-				builder.append("?,");
-			}
+    String placeholders = String.join(",", Collections.nCopies(attachmentIds.size(), "?"));
+    String query = "SELECT attachment_id, file_name, attachment_asblob " +
+                   "FROM tbl_attachment_mst " +
+                   "WHERE activate_flag = 1 AND attachment_id IN (" + placeholders + ") LIMIT 100";
 
-			ps = con.prepareStatement(
-					"select concat(attachment_id,file_name) as file_name,attachment_asblob from 	tbl_attachment_mst where activate_flag=1 and concat(attachment_id,file_name) in ("
-							+ builder.deleteCharAt(builder.length() - 1).toString() + ") limit 100");
-			int k = 1;
-			for (int i = 0; i < setOfPendingFiles.size(); i++) {
-				ps.setString(k++, setOfPendingFiles.get(i));
-			}
+    boolean allCopied = true;
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					m++;
-					String PathToNewFile = DestinationPath + rs.getString("file_name");
-					logger.debug(PathToNewFile);
-					File f = new File(PathToNewFile);
-					if (!f.exists()) {
-						fos = new FileOutputStream(f);
-						byte b[];
-						Blob blob;
-						blob = rs.getBlob("attachment_asblob");
-						b = blob.getBytes(1, (int) blob.length());
-						fos.write(b);
-						fos.close();
-					}
-				}
-				returnValue=(m == 1);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			return returnValue;
+    try (PreparedStatement ps = con.prepareStatement(query)) {
 
-		} finally {
-			if(ps!=null)
-				ps.close();
-			if(fos!=null)
-				fos.close();
-		}
+        int index = 1;
+        for (String id : attachmentIds) {
+            ps.setString(index++, id);
+        }
 
-	}
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String fileName = rs.getString("file_name");
+                String attachmentId = rs.getString("attachment_id");
+                String pathToNewFile = destinationPath + attachmentId + fileName;
+
+                
+
+                File file = new File(pathToNewFile);
+                if (!file.exists()) {
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        Blob blob = rs.getBlob("attachment_asblob");
+                        byte[] bytes = blob.getBytes(1, (int) blob.length());
+                        fos.write(bytes);
+                    } catch (Exception e) {
+                        allCopied = false;                        
+                    }
+                }
+            }
+        }
+    }
+
+    return allCopied;
+}
+
 
 
 	public String actualCopyNew(String DestinationPath, Connection con, long attachmentId)
