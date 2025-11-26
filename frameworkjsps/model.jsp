@@ -210,33 +210,34 @@
         </div>
       </div>
 
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column">
+     <nav class="mt-2">
+  <ul class="nav nav-pills nav-sidebar flex-column"
+      data-widget="treeview"
+      role="menu"
+      data-accordion="false">
 
-          <c:forEach items="${elementsDB}" var="item">
-            <li class="nav-item has-treeview" name="listItemParentElements" id="${item.getElementName()}">
-
-              <a href="#" name="anchorParentElement" class="nav-link" style="color:floralwhite;font-weight:800">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>${item.getElementName()}<i class="right fas fa-angle-left"></i></p>
+    <c:forEach items="${elementsDB}" var="item">
+      <li class="nav-item has-treeview" name="listItemParentElements" id="${item.getElementName()}">
+        <a href="#" name="anchorParentElement" class="nav-link" style="color:floralwhite;font-weight:800">
+          <i class="nav-icon fas fa-tachometer-alt"></i>
+          <p>${item.getElementName()}<i class="right fas fa-angle-left"></i></p>
+        </a>
+        <ul class="nav nav-treeview">
+          <c:forEach items="${item.getChildElements()}" var="item1">
+            <li id="${item1.getElementName()}" class="nav-item">
+              <a href="${item1.getElementUrl()}" style="color:floralwhite" class="nav-link">
+                <i class="nav-icon fas fa-edit"></i>
+                <p style="color:cyan">${ item1.getElementName()}</p>
               </a>
-
-              <ul class="nav nav-treeview">
-                <c:forEach items="${item.getChildElements()}" var="item1">
-                  <li id="${item1.getElementName()}" class="nav-item">
-                    <a href="${item1.getElementUrl()}" style="color:floralwhite" class="nav-link">
-                      <i class="nav-icon fas fa-edit"></i>
-                      <p style="color:cyan">${ item1.getElementName()}</p>
-                    </a>
-                  </li>
-                </c:forEach>
-              </ul>
-
             </li>
           </c:forEach>
-
         </ul>
-      </nav>
+      </li>
+    </c:forEach>
+
+  </ul>
+</nav>
+
 
     </div>
   </aside>
