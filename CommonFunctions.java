@@ -912,9 +912,8 @@ public class CommonFunctions extends PdfPageEventHelper
 		{
 			for(Entry<Long, Role> tmpRole: roles.entrySet())
 			{
-				if(tmpRole.getKey()==roleId)
+				if(tmpRole.getKey().toString().equals(String.valueOf(roleId)))
 				{
-					//r.add(tmpRole.getValue());
 					r.put(roleId, tmpRole.getValue());
 				}
 			}
